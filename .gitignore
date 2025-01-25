@@ -1,0 +1,51 @@
+# Node.js dependencies (server and client)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Logs (server and client)
+logs/
+*.log
+debug.log
+*.pid
+*.seed
+*.pid.lock
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Build outputs (server and client)
+build/
+dist/
+*.out
+
+# Coverage files (testing)
+coverage/
+*.lcov
+
+# OS-generated files
+.DS_Store
+Thumbs.db
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+
+# Temporary files
+*.tmp
+*.temp
+
+# React-specific (client)
+client/node_modules/
+client/.env
+client/build/
+client/coverage/
+
+# Server-specific
+server/node_modules/
+server/.env
+server/coverage/
