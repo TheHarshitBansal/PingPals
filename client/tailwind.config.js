@@ -1,9 +1,13 @@
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
-  darkMode: ["class", "class"],
+  darkMode: ["class"],
   theme: {
   	extend: {
+		boxShadow:{
+			light: '0 0 2px rgba(0,0,0,0.25)',
+			dark: '0 0 2px rgba(255,255,255,0.25)'
+		},
 		fontFamily:{
 			'manrope' : ['Manrope', 'sans-serif']
 		},
