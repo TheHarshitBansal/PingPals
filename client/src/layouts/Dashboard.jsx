@@ -16,7 +16,7 @@ const Dashboard = () => {
   const [active, setActive] = useState(1);
 
   return (
-    <div>
+    <div className="flex">
       <div
         className={`h-screen w-[100px] bg-gray-100 dark:bg-gray-900 shadow-light dark:shadow-dark`}
       >
@@ -27,7 +27,9 @@ const Dashboard = () => {
             </div>
             <div
               className={`h-16 w-16 rounded-lg flex items-center cursor-pointer justify-center ${
-                active === 1 ? "bg-blue-500 text-white" : ""
+                active === 1
+                  ? "bg-blue-500 text-white"
+                  : "hover:bg-gray-200 dark:hover:bg-gray-800"
               }`}
               onClick={() => setActive(1)}
             >
@@ -35,7 +37,9 @@ const Dashboard = () => {
             </div>
             <div
               className={`h-16 w-16 rounded-lg flex items-center cursor-pointer justify-center ${
-                active === 2 ? "bg-blue-500 text-white" : ""
+                active === 2
+                  ? "bg-blue-500 text-white"
+                  : "hover:bg-gray-200 dark:hover:bg-gray-800"
               }`}
               onClick={() => setActive(2)}
             >
@@ -43,16 +47,20 @@ const Dashboard = () => {
             </div>
             <div
               className={`h-16 w-16 rounded-lg flex items-center cursor-pointer justify-center ${
-                active === 3 ? "bg-blue-500 text-white" : ""
+                active === 3
+                  ? "bg-blue-500 text-white"
+                  : "hover:bg-gray-200 dark:hover:bg-gray-800"
               }`}
               onClick={() => setActive(3)}
             >
               <PhoneIcon size={28} />
             </div>
-            <Divider className="w-16" />
+            <Divider className="w-16 bg-gray-100 dark:bg-gray-700" />
             <div
               className={`h-16 w-16 rounded-lg flex items-center cursor-pointer justify-center ${
-                active === 4 ? "bg-blue-500 text-white" : ""
+                active === 4
+                  ? "bg-blue-500 text-white"
+                  : "hover:bg-gray-200 dark:hover:bg-gray-800"
               }`}
               onClick={() => setActive(4)}
             >
@@ -63,7 +71,7 @@ const Dashboard = () => {
             <div className="h-16 w-16 rounded-lg flex items-center justify-center">
               <DarkModeSwitcher />
             </div>
-            <Avatar>
+            <Avatar className="cursor-pointer">
               <AvatarImage src={faker.image.avatar()} />
               <AvatarFallback>User</AvatarFallback>
             </Avatar>

@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
-import Dashboard from "../src/layouts/Dashboard.jsx";
+import Dashboard from "./layouts/Dashboard.jsx";
+import GeneralApp from "./pages/dashboard/GeneralApp.jsx";
 
 const App = () => {
   useEffect(() => {
@@ -15,7 +16,9 @@ const App = () => {
   }, []);
   return (
     <Routes>
-      <Route path="/" element={<Dashboard />} />
+      <Route path="/" element={<Dashboard />}>
+        <Route index element={<GeneralApp />} />
+      </Route>
     </Routes>
   );
 };
