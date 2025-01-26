@@ -36,18 +36,22 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 
 // INFO: Individual Chat Element
 
-const ChatElement = ({ name, message, avatar, time, badge }) => {
+const ChatElement = ({ name, message, avatar, time, badge, online }) => {
   return (
     <div className="w-full h-20 rounded-sm hover:bg-gray-100 dark:hover:bg-gray-900 flex items-center justify-between px-3 py-2 border-y border-gray-100 dark:border-gray-700">
       <div className="flex items-center justify-between">
         <div className="flex gap-x-2">
-          <StyledBadge
-            overlap="circular"
-            anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-            variant="dot"
-          >
+          {online ? (
+            <StyledBadge
+              overlap="circular"
+              anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+              variant="dot"
+            >
+              <Avatar alt={name} src={avatar} />
+            </StyledBadge>
+          ) : (
             <Avatar alt={name} src={avatar} />
-          </StyledBadge>
+          )}
 
           <div>
             <h3 className="font-semibold line-clamp-1">{name}</h3>
@@ -89,6 +93,7 @@ const Chats = () => {
               avatar={user.avatar}
               time={user.time}
               badge={user.badge}
+              online={user.online}
             />
           ))}
         </div>
