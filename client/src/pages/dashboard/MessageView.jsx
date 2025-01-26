@@ -1,14 +1,11 @@
-import React from "react";
 import users from "@/data/users.js";
 import {
   CaretDown,
   Gif,
   MagnifyingGlass,
   Microphone,
-  Paperclip,
   PaperPlaneTilt,
   Phone,
-  SmileySticker,
   VideoCamera,
 } from "@phosphor-icons/react";
 import { Divider } from "@mui/material";
@@ -17,8 +14,13 @@ import Text from "@/components/messages/Text.jsx";
 import Media from "@/components/messages/Media.jsx";
 import MessageHistory from "@/data/messages.js";
 import ReplyMessage from "@/components/messages/ReplyMessage.jsx";
+import EmojiPicker from "@/components/EmojiPicker.jsx";
+import Attachments from "@/components/Attachments.jsx";
+import { useState } from "react";
+import Giphy from "@/components/Giphy.jsx";
 
 const MessageView = () => {
+  const [isGifOpen, setIsGifOpen] = useState(false);
   return (
     <>
       <div
@@ -120,15 +122,16 @@ const MessageView = () => {
                 <button>
                   <Microphone size={24} color="gray" weight="bold" />
                 </button>
-                <button>
-                  <Paperclip size={24} color="gray" weight="bold" />
-                </button>
-                <button>
+                <Attachments />
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setIsGifOpen(!isGifOpen);
+                  }}
+                >
                   <Gif size={24} color="gray" weight="bold" />
                 </button>
-                <button>
-                  <SmileySticker size={24} color="gray" weight="bold" />
-                </button>
+                <EmojiPicker />
               </div>
             </div>
 
@@ -136,6 +139,7 @@ const MessageView = () => {
               <PaperPlaneTilt size={24} color="white" weight="bold" />
             </button>
           </form>
+          {isGifOpen && <Giphy />}
         </div>
       </div>
     </>

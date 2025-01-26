@@ -38,7 +38,7 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 
 const ChatElement = ({ name, message, avatar, time, badge, online }) => {
   return (
-    <div className="w-full h-20 rounded-sm hover:bg-gray-100 dark:hover:bg-gray-900 flex items-center justify-between px-3 py-2 border-y border-gray-100 dark:border-gray-700">
+    <div className="w-full h-20 rounded-sm hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center justify-between px-3 py-2 border-y border-gray-100 dark:border-gray-900">
       <div className="flex items-center justify-between">
         <div className="flex gap-x-2">
           {online ? (
@@ -76,7 +76,7 @@ const ChatElement = ({ name, message, avatar, time, badge, online }) => {
 const Chats = () => {
   return (
     <div className="relative h-screen w-80 shadow-light dark:shadow-dark">
-      <div className="flex items-center justify-between px-10 pt-10 pb-5">
+      <div className="flex items-center justify-between px-10 py-5">
         <h1 className="text-2xl font-bold">Chats</h1>
         <CircleDashedIcon size={32} />
       </div>
