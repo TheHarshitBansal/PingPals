@@ -18,6 +18,7 @@ import EmojiPicker from "@/components/EmojiPicker.jsx";
 import Attachments from "@/components/Attachments.jsx";
 import { useState } from "react";
 import Giphy from "@/components/Giphy.jsx";
+import Document from "@/components/messages/Document.jsx";
 
 const MessageView = () => {
   const [isGifOpen, setIsGifOpen] = useState(false);
@@ -102,6 +103,18 @@ const MessageView = () => {
                   original={message?.original}
                   content={message?.content}
                   read_receipt={message?.read_receipt}
+                />
+              );
+            } else if (message.type === "document") {
+              return (
+                <Document
+                  key={index}
+                  incoming={message?.incoming}
+                  timestamp={message?.timestamp}
+                  read_receipt={message?.read_receipt}
+                  content={message?.content}
+                  fileName={message?.fileName}
+                  fileSize={message?.fileSize}
                 />
               );
             }

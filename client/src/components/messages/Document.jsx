@@ -1,12 +1,15 @@
-import { Check, Checks, DotsThree } from "@phosphor-icons/react";
+import { Check, Checks, DownloadSimple, File } from "@phosphor-icons/react";
 import React from "react";
-import extractLinks from "@/utils/extractLinks.js";
-import Microlink from "@microlink/react";
-import { Menu, MenuItem } from "@mui/material";
 import MessageOptions from "./MessageOptions.jsx";
 
-const Text = ({ incoming, timestamp, read_receipt, content }) => {
-  const { modifiedString, linksArray } = extractLinks(content);
+const Document = ({
+  incoming,
+  timestamp,
+  read_receipt,
+  content,
+  fileName,
+  fileSize,
+}) => {
   return (
     <div className={`max-w-96 w-fit ${!incoming ? "ml-auto" : ""}`}>
       <MessageOptions>
@@ -17,15 +20,23 @@ const Text = ({ incoming, timestamp, read_receipt, content }) => {
               : "rounded-bl-none bg-gray-200 dark:bg-gray-800"
           } px-5 py-3 space-y-2`}
         >
-          <p
-            className="text-sm"
-            dangerouslySetInnerHTML={{ __html: modifiedString }}
-          ></p>
-          {linksArray.length > 0 && (
-            <Microlink style={{ width: "100%" }} url={linksArray[0]} />
-          )}
-        </div>
+          <div className="flex items-center justify-between p-2 bg-white dark:bg-gray-900 rounded-md">
+            <div className="flex items-center space-x-3">
+              <div className="p-2 rounded-md bg-blue-600/20">
+                <File size={20} />
+              </div>
+              <div className="flex flex-col">
+                <div>{fileName}</div>
+                <div className="text-sm font-medium">{fileSize}</div>
+              </div>
+            </div>
 
+            <button className="pl-5">
+              <DownloadSimple size={20} color="gray" />
+            </button>
+          </div>
+          <p className="text-sm">{content}</p>
+        </div>
         <div className="flex items-center justify-end space-x-2">
           <p className="text-xs text-gray-500 dark:text-gray-400">
             {timestamp}
@@ -50,5 +61,4 @@ const Text = ({ incoming, timestamp, read_receipt, content }) => {
     </div>
   );
 };
-
-export default Text;
+export default Document;

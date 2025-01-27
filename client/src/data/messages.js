@@ -25,6 +25,9 @@ const MessageHistory = [
     {type : 'reply', timestamp:"19:38", original:"How about you?", content:"I'm doing great too, thanks for asking", incoming:true},
     {type : 'reply', timestamp:"19:39", original:"I'm doing great too, thanks for asking", content:"That's great to hear!", incoming:false, read_receipt:"read"},
     {type : 'text', timestamp:"19:40", content:"https://www.youtube.com/watch?v=4K4OmnNxhe0&list=PLdLUE-L26MMbXYkddCi6Cb1jy5dKczosk&index=5", incoming:false, read_receipt:"delivered"},
+    {type : 'text', timestamp:"19:41", content:"I'll check it out later", incoming:true},
+    {type: 'document', timestamp:"19:42", fileName:"Document.pdf", fileSize:"1.2 MB", content:"Please find the document attached", incoming:false, read_receipt:"sent"},
+    {type: 'document', timestamp:"19:43", fileName:"Document.pdf", fileSize:"1.2 MB", content:"Please find the document attached", incoming:true},
  ]
 
     export default MessageHistory;
