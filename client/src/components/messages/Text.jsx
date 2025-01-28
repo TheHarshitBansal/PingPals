@@ -1,8 +1,7 @@
-import { Check, Checks, DotsThree } from "@phosphor-icons/react";
+import { Check, Checks } from "@phosphor-icons/react";
 import React from "react";
 import extractLinks from "@/utils/extractLinks.js";
 import Microlink from "@microlink/react";
-import { Menu, MenuItem } from "@mui/material";
 import MessageOptions from "./MessageOptions.jsx";
 
 const Text = ({ incoming, timestamp, read_receipt, content }) => {
@@ -30,7 +29,7 @@ const Text = ({ incoming, timestamp, read_receipt, content }) => {
           <p className="text-xs text-gray-500 dark:text-gray-400">
             {timestamp}
           </p>
-          {!incoming && (
+          {!incoming && read_receipt && (
             <div
               className={`${
                 read_receipt === "read"

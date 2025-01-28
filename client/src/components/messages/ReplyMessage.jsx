@@ -36,7 +36,7 @@ const ReplyMessage = ({
           <p className="text-xs text-gray-500 dark:text-gray-400">
             {timestamp}
           </p>
-          {!incoming && (
+          {!incoming && read_receipt && (
             <div
               className={`${
                 read_receipt === "read"

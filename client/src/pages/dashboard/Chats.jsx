@@ -75,28 +75,31 @@ const ChatElement = ({ name, message, avatar, time, badge, online }) => {
 
 const Chats = () => {
   return (
-    <div className="relative h-screen w-80 shadow-light dark:shadow-dark">
-      <div className="flex items-center justify-between px-10 py-5">
+    <div className="relative h-screen min-w-80 max-w-80 shadow-light dark:shadow-dark flex flex-col">
+      {/* Header */}
+      <div className="flex items-center justify-between px-10 py-5 flex-shrink-0">
         <h1 className="text-2xl font-bold">Chats</h1>
         <CircleDashedIcon size={32} />
       </div>
+
       {/* Search Box */}
-      <div className="px-5 h-full">
-        <Input placeholder="Search" />
-        {/* // TODO: PASS ORIGINAL DATA */}
-        <div className="!overflow-y-scroll h-full no-scrollbar">
-          {users.map((user, index) => (
-            <ChatElement
-              key={index}
-              name={user.name}
-              message={user.message}
-              avatar={user.avatar}
-              time={user.time}
-              badge={user.badge}
-              online={user.online}
-            />
-          ))}
-        </div>
+      <div className="px-5 flex-shrink-0">
+        <Input placeholder="Search" className="mb-2" />
+      </div>
+
+      {/* Chat List */}
+      <div className="flex-1 overflow-y-auto px-5 no-scrollbar">
+        {users.map((user, index) => (
+          <ChatElement
+            key={index}
+            name={user.name}
+            message={user.message}
+            avatar={user.avatar}
+            time={user.time}
+            badge={user.badge}
+            online={user.online}
+          />
+        ))}
       </div>
     </div>
   );

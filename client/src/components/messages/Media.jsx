@@ -21,7 +21,7 @@ const Media = ({ incoming, read_receipt, timestamp, assets, caption }) => {
           <p className="text-xs text-gray-500 dark:text-gray-400">
             {timestamp}
           </p>
-          {!incoming && (
+          {!incoming && read_receipt && (
             <div
               className={`${
                 read_receipt === "read"

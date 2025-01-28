@@ -10,6 +10,10 @@ function generateFakeImages(count) {
 
 const fakeImages = generateFakeImages(10); // Generate 10 fake images
 const fakeImages2 = generateFakeImages(5); // Generate 5 fake images
+export const fakeImagesMedia = generateFakeImages(50); // Generate 3 fake images
+const linkMessages = Array.from({ length: 10 }, () => ({
+  link: faker.internet.url(),
+}))
 
 const MessageHistory = [
     {type : 'separator', date:"21 January 2025"},
@@ -31,3 +35,31 @@ const MessageHistory = [
  ]
 
     export default MessageHistory;
+
+
+export const StarredMessages = [
+    {type : 'text', content:"Hey! I'm doing great, thanks for asking", incoming:false, read_receipt:"read"},
+    {type : 'media', assets:[fakeImages2[3], fakeImages[3], fakeImages[2]], incoming:false, read_receipt:"sent", caption:"Please check them out"},
+    {type : 'reply', original:"I'm doing great too, thanks for asking", content:"That's great to hear!", incoming:false, read_receipt:"read"},
+    {type: 'document', fileName:"Document.pdf", fileSize:"1.2 MB", content:"Please find the document attached", incoming:true},
+]
+
+export const LinkPreviews = [
+    {type: 'text' , timestamp:"19:30", content:linkMessages[0].link, incoming:false, read_receipt:"read"},
+    {type: 'text' , timestamp:"19:30", content:linkMessages[1].link, incoming:true},
+    {type: 'text' , timestamp:"19:30", content:linkMessages[2].link, incoming:true},
+    {type: 'text' , timestamp:"19:30", content:linkMessages[3].link, incoming:false, read_receipt:"read"},
+    {type: 'text' , timestamp:"19:30", content:linkMessages[4].link, incoming:true},
+]
+
+export const docsPreview = Array.from({ length: 20 }, (_, index) => ({
+  type: 'document',
+  timestamp: `${faker.number.int({ min: 0o0, max: 23 })}:${faker.number.int({
+        min: 0o0,
+        max: 59,
+      })}`,
+  fileName: `Document${index + 1}.pdf`,
+  fileSize: `${(Math.random() * 10 + 1).toFixed(1)} MB`,
+  content: "Please find the document attached",
+  incoming: Math.random() < 0.5,
+}));

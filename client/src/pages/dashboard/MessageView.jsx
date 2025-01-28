@@ -19,17 +19,31 @@ import Attachments from "@/components/Attachments.jsx";
 import { useState } from "react";
 import Giphy from "@/components/Giphy.jsx";
 import Document from "@/components/messages/Document.jsx";
+import { useDispatch, useSelector } from "react-redux";
+import { toggleSidebar } from "@/redux/slices/appSlice.js";
 
 const MessageView = () => {
+  const dispatch = useDispatch();
+
   const [isGifOpen, setIsGifOpen] = useState(false);
+  const profileSidebar = useSelector((state) => state?.app?.sidebar?.isOpen);
+
+  const handleSidebar = () => {
+    dispatch(toggleSidebar());
+  };
   return (
     <>
       <div
-        className={`flex flex-col h-full border-l border-gray-100 dark:border-gray-900 w-4/5`}
+        className={`flex flex-col h-full border-x border-gray-100 dark:border-gray-900 shaow-light dark:shadow-dark ${
+          !profileSidebar ? "w-4/5" : "w-3/5"
+        } transition-width ease-linear duration-300`}
       >
         {/* //INFO:Chat Header */}
         <div className="flex sticky items-center justify-between border-b  px-6 py-4 ">
-          <div className="flex items-center cursor-pointer">
+          <div
+            onClick={() => handleSidebar()}
+            className="flex items-center cursor-pointer"
+          >
             <div className="mr-4 h-10 w-full max-w-10 rounded-full overflow-hidden">
               <img
                 src={users[0].avatar}

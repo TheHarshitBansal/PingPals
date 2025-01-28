@@ -11,6 +11,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { faker } from "@faker-js/faker";
 import DarkModeSwitcher from "@/components/DarkModeSwitcher.jsx";
 import { useState } from "react";
+import ProfileOptions from "@/components/profile/ProfileOptions.jsx";
 
 const Dashboard = () => {
   const [active, setActive] = useState(1);
@@ -71,10 +72,12 @@ const Dashboard = () => {
             <div className="h-16 w-16 rounded-lg flex items-center justify-center">
               <DarkModeSwitcher />
             </div>
-            <Avatar className="cursor-pointer">
-              <AvatarImage src={faker.image.avatar()} />
-              <AvatarFallback>User</AvatarFallback>
-            </Avatar>
+            <ProfileOptions>
+              <Avatar className="cursor-pointer">
+                <AvatarImage src={faker.image.avatar()} />
+                <AvatarFallback>User</AvatarFallback>
+              </Avatar>
+            </ProfileOptions>
           </div>
         </div>
       </div>

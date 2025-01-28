@@ -12,7 +12,9 @@ function getUsers(){
         max: 59,
       })}`,
       badge: faker.number.int({ min: 0, max: 10 }),
-      online : faker.datatype.boolean({probability: 0.5})
+      online : faker.datatype.boolean({probability: 0.5}),
+      about : faker.lorem.sentence(),
+      phone : faker.phone.number({style: 'international'}),
     });
   }
 
