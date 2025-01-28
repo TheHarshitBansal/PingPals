@@ -1,7 +1,9 @@
-import React, { useEffect } from "react";
+import React, { lazy, useEffect, Suspense } from "react";
 import { Route, Routes } from "react-router-dom";
-import Dashboard from "./layouts/Dashboard.jsx";
-import GeneralApp from "./pages/dashboard/GeneralApp.jsx";
+import LoadingSpinner from "./components/LoadingSpinner.jsx";
+const Dashboard = lazy(() => import("./layouts/Dashboard.jsx"));
+const GeneralApp = lazy(() => import("./pages/dashboard/GeneralApp.jsx"));
+const Profile = lazy(() => import("./pages/profile/Profile.jsx"));
 
 const App = () => {
   useEffect(() => {
@@ -15,11 +17,20 @@ const App = () => {
       : bodyClass.remove(className);
   }, []);
   return (
-    <Routes>
-      <Route path="/" element={<Dashboard />}>
-        <Route index element={<GeneralApp />} />
-      </Route>
-    </Routes>
+    <Suspense
+      fallback={
+        <div className="flex justify-center items-center h-screen">
+          <LoadingSpinner />
+        </div>
+      }
+    >
+      <Routes>
+        <Route path="/" element={<Dashboard />}>
+          <Route index element={<GeneralApp />} />
+          <Route path="profile" element={<Profile />} />
+        </Route>
+      </Routes>
+    </Suspense>
   );
 };
 

@@ -1,8 +1,10 @@
+import React from "react";
 import { CircleDashedIcon } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import Badge from "@mui/material/Badge";
-import Avatar from "@mui/material/Avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { styled } from "@mui/material";
+import { Skeleton } from "@/components/ui/skeleton.jsx";
 import users from "@/data/users.js";
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
@@ -47,7 +49,12 @@ const ChatElement = ({ name, message, avatar, time, badge, online }) => {
               anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
               variant="dot"
             >
-              <Avatar alt={name} src={avatar} />
+              <Avatar className="cursor-pointer">
+                <AvatarImage src={avatar} loading="lazy" />
+                <AvatarFallback>
+                  <Skeleton className="h-16 w-16 rounded-full" />
+                </AvatarFallback>
+              </Avatar>
             </StyledBadge>
           ) : (
             <Avatar alt={name} src={avatar} />

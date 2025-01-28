@@ -6,6 +6,7 @@ import { useDispatch } from "react-redux";
 import { faker } from "@faker-js/faker";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import LazyImage from "@/components/LazyImage.jsx";
 
 const ProfileSidebar = () => {
   const dispatch = useDispatch();
@@ -35,7 +36,7 @@ const ProfileSidebar = () => {
       {/* Profile Details */}
       <div className="p-4 space-y-4">
         <div className="flex items-center gap-x-5 px-2">
-          <img
+          <LazyImage
             src={users[0].avatar}
             alt={users[0].name}
             className="w-16 h-16 rounded-full object-cover object-center"
@@ -75,17 +76,17 @@ const ProfileSidebar = () => {
             </div>
           </div>
           <div className="flex gap-x-2 overflow-clip">
-            <img
+            <LazyImage
               src={faker.image.url()}
               alt="media"
               className="w-24 h-24 rounded-md object-cover object-center"
             />
-            <img
+            <LazyImage
               src={faker.image.url()}
               alt="media"
               className="w-24 h-24 rounded-md object-cover object-center"
             />
-            <img
+            <LazyImage
               src={faker.image.url()}
               alt="media"
               className="w-24 h-24 rounded-md object-cover object-center"

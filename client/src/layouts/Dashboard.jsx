@@ -1,4 +1,4 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import Logo from "../assets/logo.png";
 import {
   CogIcon,
@@ -12,9 +12,11 @@ import { faker } from "@faker-js/faker";
 import DarkModeSwitcher from "@/components/DarkModeSwitcher.jsx";
 import { useState } from "react";
 import ProfileOptions from "@/components/profile/ProfileOptions.jsx";
+import { Skeleton } from "@/components/ui/skeleton.jsx";
 
 const Dashboard = () => {
-  const [active, setActive] = useState(1);
+  const [active, setActive] = useState(null);
+  const navigate = useNavigate();
 
   return (
     <div className="flex">
@@ -32,7 +34,10 @@ const Dashboard = () => {
                   ? "bg-blue-500 text-white"
                   : "hover:bg-gray-200 dark:hover:bg-gray-800"
               }`}
-              onClick={() => setActive(1)}
+              onClick={() => {
+                setActive(1);
+                navigate("/");
+              }}
             >
               <MessageSquareMoreIcon size={28} />
             </div>
@@ -42,7 +47,10 @@ const Dashboard = () => {
                   ? "bg-blue-500 text-white"
                   : "hover:bg-gray-200 dark:hover:bg-gray-800"
               }`}
-              onClick={() => setActive(2)}
+              onClick={() => {
+                setActive(2);
+                navigate("/profile");
+              }}
             >
               <UserIcon size={28} />
             </div>
@@ -75,7 +83,9 @@ const Dashboard = () => {
             <ProfileOptions>
               <Avatar className="cursor-pointer">
                 <AvatarImage src={faker.image.avatar()} />
-                <AvatarFallback>User</AvatarFallback>
+                <AvatarFallback>
+                  <Skeleton className="h-16 w-16 rounded-full" />
+                </AvatarFallback>
               </Avatar>
             </ProfileOptions>
           </div>

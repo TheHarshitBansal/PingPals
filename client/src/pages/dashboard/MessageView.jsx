@@ -21,6 +21,12 @@ import Giphy from "@/components/Giphy.jsx";
 import Document from "@/components/messages/Document.jsx";
 import { useDispatch, useSelector } from "react-redux";
 import { toggleSidebar } from "@/redux/slices/appSlice.js";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/components/ui/avatar.jsx";
+import { Skeleton } from "@/components/ui/skeleton.jsx";
 
 const MessageView = () => {
   const dispatch = useDispatch();
@@ -45,11 +51,12 @@ const MessageView = () => {
             className="flex items-center cursor-pointer"
           >
             <div className="mr-4 h-10 w-full max-w-10 rounded-full overflow-hidden">
-              <img
-                src={users[0].avatar}
-                alt={users[0].name}
-                className="h-full w-full object-cover object-center"
-              />
+              <Avatar>
+                <AvatarImage src={users[0].avatar} />
+                <AvatarFallback>
+                  <Skeleton className="h-16 w-16 rounded-full" />
+                </AvatarFallback>
+              </Avatar>
             </div>
             <div className="w-full">
               <h5 className="font-medium text-black dark:text-white">

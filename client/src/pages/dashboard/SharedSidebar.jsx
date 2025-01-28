@@ -6,6 +6,7 @@ import { useDispatch } from "react-redux";
 import { Skeleton } from "@/components/ui/skeleton";
 import Text from "@/components/messages/Text.jsx";
 import Document from "@/components/messages/Document.jsx";
+import LazyImage from "@/components/LazyImage.jsx";
 
 // INFO: Shared Docs
 const SharedSidebarDocs = () => {
@@ -40,7 +41,7 @@ const SharedSidebarMedia = () => {
     <div className="w-full grid grid-cols-3 gap-2 py-1 px-2">
       {fakeImagesMedia.map((image, index) =>
         image ? (
-          <img
+          <LazyImage
             src={image.url}
             alt={"test"}
             key={index}
