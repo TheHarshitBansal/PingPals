@@ -1,9 +1,11 @@
 import React, { lazy, useEffect, Suspense } from "react";
 import { Route, Routes } from "react-router-dom";
 import LoadingSpinner from "./components/LoadingSpinner.jsx";
+import HomePage from "./pages/HomePage.jsx";
+import Settings from "./pages/settings/Settings.jsx";
+import Login from "./pages/auth/Login.jsx";
 const Dashboard = lazy(() => import("./layouts/Dashboard.jsx"));
 const GeneralApp = lazy(() => import("./pages/dashboard/GeneralApp.jsx"));
-const Profile = lazy(() => import("./pages/profile/Profile.jsx"));
 
 const App = () => {
   useEffect(() => {
@@ -25,10 +27,13 @@ const App = () => {
       }
     >
       <Routes>
+        <Route path="/auth/login" element={<Login />} />
         <Route path="/" element={<Dashboard />}>
-          <Route index element={<GeneralApp />} />
-          <Route path="profile" element={<Profile />} />
+          <Route index element={<HomePage />} />
+          <Route path="chat" element={<GeneralApp />} />
+          <Route path="settings" element={<Settings />} />
         </Route>
+        <Route path="*" element={<div>404</div>} />
       </Routes>
     </Suspense>
   );
