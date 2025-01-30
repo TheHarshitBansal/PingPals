@@ -34,7 +34,7 @@ const ThemeChangeDialog = ({ children }) => {
               />
               <Label
                 htmlFor="option-one"
-                className="text-lg"
+                className="text-lg cursor-pointer"
                 onClick={() => setColorMode("light")}
               >
                 Light
@@ -48,7 +48,7 @@ const ThemeChangeDialog = ({ children }) => {
               />
               <Label
                 htmlFor="option-two"
-                className="text-lg"
+                className="text-lg cursor-pointer"
                 onClick={() => setColorMode("dark")}
               >
                 Dark

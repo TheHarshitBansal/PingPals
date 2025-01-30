@@ -1,11 +1,14 @@
 import React, { lazy, useEffect, Suspense } from "react";
 import { Route, Routes } from "react-router-dom";
 import LoadingSpinner from "./components/LoadingSpinner.jsx";
-import HomePage from "./pages/HomePage.jsx";
-import Settings from "./pages/settings/Settings.jsx";
-import Login from "./pages/auth/Login.jsx";
+const ForgotPassword = lazy(() => import("./pages/auth/ForgotPassword.jsx"));
+const ResetPassword = lazy(() => import("./pages/auth/ResetPassword.jsx"));
+const HomePage = lazy(() => import("./pages/HomePage.jsx"));
+const Settings = lazy(() => import("./pages/settings/Settings.jsx"));
+const Login = lazy(() => import("./pages/auth/Login.jsx"));
 const Dashboard = lazy(() => import("./layouts/Dashboard.jsx"));
 const GeneralApp = lazy(() => import("./pages/dashboard/GeneralApp.jsx"));
+const Register = lazy(() => import("./pages/auth/Register.jsx"));
 
 const App = () => {
   useEffect(() => {
@@ -28,6 +31,9 @@ const App = () => {
     >
       <Routes>
         <Route path="/auth/login" element={<Login />} />
+        <Route path="/auth/register" element={<Register />} />
+        <Route path="/auth/forgot-password" element={<ForgotPassword />} />
+        <Route path="/auth/reset-password" element={<ResetPassword />} />
         <Route path="/" element={<Dashboard />}>
           <Route index element={<HomePage />} />
           <Route path="chat" element={<GeneralApp />} />
