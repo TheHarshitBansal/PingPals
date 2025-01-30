@@ -57,7 +57,12 @@ const ChatElement = ({ name, message, avatar, time, badge, online }) => {
               </Avatar>
             </StyledBadge>
           ) : (
-            <Avatar alt={name} src={avatar} />
+            <Avatar className="cursor-pointer">
+              <AvatarImage src={avatar} loading="lazy" />
+              <AvatarFallback>
+                <Skeleton className="h-16 w-16 rounded-full" />
+              </AvatarFallback>
+            </Avatar>
           )}
 
           <div>

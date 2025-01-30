@@ -1,11 +1,6 @@
 import { Outlet, useNavigate } from "react-router-dom";
 import Logo from "../assets/logo.png";
-import {
-  CogIcon,
-  MessageSquareMoreIcon,
-  PhoneIcon,
-  UserIcon,
-} from "lucide-react";
+import { CogIcon, MessageSquareMoreIcon, PhoneIcon, Users } from "lucide-react";
 import { Divider } from "@mui/material";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { faker } from "@faker-js/faker";
@@ -25,8 +20,15 @@ const Dashboard = () => {
       >
         <div className="h-full w-full flex flex-col items-center justify-between">
           <div className="w-full flex flex-col items-center justify-center gap-y-3">
-            <div className="h-16 w-16 rounded-lg my-4 flex items-center justify-center">
-              <img src={Logo} alt="Logo" />
+            <div className="h-16 w-16 rounded-lg my-4 flex items-center justify-center cursor-pointer">
+              <img
+                src={Logo}
+                alt="Logo"
+                onClick={() => {
+                  setActive(0);
+                  navigate("/");
+                }}
+              />
             </div>
             <div
               className={`h-16 w-16 rounded-lg flex items-center cursor-pointer justify-center ${
@@ -36,7 +38,7 @@ const Dashboard = () => {
               }`}
               onClick={() => {
                 setActive(1);
-                navigate("/");
+                navigate("/chat");
               }}
             >
               <MessageSquareMoreIcon size={28} />
@@ -52,7 +54,7 @@ const Dashboard = () => {
                 navigate("/profile");
               }}
             >
-              <UserIcon size={28} />
+              <Users size={28} />
             </div>
             <div
               className={`h-16 w-16 rounded-lg flex items-center cursor-pointer justify-center ${
@@ -71,7 +73,10 @@ const Dashboard = () => {
                   ? "bg-blue-500 text-white"
                   : "hover:bg-gray-200 dark:hover:bg-gray-800"
               }`}
-              onClick={() => setActive(4)}
+              onClick={() => {
+                setActive(4);
+                navigate("/settings");
+              }}
             >
               <CogIcon size={28} />
             </div>

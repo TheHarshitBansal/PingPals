@@ -3,7 +3,6 @@ import {
   CaretDown,
   Gif,
   MagnifyingGlass,
-  Microphone,
   PaperPlaneTilt,
   Phone,
   VideoCamera,
@@ -153,9 +152,6 @@ const MessageView = () => {
               />
 
               <div className="absolute right-5 top-1/2 -translate-y-1/2 flex items-center justify-end space-x-4">
-                <button>
-                  <Microphone size={24} color="gray" weight="bold" />
-                </button>
                 <Attachments />
                 <button
                   onClick={(e) => {
