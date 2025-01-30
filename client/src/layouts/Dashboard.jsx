@@ -51,7 +51,7 @@ const Dashboard = () => {
               }`}
               onClick={() => {
                 setActive(2);
-                navigate("/profile");
+                navigate("/group");
               }}
             >
               <Users size={28} />

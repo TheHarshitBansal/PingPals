@@ -38,7 +38,7 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 
 // INFO: Individual Chat Element
 
-const ChatElement = ({ name, message, avatar, time, badge, online }) => {
+export const ChatElement = ({ name, message, avatar, time, badge, online }) => {
   return (
     <div className="w-full h-20 rounded-sm hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center justify-between px-3 py-2 border-y border-gray-100 dark:border-gray-900">
       <div className="flex items-center justify-between">
