@@ -1,6 +1,9 @@
 import React, { lazy, useEffect, Suspense } from "react";
 import { Route, Routes } from "react-router-dom";
 import LoadingSpinner from "./components/LoadingSpinner.jsx";
+import RequireAuth from "./components/auth/RequireAuth.jsx";
+import NotRequireAuth from "./components/auth/NotRequireAuth.jsx";
+const Profile = lazy(() => import("./pages/profile/Profile.jsx"));
 const CallLog = lazy(() => import("./pages/call/CallLog.jsx"));
 const GroupGeneralApp = lazy(() => import("./pages/group/GroupGeneralApp.jsx"));
 const ForgotPassword = lazy(() => import("./pages/auth/ForgotPassword.jsx"));
@@ -32,16 +35,21 @@ const App = () => {
       }
     >
       <Routes>
-        <Route path="/auth/login" element={<Login />} />
-        <Route path="/auth/register" element={<Register />} />
-        <Route path="/auth/forgot-password" element={<ForgotPassword />} />
-        <Route path="/auth/reset-password" element={<ResetPassword />} />
-        <Route path="/" element={<Dashboard />}>
-          <Route index element={<HomePage />} />
-          <Route path="chat" element={<GeneralApp />} />
-          <Route path="group" element={<GroupGeneralApp />} />
-          <Route path="calls" element={<CallLog />} />
-          <Route path="settings" element={<Settings />} />
+        <Route element={<NotRequireAuth />}>
+          <Route path="/auth/login" element={<Login />} />
+          <Route path="/auth/register" element={<Register />} />
+          <Route path="/auth/forgot-password" element={<ForgotPassword />} />
+          <Route path="/auth/reset-password" element={<ResetPassword />} />
+        </Route>
+        <Route element={<RequireAuth />}>
+          <Route path="/" element={<Dashboard />}>
+            <Route index element={<HomePage />} />
+            <Route path="chat" element={<GeneralApp />} />
+            <Route path="group" element={<GroupGeneralApp />} />
+            <Route path="calls" element={<CallLog />} />
+            <Route path="settings" element={<Settings />} />
+            <Route path="profile" element={<Profile />} />
+          </Route>
         </Route>
         <Route path="*" element={<div>404</div>} />
       </Routes>
