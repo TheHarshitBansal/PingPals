@@ -3,6 +3,7 @@ import { Route, Routes } from "react-router-dom";
 import LoadingSpinner from "./components/LoadingSpinner.jsx";
 import RequireAuth from "./components/auth/RequireAuth.jsx";
 import NotRequireAuth from "./components/auth/NotRequireAuth.jsx";
+import NotFound from "./pages/NotFound.jsx";
 const Profile = lazy(() => import("./pages/profile/Profile.jsx"));
 const CallLog = lazy(() => import("./pages/call/CallLog.jsx"));
 const GroupGeneralApp = lazy(() => import("./pages/group/GroupGeneralApp.jsx"));
@@ -51,7 +52,7 @@ const App = () => {
             <Route path="profile" element={<Profile />} />
           </Route>
         </Route>
-        <Route path="*" element={<div>404</div>} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </Suspense>
   );
