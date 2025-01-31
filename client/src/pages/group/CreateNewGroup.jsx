@@ -97,7 +97,7 @@ const CreateNewGroup = ({ children }) => {
         <DialogHeader>
           <DialogTitle className="text-lg">Create New Group</DialogTitle>
         </DialogHeader>
-        <DialogDescription>
+        <DialogDescription asChild>
           <form
             className="flex flex-col gap-y-2"
             onSubmit={handleSubmit(onSubmit)}
@@ -123,43 +123,44 @@ const CreateNewGroup = ({ children }) => {
               </p>
             )}
             {/* Show selected members */}
-            <div className="flex gap-2 mt-2 flex-wrap">
-              {members.map((member) => (
-                <span
-                  key={member.bio}
-                  className="bg-gray-200 dark:bg-gray-800 px-2 py-1 rounded-lg flex items-center gap-1"
-                >
-                  <Avatar className="w-6 h-6">
-                    <AvatarImage src={member.avatar} alt={member.name} />
-                  </Avatar>
-                  {member.name}
-                  <XCircleIcon
-                    size={16}
-                    className="cursor-pointer"
-                    onClick={() => removeMember(member)}
-                  />
-                </span>
-              ))}
+            <div className="flex flex-col gap-y-2 border rounded-lg p-2">
+              <div className="flex gap-2 mt-2 flex-wrap">
+                {members.map((member) => (
+                  <span
+                    key={member.bio}
+                    className="bg-gray-200 dark:bg-gray-800 px-2 py-1 rounded-lg flex items-center gap-1"
+                  >
+                    <Avatar className="w-6 h-6">
+                      <AvatarImage src={member.avatar} alt={member.name} />
+                    </Avatar>
+                    {member.name}
+                    <XCircleIcon
+                      size={16}
+                      className="cursor-pointer"
+                      onClick={() => removeMember(member)}
+                    />
+                  </span>
+                ))}
+              </div>
+
+              {/* Member Selection */}
+              <Command>
+                <CommandInput placeholder="Search members..." />
+                <CommandList>
+                  <CommandEmpty>No members found</CommandEmpty>
+                  <CommandGroup className="max-h-48 overflow-y-auto no-scrollbar">
+                    {users.map((member) => (
+                      <CommandItem
+                        key={member.name}
+                        onSelect={() => addMember(member)}
+                      >
+                        {member.name}
+                      </CommandItem>
+                    ))}
+                  </CommandGroup>
+                </CommandList>
+              </Command>
             </div>
-
-            {/* Member Selection */}
-            <Command>
-              <CommandInput placeholder="Search members..." />
-              <CommandList>
-                <CommandEmpty>No members found</CommandEmpty>
-                <CommandGroup className="max-h-48 overflow-y-auto no-scrollbar">
-                  {users.map((member) => (
-                    <CommandItem
-                      key={member.name}
-                      onSelect={() => addMember(member)}
-                    >
-                      {member.name}
-                    </CommandItem>
-                  ))}
-                </CommandGroup>
-              </CommandList>
-            </Command>
-
             {errors.members && (
               <p className="text-red-500 text-xs font-semibold">
                 {errors.members.message}

@@ -1,6 +1,7 @@
 import React, { lazy, useEffect, Suspense } from "react";
 import { Route, Routes } from "react-router-dom";
 import LoadingSpinner from "./components/LoadingSpinner.jsx";
+const CallLog = lazy(() => import("./pages/call/CallLog.jsx"));
 const GroupGeneralApp = lazy(() => import("./pages/group/GroupGeneralApp.jsx"));
 const ForgotPassword = lazy(() => import("./pages/auth/ForgotPassword.jsx"));
 const ResetPassword = lazy(() => import("./pages/auth/ResetPassword.jsx"));
@@ -39,6 +40,7 @@ const App = () => {
           <Route index element={<HomePage />} />
           <Route path="chat" element={<GeneralApp />} />
           <Route path="group" element={<GroupGeneralApp />} />
+          <Route path="calls" element={<CallLog />} />
           <Route path="settings" element={<Settings />} />
         </Route>
         <Route path="*" element={<div>404</div>} />

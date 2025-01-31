@@ -62,7 +62,10 @@ const Dashboard = () => {
                   ? "bg-blue-500 text-white"
                   : "hover:bg-gray-200 dark:hover:bg-gray-800"
               }`}
-              onClick={() => setActive(3)}
+              onClick={() => {
+                setActive(3);
+                navigate("/calls");
+              }}
             >
               <PhoneIcon size={28} />
             </div>

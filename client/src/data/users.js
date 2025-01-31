@@ -15,7 +15,11 @@ function getUsers(){
       online : faker.datatype.boolean({probability: 0.5}),
       about : faker.lorem.sentence(),
       phone : faker.phone.number({style: 'international'}),
-      bio : faker.person.bio()
+      bio : faker.person.bio(),
+      incoming : faker.datatype.boolean({probability: 0.5}),
+      missed : faker.datatype.boolean({probability: 0.5}),
+      date : faker.date.weekday(),
+      voice: faker.datatype.boolean({probability: 0.5}),
     });
   }
 
