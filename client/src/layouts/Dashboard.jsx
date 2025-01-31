@@ -1,17 +1,34 @@
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import Logo from "../assets/logo.png";
 import { CogIcon, MessageSquareMoreIcon, PhoneIcon, Users } from "lucide-react";
 import { Divider } from "@mui/material";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { faker } from "@faker-js/faker";
 import DarkModeSwitcher from "@/components/DarkModeSwitcher.jsx";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ProfileOptions from "@/components/profile/ProfileOptions.jsx";
 import { Skeleton } from "@/components/ui/skeleton.jsx";
 
 const Dashboard = () => {
   const [active, setActive] = useState(null);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.pathname === "/") {
+      setActive(0);
+    } else if (location.pathname === "/chat") {
+      setActive(1);
+    } else if (location.pathname === "/group") {
+      setActive(2);
+    } else if (location.pathname === "/calls") {
+      setActive(3);
+    } else if (location.pathname === "/settings") {
+      setActive(4);
+    } else {
+      setActive(null);
+    }
+  }, [location]);
 
   return (
     <div className="flex">
