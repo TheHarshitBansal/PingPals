@@ -15,11 +15,23 @@ const Login = () => {
 
   const loginSchema = yup
     .object({
-      email: yup
+      identifier: yup
         .string()
-        .email("Enter a valid Email Address")
-        .required("Email is required")
-        .trim(),
+        .test(
+          "is-email-or-username",
+          "Enter either a valid email or a username",
+          function (value) {
+            if (!value) return false; // Ensure at least one is provided
+            return (
+              yup.string().email().isValidSync(value) || // Check if valid email
+              yup
+                .string()
+                .matches(/^[a-zA-Z0-9_.-]+$/, "Invalid username")
+                .isValidSync(value) // Check if valid username
+            );
+          }
+        )
+        .required("Username or Email is required"),
       password: yup
         .string()
         .required("Password is required")
@@ -41,19 +53,20 @@ const Login = () => {
     resolver: yupResolver(loginSchema),
   });
 
-  const emailValue = watch("email");
-  const passwordValue = watch("password");
+  const values = watch();
 
   useEffect(() => {
-    if (emailValue === "") {
-      clearErrors("email");
+    if (values.identifier === "") {
+      clearErrors("identifier");
     }
-    if (passwordValue === "") {
+    if (values.password === "") {
       clearErrors("password");
     }
-  }, [emailValue, passwordValue, clearErrors]);
+  }, [values.identifier, values.password, clearErrors]);
 
-  const onSubmit = async (data) => {};
+  const onSubmit = async (data) => {
+    console.log(data);
+  };
 
   return (
     <div className="relative w-screen h-screen flex flex-col items-center justify-start pt-10 gap-y-3">
@@ -79,13 +92,13 @@ const Login = () => {
         >
           <input
             type="text"
-            placeholder="Email Address"
+            placeholder="Email Address or Username"
             className="bg-transparent border p-4 rounded-lg outline-none"
-            {...register("email")}
+            {...register("identifier")}
           />
-          {errors.email && (
+          {errors.identifier && (
             <p className="text-red-500 text-xs font-semibold">
-              {errors.email.message}
+              {errors.identifier.message}
             </p>
           )}
           <label className="bg-transparent flex items-center border pr-4 rounded-lg justify-between">

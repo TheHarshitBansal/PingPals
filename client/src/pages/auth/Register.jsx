@@ -3,20 +3,30 @@ import ThemeChangeDialog from "@/components/ThemeChangeDialog.jsx";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator.jsx";
 import { GoogleLogo, LinkedinLogo, GithubLogo } from "@phosphor-icons/react";
-import { EyeIcon, EyeOff, Loader2, Pencil } from "lucide-react";
+import { EyeIcon, EyeOff, InfoIcon, Loader2, Pencil } from "lucide-react";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
 
   const registerSchema = yup
     .object({
-      firstName: yup.string().required("First Name is required").trim(),
-      lastName: yup.string().trim(),
+      name: yup.string().required("Name is required").trim(),
+      username: yup
+        .string()
+        .required("Username is required")
+        .matches("^[a-z0-9_-]{3,15}$", "Invalid Username")
+        .trim(),
       email: yup
         .string()
         .email("Enter a valid Email Address")
@@ -43,21 +53,28 @@ const Register = () => {
     resolver: yupResolver(registerSchema),
   });
 
-  const emailValue = watch("email");
-  const passwordValue = watch("password");
-  const firstNameValue = watch("firstName");
+  const values = watch();
 
   useEffect(() => {
-    if (emailValue === "") {
+    if (values.email === "") {
       clearErrors("email");
     }
-    if (passwordValue === "") {
+    if (values.password === "") {
       clearErrors("password");
     }
-    if (firstNameValue === "") {
-      clearErrors("firstName");
+    if (values.name === "") {
+      clearErrors("name");
     }
-  }, [emailValue, passwordValue, clearErrors]);
+    if (values.username === "") {
+      clearErrors("username");
+    }
+  }, [
+    values.email,
+    values.name,
+    values.password,
+    values.username,
+    clearErrors,
+  ]);
 
   const onSubmit = async (data) => {
     console.log(data);
@@ -84,26 +101,48 @@ const Register = () => {
           onSubmit={handleSubmit(onSubmit)}
         >
           <div className="flex gap-x-2">
-            <div>
+            <div className="flex flex-col w-1/2 space-y-2">
               <input
                 type="text"
-                placeholder="First Name"
+                placeholder="Your Name"
                 className="bg-transparent border p-4 rounded-lg outline-none"
-                {...register("firstName")}
+                {...register("name")}
               />
+              {errors.name && (
+                <p className="text-red-500 text-xs font-semibold">
+                  {errors.name.message}
+                </p>
+              )}
             </div>
-            <input
-              type="text"
-              placeholder="Last Name"
-              className="bg-transparent border p-4 rounded-lg outline-none"
-              {...register("lastName")}
-            />
+            <div className="flex flex-col w-1/2 space-y-2">
+              <div className="flex items-center gap-x-2">
+                <input
+                  type="text"
+                  placeholder="Username"
+                  className="bg-transparent border p-4 rounded-lg outline-none"
+                  {...register("username")}
+                />
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger type="button">
+                      <InfoIcon strokeWidth={1.5} size={20} />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p className="font-xs font-semibold">
+                        Users can find you using this username
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+              {errors.username && (
+                <p className="text-red-500 text-xs font-semibold">
+                  {errors.username.message}
+                </p>
+              )}
+            </div>
           </div>
-          {errors.firstName && (
-            <p className="text-red-500 text-xs font-semibold">
-              {errors.firstName.message}
-            </p>
-          )}
+
           <input
             type="text"
             placeholder="Email Address"
