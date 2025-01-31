@@ -14,14 +14,12 @@ const ThemeChangeDialog = ({ children }) => {
   const [colorMode, setColorMode] = useColorMode();
   return (
     <Dialog>
-      <DialogTrigger className="w-full" asChild>
-        {children}
-      </DialogTrigger>
+      <DialogTrigger className="w-full">{children}</DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle className="text-xl">Choose Theme</DialogTitle>
         </DialogHeader>
-        <DialogDescription>
+        <DialogDescription asChild>
           <RadioGroup
             defaultValue={colorMode === "light" ? "option-one" : "option-two"}
             className="flex flex-col space-y-1"

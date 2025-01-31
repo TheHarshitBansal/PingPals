@@ -98,10 +98,13 @@ const list = [
 const Shortcut = ({ title, combination }) => {
   return (
     <div className="flex items-center justify-between w-full gap-x-10">
-      <p className="text-base font-medium">{title}</p>
+      <span className="text-base font-medium">{title}</span>
       <div className="flex gap-x-1">
-        {combination.map((el) => (
-          <div className="px-2 py-1 rounded-sm bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 cursor-default">
+        {combination.map((el, idx) => (
+          <div
+            key={idx}
+            className="px-2 py-1 rounded-sm bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 cursor-default"
+          >
             {el}
           </div>
         ))}
@@ -120,7 +123,7 @@ const KeyboardShortcuts = ({ children }) => {
         <DialogHeader className="mb-5">
           <DialogTitle className="text-xl">Keyboard Shortcuts</DialogTitle>
         </DialogHeader>
-        <DialogDescription>
+        <DialogDescription asChild>
           <div className="grid grid-cols-2 gap-x-10 gap-y-4">
             {list.map((item) => (
               <Shortcut

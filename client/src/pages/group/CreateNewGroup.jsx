@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/dialog.jsx";
 import { Button } from "@/components/ui/button.jsx";
 import { useEffect, useState } from "react";
-import { Loader2 } from "lucide-react";
+import { Loader2, XCircleIcon } from "lucide-react";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -61,6 +61,13 @@ const CreateNewGroup = ({ children }) => {
       setValue("members", updatedMembers);
       clearErrors("members");
     }
+  };
+
+  const removeMember = (member) => {
+    const updatedMembers = members.filter((m) => m !== member);
+    setMembers(updatedMembers);
+    setValue("members", updatedMembers);
+    clearErrors("members");
   };
 
   const nameValue = watch("name");
@@ -126,6 +133,11 @@ const CreateNewGroup = ({ children }) => {
                     <AvatarImage src={member.avatar} alt={member.name} />
                   </Avatar>
                   {member.name}
+                  <XCircleIcon
+                    size={16}
+                    className="cursor-pointer"
+                    onClick={() => removeMember(member)}
+                  />
                 </span>
               ))}
             </div>
@@ -135,7 +147,7 @@ const CreateNewGroup = ({ children }) => {
               <CommandInput placeholder="Search members..." />
               <CommandList>
                 <CommandEmpty>No members found</CommandEmpty>
-                <CommandGroup>
+                <CommandGroup className="max-h-48 overflow-y-auto no-scrollbar">
                   {users.map((member) => (
                     <CommandItem
                       key={member.name}
