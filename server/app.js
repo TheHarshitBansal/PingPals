@@ -7,6 +7,7 @@ import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
 import ExpressMongoSanitize from 'express-mongo-sanitize';
 import connectToDb from './config/dbConfig.js';
+import userRoutes from './routes/user.routes.js';
 
 const app = express();
 const PORT = process.env.PORT || 8000;
@@ -33,6 +34,8 @@ const limited = expressRateLimit({
 });
 
 app.use('/api', limited);
+
+app.use('/api/v1/user', userRoutes);
 
 
 app.listen(PORT, () => {

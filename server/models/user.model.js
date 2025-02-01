@@ -1,4 +1,6 @@
 import { model, Schema } from "mongoose";
+import bcrypt from "bcrypt";
+import crypto from "crypto";
 
 const userSchema = new Schema({
     name:{
@@ -31,6 +33,7 @@ const userSchema = new Schema({
         type: String,
         required: [true, 'Password is required'],
         trim: true,
+        select: false, 
         validate: {
             validator: (value) => {
                 return /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/.test(value);
@@ -58,9 +61,52 @@ const userSchema = new Schema({
     },
     updatedAt:{
         type: Date,
+    },
+    verified:{
+        type: Boolean,
+        default: false
+    },
+    otp:{
+        type: Number,
+        length: 4,
+    },
+    otpExpires:{
+        type: Date,
     }
 })
 
-const User = new model('User', userSchema);
+userSchema.pre('save', async function(next){
+    if(!this.isModified('password')) return next();
+    this.password = await bcrypt.hash(this.password, 12);
+    this.passwordChangedAt = Date.now();
+
+    next(); 
+})
+
+userSchema.pre('save', async function(next){
+    if(!this.isModified('otp')) return next();
+    this.otp = await bcrypt.hash(this.otp, 12);
+
+    next(); 
+})
+
+userSchema.pre('save', function(next){
+    this.updatedAt = Date.now();
+    next();
+})
+
+userSchema.methods.comparePassword = async function(candidatePassword, userPassword){
+    return await bcrypt.compare(candidatePassword, userPassword);
+}
+
+userSchema.methods.createPasswordResetToken = function(){
+    const resetToken = crypto.randomBytes(32).toString('hex');
+    this.passwordResetToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+    this.passwordResetExpires = Date.now() + 60 * 60 * 1000; //NOTE: 1 hour
+
+    return resetToken;
+}
+
+const User = model('User', userSchema);
 
 export default User;
