@@ -20,7 +20,7 @@ const Profile = () => {
       username: yup
         .string()
         .required("Username is required")
-        .matches(/^[a-zA-Z0-9_.-]+$/, "Invalid username"),
+        .matches(/^[a-z0-9_-]{3,30}$/, "Invalid username"),
       about: yup.string(),
       avatar: yup.string(),
     })

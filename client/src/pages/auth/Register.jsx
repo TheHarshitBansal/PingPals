@@ -25,7 +25,7 @@ const Register = () => {
       username: yup
         .string()
         .required("Username is required")
-        .matches("^[a-z0-9_-]{3,15}$", "Invalid Username")
+        .matches("^[a-z0-9_-]{3,30}$", "Invalid Username")
         .trim(),
       email: yup
         .string()
