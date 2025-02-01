@@ -6,6 +6,7 @@ import expressRateLimit from 'express-rate-limit';
 import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
 import ExpressMongoSanitize from 'express-mongo-sanitize';
+import connectToDb from './config/dbConfig.js';
 
 const app = express();
 const PORT = process.env.PORT || 8000;
@@ -36,6 +37,7 @@ app.use('/api', limited);
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
+    connectToDb();
 })
 
 export default app;
