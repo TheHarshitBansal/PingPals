@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 import User from '../models/user.model.js';
 import otpGenerator from 'otp-generator';
+import sendMail from '../services/mailer.js';
 
 //INFO: Sign JWT token
 const signToken = (userId) => {
@@ -48,9 +49,12 @@ export const sendOTP = async (req, res) => {
 
     const user = await User.findByIdAndUpdate(id, {otp, otpExpires}, {new: true});
 
-    //TODO: Send OTP to user's email
-
-    res.status(200).json({message: 'OTP sent successfully'});
+    try {
+        await sendMail({name: user.name, email: user.email, subject: 'Verify your account at PingPals', templateId: process.env.MAILERSEND_OTP_TEMPLATE_ID, otp});
+        res.status(200).json({message: 'OTP sent successfully'});
+    } catch (error) {
+        
+    }
 }
 
 //INFO: Verify OTP
@@ -145,8 +149,7 @@ export const forgotPassword = async (req, res) => {
     const resetUrl = `${req.protocol}://${req.get('host')}/api/v1/user/reset-password/${resetToken}`;
 
     try {
-        //TODO: Send reset URL to user's email
-
+        await sendMail({name: user.name, email: user.email, subject: 'Reset your password for PingPals', templateId: process.env.MAILERSEND_RESET_PASSWORD_TEMPLATE_ID, resetUrl});
         res.status(200).json({message: 'Reset URL sent successfully'});
     } catch (error) {
         user.passwordResetToken = undefined;
