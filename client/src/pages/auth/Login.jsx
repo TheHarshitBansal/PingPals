@@ -37,7 +37,7 @@ const Login = () => {
         .required("Password is required")
         .min(8, "Password must be at least 8 characters long")
         .matches(
-          /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/,
+          /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/,
           "Password must have an alphabet, a special symbol and a number"
         ),
     })

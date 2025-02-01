@@ -21,7 +21,7 @@ const Profile = () => {
         .string()
         .required("Username is required")
         .matches(/^[a-zA-Z0-9_.-]+$/, "Invalid username"),
-      about: yup.string().required("About is required"),
+      about: yup.string(),
       avatar: yup.string(),
     })
     .required();
