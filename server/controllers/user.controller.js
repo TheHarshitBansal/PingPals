@@ -90,17 +90,17 @@ export const verifyOTP = asyncHandler(async (req, res) => {
 
     const token = signToken(user._id);
 
-    res.status(200).json({token, message: 'OTP verified successfully'});
+    res.status(200).json({token, message: 'OTP verified successfully', user});
 })
 
 //INFO: Login a user
 export const login = asyncHandler(async (req, res) => {
-    const { username, email, password } = req.body;
-    if(!(username || email) || !password) {
+    const { identifier, password } = req.body;
+    if(!identifier || !password) {
         return res.status(400).json({message: 'Please provide a username or email and password'});
     }
 
-    const user = await User.findOne({$or: [{username}, {email}]}).select('+password');
+    const user = await User.findOne({$or: [{username:identifier}, {email:identifier}]}).select('+password');
     if(!user) {
         return res.status(401).json({message: 'User not found'});
     }
@@ -109,9 +109,10 @@ export const login = asyncHandler(async (req, res) => {
         return res.status(401).json({message: 'Invalid password'});
     }
 
+    user.password = undefined;
     const token = signToken(user._id);
 
-    res.status(200).json({token, message: 'Login successful'});
+    res.status(200).json({token, message: 'Login successful', user});
 })
 
 //INFO: Protect routes

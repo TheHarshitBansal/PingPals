@@ -9,9 +9,14 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useLoginUserMutation } from "@/redux/api/authApi.js";
+import { useToast } from "@/hooks/use-toast";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const [loginUser, { isSuccess, error, data: apiData, isError }] =
+    useLoginUserMutation();
+  const { toast } = useToast();
 
   const loginSchema = yup
     .object({
@@ -64,8 +69,20 @@ const Login = () => {
     }
   }, [values.identifier, values.password, clearErrors]);
 
+  useEffect(() => {
+    if (isSuccess && apiData) {
+      toast({ variant: "success", title: apiData.message });
+    }
+    if (isError) {
+      toast({
+        variant: "destructive",
+        title: error.data.message,
+      });
+    }
+  }, [isSuccess, isError, apiData, error]);
+
   const onSubmit = async (data) => {
-    console.log(data);
+    await loginUser(data);
   };
 
   return (
