@@ -10,13 +10,10 @@ import { useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useLoginUserMutation } from "@/redux/api/authApi.js";
-import { useToast } from "@/hooks/use-toast";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const [loginUser, { isSuccess, error, data: apiData, isError }] =
-    useLoginUserMutation();
-  const { toast } = useToast();
+  const [loginUser, { isLoading: loading }] = useLoginUserMutation();
 
   const loginSchema = yup
     .object({
@@ -68,18 +65,6 @@ const Login = () => {
       clearErrors("password");
     }
   }, [values.identifier, values.password, clearErrors]);
-
-  useEffect(() => {
-    if (isSuccess && apiData) {
-      toast({ variant: "success", title: apiData.message });
-    }
-    if (isError) {
-      toast({
-        variant: "destructive",
-        title: error.data.message,
-      });
-    }
-  }, [isSuccess, isError, apiData, error]);
 
   const onSubmit = async (data) => {
     await loginUser(data);
@@ -145,7 +130,7 @@ const Login = () => {
           >
             Forgot Password?
           </Link>
-          {isSubmitting ? (
+          {isSubmitting || loading ? (
             <Button className="py-6 text-base font-semibold" disabled>
               <Loader2 className="animate-spin" />
               Please wait
