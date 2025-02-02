@@ -72,9 +72,9 @@ export const sendOTP = asyncHandler(async (req, res) => {
 
 //INFO: Verify OTP
 export const verifyOTP = asyncHandler(async (req, res) => {
-    const { email, otp } = req.body;
+    const { username, otp } = req.body;
 
-    const user = await User.findOne({email, otpExpires: {$gt: Date.now()}});
+    const user = await User.findOne({username, otpExpires: {$gt: Date.now()}});
     if(!user) {
         return res.status(400).json({message: 'User not found or OTP expired'});
     }

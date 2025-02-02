@@ -8,16 +8,20 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useRegisterUserMutation } from "@/redux/api/authApi.js";
 
 const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
+  const [registerUser, { isLoading: loading, isSuccess }] =
+    useRegisterUserMutation();
 
   const registerSchema = yup
     .object({
@@ -76,8 +80,14 @@ const Register = () => {
     clearErrors,
   ]);
 
+  useEffect(() => {
+    if (isSuccess) {
+      navigate(`/auth/verify/${values.username}`);
+    }
+  }, [isSuccess]);
+
   const onSubmit = async (data) => {
-    console.log(data);
+    await registerUser(data);
   };
 
   return (
@@ -175,7 +185,7 @@ const Register = () => {
               {errors.password.message}
             </p>
           )}
-          {isSubmitting ? (
+          {isSubmitting || loading ? (
             <Button className="py-6 text-base font-semibold" disabled>
               <Loader2 className="animate-spin" />
               Please wait

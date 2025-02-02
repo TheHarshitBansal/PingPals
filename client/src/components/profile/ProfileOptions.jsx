@@ -24,9 +24,9 @@ const ProfileOptions = ({ children }) => {
     <DropdownMenu>
       <DropdownMenuTrigger>{children}</DropdownMenuTrigger>
       <DropdownMenuContent>
-        <DropdownMenuItem>
+        <DropdownMenuItem className="cursor-pointer">
           <div
-            className="flex items-center space-x-2 cursor-pointer"
+            className="flex items-center space-x-2"
             onClick={() => navigate("/profile")}
           >
             <User size={20} />
@@ -34,11 +34,8 @@ const ProfileOptions = ({ children }) => {
           </div>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
-          <div
-            className="flex items-center space-x-2 cursor-pointer"
-            onClick={handleLogout}
-          >
+        <DropdownMenuItem className="cursor-pointer" onClick={handleLogout}>
+          <div className="flex items-center space-x-2">
             <LogOut size={20} />
             <p>Logout</p>
           </div>
