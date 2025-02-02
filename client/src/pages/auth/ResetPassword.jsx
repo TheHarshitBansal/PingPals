@@ -5,21 +5,27 @@ import { ChevronLeft, EyeIcon, EyeOff, Loader2, Pencil } from "lucide-react";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
-import { useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useResetPasswordMutation } from "@/redux/api/authApi.js";
 
 const ResetPassword = () => {
+  const [resetPassword, { isLoading: loading, isSuccess }] =
+    useResetPasswordMutation();
+
   const [showPassword, setShowPassword] = useState({
     password: false,
     confirmPassword: false,
   });
+
+  const navigate = useNavigate();
 
   const resetSchema = yup
     .object({
       password: yup
         .string()
         .matches(
-          "/^(?=.*d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/",
+          /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/,
           "Password must have an alphabet, a special symbol and a number"
         )
         .required("Password is required")
@@ -38,8 +44,16 @@ const ResetPassword = () => {
     resolver: yupResolver(resetSchema),
   });
 
+  const { resetToken } = useParams();
+
+  useEffect(() => {
+    if (isSuccess) {
+      navigate("/auth/login");
+    }
+  }, [isSuccess]);
+
   const onSubmit = async (data) => {
-    console.log(data);
+    await resetPassword({ ...data, token: resetToken });
   };
 
   return (
@@ -109,7 +123,7 @@ const ResetPassword = () => {
             </p>
           )}
 
-          {isSubmitting ? (
+          {isSubmitting || loading ? (
             <Button className="py-6 text-base font-semibold" disabled>
               <Loader2 className="animate-spin" />
               Please wait

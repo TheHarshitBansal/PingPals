@@ -59,7 +59,7 @@ const resetPasswordTemplate = (name, resetUrl) => {
         Hi <strong>${name}</strong>,<br><br>
         We received a request to reset your password. Click the button below to proceed:
     </p>
-    <a href="${resetUrl}" class="btn">Reset Password</a>
+    <a href="${resetUrl}" class="btn text-white visited:text-white">Reset Password</a>
     <p class="content">
         If you did not request this, please ignore this email. This link will expire in 30 minutes.
     </p>

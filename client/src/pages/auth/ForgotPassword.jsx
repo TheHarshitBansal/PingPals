@@ -6,8 +6,11 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
+import { useForgotPasswordMutation } from "@/redux/api/authApi.js";
 
 const ForgotPassword = () => {
+  const [forgotPassword, { isLoading: loading }] = useForgotPasswordMutation();
+
   const forgotSchema = yup
     .object({
       email: yup
@@ -27,7 +30,7 @@ const ForgotPassword = () => {
   });
 
   const onSubmit = async (data) => {
-    console.log(data);
+    await forgotPassword(data);
   };
 
   return (
@@ -60,7 +63,7 @@ const ForgotPassword = () => {
             </p>
           )}
 
-          {isSubmitting ? (
+          {isSubmitting || loading ? (
             <Button className="py-6 text-base font-semibold" disabled>
               <Loader2 className="animate-spin" />
               Please wait

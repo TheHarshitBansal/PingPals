@@ -77,8 +77,38 @@ export const authApi = createApi({
                     toast({variant: 'error', title: error?.error?.data?.message})
                 }
             }
-        })
+        }),
+        forgotPassword: builder.mutation({
+            query: (body) => ({
+                url: '/forgot-password',
+                method: 'POST',
+                body,
+            }),
+            onQueryStarted: async(_, { queryFulfilled }) => {
+                try {
+                    const result = await queryFulfilled;
+                    toast({variant: 'success', title: result.data.message})
+                } catch (error) {
+                    toast({variant: 'error', title: error?.error?.data?.message})
+                }
+            }
+        }),
+        resetPassword: builder.mutation({
+            query: (body) => ({
+                url: `/reset-password`,
+                method: 'POST',
+                body,
+            }),
+            onQueryStarted: async(_, { queryFulfilled }) => {
+                try {
+                    const result = await queryFulfilled;
+                    toast({variant: 'success', title: result.data.message})
+                } catch (error) {
+                    toast({variant: 'error', title: error?.error?.data?.message})
+                }
+            }
+        }),
     })
 })
 
-export const { useLoginUserMutation, useRegisterUserMutation, useVerifyUserMutation, useResendOTPMutation } = authApi;
+export const { useLoginUserMutation, useRegisterUserMutation, useVerifyUserMutation, useResendOTPMutation, useForgotPasswordMutation, useResetPasswordMutation } = authApi;

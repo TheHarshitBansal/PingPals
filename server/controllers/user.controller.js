@@ -160,7 +160,7 @@ export const forgotPassword = asyncHandler(async (req, res) => {
     }
 
     const resetToken = await user.createPasswordResetToken();
-    const resetUrl = `${req.protocol}://${req.get('host')}/api/v1/user/reset-password/${resetToken}`;
+    const resetUrl = `${process.env.FRONTEND_URL}/auth/reset-password/${resetToken}`;
 
     try {
         await sendMail({name: user.name, email: user.email, subject: 'Reset your password for PingPals', html: resetPasswordTemplate(user.name, resetUrl)});
@@ -176,8 +176,7 @@ export const forgotPassword = asyncHandler(async (req, res) => {
 
 //INFO: Reset password
 export const resetPassword = asyncHandler(async (req, res) => {
-    const { token } = req.params;
-    const { password, confirmPassword } = req.body;
+    const { password, confirmPassword, token } = req.body;
 
     if(!token) {
         return res.status(400).json({message: 'Invalid token'});

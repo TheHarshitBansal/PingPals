@@ -8,7 +8,7 @@ router.post('/send-otp', sendOTP);
 router.post('/verify-otp', verifyOTP);
 router.post('/login', login);
 router.post('/forgot-password', forgotPassword);
-router.post('/reset-password/:token', resetPassword);
+router.post('/reset-password', resetPassword);
 router.patch('/update-user', protect, updateProfile)
 router.patch('/update-password', protect, changePassword);
 
