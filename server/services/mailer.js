@@ -1,33 +1,23 @@
-import { MailerSend, Recipient, EmailParams } from "mailersend";
+import nodemailer from 'nodemailer';
 
-const mailersend = new MailerSend({
-    apiKey: process.env.MAILERSEND_API_KEY,
-})
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.NODEMAILER_EMAIL,
+    pass: process.env.NODEMAILER_PASSWORD
+  }
+});
 
-const sendMail = async(name, email, subject, templateId, resetUrl, otp) => {
-    const recipient = new Recipient(email, name);
+const sendMail = async ({name, email, subject, html}) => {
+  const mailOptions = {
+    from: process.env.NODEMAILER_EMAIL,
+    name,
+    to: email,
+    subject,
+    html
+  };
 
-    const personalization = [
-        {
-          email: email,
-          data: {
-            otp: otp,
-            name: name,
-            account_name: 'PingPals',
-            resetUrl: resetUrl
-          },
-        }
-      ];
-
-    const emailParams = new EmailParams()
-    .setFrom(process.env.MAILERSEND_FROM_EMAIL)
-    .setFromName('Team PingPals')
-    .setRecipients(recipient)
-    .setSubject(subject)
-    .setTemplateId(templateId)
-    .setPersonalization(personalization);
-
-mailersend.send(emailParams);
-}
+  await transporter.sendMail(mailOptions);
+};
 
 export default sendMail;
