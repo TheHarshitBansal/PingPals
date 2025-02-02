@@ -62,8 +62,23 @@ export const authApi = createApi({
                     toast({variant: 'error', title: error?.error?.data?.message})
                 }
             }
+        }),
+        resendOTP: builder.mutation({
+            query: (body) => ({
+                url: `/send-otp`,
+                method: 'POST',
+                body,
+            }),
+            onQueryStarted: async(_, { queryFulfilled }) => {
+                try {
+                    const result = await queryFulfilled;
+                    toast({variant: 'success', title: result.data.message})
+                } catch (error) {
+                    toast({variant: 'error', title: error?.error?.data?.message})
+                }
+            }
         })
     })
 })
 
-export const { useLoginUserMutation, useRegisterUserMutation, useVerifyUserMutation } = authApi;
+export const { useLoginUserMutation, useRegisterUserMutation, useVerifyUserMutation, useResendOTPMutation } = authApi;

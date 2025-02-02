@@ -44,11 +44,11 @@ export const register = asyncHandler(async (req, res) => {
 
 //INFO: Send OTP to user's email
 export const sendOTP = asyncHandler(async (req, res) => {
-    if (!req.id) {
+    if (!req.id && !req.body.username) {
         return res.status(400).json({ message: "User ID is missing" });
     }
 
-    const user = await User.findById(req.id);
+    const user = await User.findById(req.id) || await User.findOne({ username: req.body.username });
     if (!user) {
         return res.status(404).json({ message: "User not found" });
     }

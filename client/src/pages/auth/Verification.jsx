@@ -7,7 +7,10 @@ import ThemeChangeDialog from "@/components/ThemeChangeDialog.jsx";
 import { Loader2, Pencil } from "lucide-react";
 import Logo from "@/assets/logo.png";
 import { useParams } from "react-router-dom";
-import { useVerifyUserMutation } from "@/redux/api/authApi.js";
+import {
+  useVerifyUserMutation,
+  useResendOTPMutation,
+} from "@/redux/api/authApi.js";
 
 const otpSchema = yup.object({
   otp: yup
@@ -18,6 +21,7 @@ const otpSchema = yup.object({
 
 const Verification = () => {
   const [verifyUser, { isLoading: loading }] = useVerifyUserMutation();
+  const [resendOTP] = useResendOTPMutation();
 
   const {
     control,
@@ -57,6 +61,11 @@ const Verification = () => {
   const username = useParams().username;
   const onSubmit = async (data) => {
     await verifyUser({ ...data, username });
+  };
+
+  const handleResend = async () => {
+    setResendTimer(30);
+    await resendOTP({ username });
   };
 
   return (
@@ -123,7 +132,7 @@ const Verification = () => {
             <Button
               variant="link"
               className="text-blue-500 dark:text-blue-400"
-              onClick={() => setResendTimer(30)}
+              onClick={handleResend}
             >
               Resend OTP
             </Button>
