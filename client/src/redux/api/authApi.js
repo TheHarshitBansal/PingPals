@@ -16,12 +16,26 @@ export const authApi = createApi({
         credentials: 'include'
     }),
     endpoints: (builder)=>({
+        registerUser: builder.mutation({
+            query: (body) => ({
+                url: '/register',
+                method: 'POST',
+                body,
+            }),
+            onQueryStarted: async(_, {  queryFulfilled }) => {
+                try {
+                    const result = await queryFulfilled;
+                    toast({variant: 'success', title: result.data.message})
+                } catch (error) {
+                    toast({variant: 'error', title: error?.error?.data?.message})
+                }
+            }
+        }),
         loginUser: builder.mutation({
             query: (body) => ({
                 url: '/login',
                 method: 'POST',
                 body,
-                
             }),
             onQueryStarted: async(_, { dispatch, queryFulfilled }) => {
                 try {
@@ -29,11 +43,27 @@ export const authApi = createApi({
                     dispatch(addUser(result?.data));
                     toast({variant: 'success', title: result.data.message})
                 } catch (error) {
-                    toast.destructive(error)
+                    toast({variant: 'error', title: error?.error?.data?.message})
+                }
+            },
+        }),
+        verifyUser: builder.mutation({
+            query: (body) => ({
+                url: '/verify-otp',
+                method: 'POST',
+                body,
+            }),
+            onQueryStarted: async(_, { dispatch, queryFulfilled }) => {
+                try {
+                    const result = await queryFulfilled;
+                    dispatch(addUser(result?.data));
+                    toast({variant: 'success', title: result.data.message})
+                } catch (error) {
+                    toast({variant: 'error', title: error?.error?.data?.message})
                 }
             }
         })
     })
 })
 
-export const { useLoginUserMutation } = authApi;
+export const { useLoginUserMutation, useRegisterUserMutation, useVerifyUserMutation } = authApi;

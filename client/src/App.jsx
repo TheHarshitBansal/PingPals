@@ -4,6 +4,7 @@ import LoadingSpinner from "./components/LoadingSpinner.jsx";
 import RequireAuth from "./components/auth/RequireAuth.jsx";
 import NotRequireAuth from "./components/auth/NotRequireAuth.jsx";
 import NotFound from "./pages/NotFound.jsx";
+const Verification = lazy(() => import("./pages/auth/Verification.jsx"));
 const Profile = lazy(() => import("./pages/profile/Profile.jsx"));
 const CallLog = lazy(() => import("./pages/call/CallLog.jsx"));
 const GroupGeneralApp = lazy(() => import("./pages/group/GroupGeneralApp.jsx"));
@@ -38,6 +39,7 @@ const App = () => {
       <Routes>
         <Route element={<NotRequireAuth />}>
           <Route path="/auth/login" element={<Login />} />
+          <Route path="/auth/verify/:username" element={<Verification />} />
           <Route path="/auth/register" element={<Register />} />
           <Route path="/auth/forgot-password" element={<ForgotPassword />} />
           <Route path="/auth/reset-password" element={<ResetPassword />} />
