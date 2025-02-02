@@ -8,6 +8,7 @@ import cookieParser from 'cookie-parser';
 import ExpressMongoSanitize from 'express-mongo-sanitize';
 import connectToDb from './config/dbConfig.js';
 import userRoutes from './routes/user.routes.js';
+import errorMiddleware from './middlewares/error.middleware.js';
 
 const app = express();
 const PORT = process.env.PORT || 8000;
@@ -37,6 +38,7 @@ app.use('/api', limited);
 
 app.use('/api/v1/user', userRoutes);
 
+app.use(errorMiddleware)
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
