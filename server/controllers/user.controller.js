@@ -242,15 +242,25 @@ export const updateProfile = asyncHandler(async (req, res) => {
 
 //INFO: Change Password
 export const changePassword = asyncHandler(async (req, res) => {
-    const {id, currentPassword, newPassword, confirmNewPassword } = req.body;
+    let token;
+    if(req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+        token = req.headers.authorization.split(' ')[1];
+    }
+    const {currentPassword, newPassword, confirmPassword } = req.body;
 
-    if(!currentPassword || !newPassword || !confirmNewPassword) {
+    if(!currentPassword || !newPassword || !confirmPassword) {
         return res.status(400).json({message: 'Please provide current password, new password, and confirm new password'});
     }
 
-    if(newPassword !== confirmNewPassword) {
+    if(newPassword !== confirmPassword) {
         return res.status(400).json({message: 'Passwords do not match'});
     }
+
+    if(!token) {
+        return res.status(400).json({message: 'Invalid token'});
+    }
+
+    const { id } = jwt.verify(token, process.env.JWT_SECRET);
 
     const user = await User.findById(id).select('+password');
     if(!await user.comparePassword(currentPassword, user.password)) {

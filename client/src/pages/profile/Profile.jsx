@@ -12,8 +12,13 @@ import * as yup from "yup";
 import { Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { useSelector } from "react-redux";
+import { useUpdateProfileMutation } from "@/redux/api/authApi.js";
 
 const Profile = () => {
+  const auth = useSelector((state) => state.auth);
+  const [updateProfile, { isLoading: loading }] = useUpdateProfileMutation();
+
   const profileSchema = yup
     .object({
       name: yup.string().required("Name is required"),
@@ -22,32 +27,51 @@ const Profile = () => {
         .required("Username is required")
         .matches(/^[a-z0-9_-]{3,30}$/, "Invalid username"),
       about: yup.string(),
-      avatar: yup.string(),
+      avatar: yup.mixed(),
     })
     .required();
+
+  const initialValues = {
+    name: auth?.user?.name,
+    username: auth?.user?.username,
+    about: auth?.user?.about,
+  };
 
   const {
     register,
     handleSubmit,
-    clearErrors,
     setValue,
     formState: { isSubmitting, errors },
   } = useForm({
     resolver: yupResolver(profileSchema),
+    defaultValues: initialValues,
   });
 
-  const [avatar, setAvatar] = useState("");
+  const [avatar, setAvatar] = useState(auth?.user?.avatar || null);
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    const avatarUrl = URL.createObjectURL(file);
-    setAvatar(avatarUrl);
+
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => {
+      setAvatar(reader.result);
+    };
+
     setValue("avatar", file);
   };
 
   const onSubmit = (data) => {
-    console.log(data);
+    const formData = new FormData();
+    formData.append("name", data.name);
+    formData.append("username", data.username);
+    formData.append("about", data.about);
+
+    if (data.avatar instanceof File) {
+      formData.append("avatar", data.avatar);
+    }
+    updateProfile(formData);
   };
 
   return (
@@ -116,8 +140,8 @@ const Profile = () => {
               </p>
             )}
           </div>
-          {isSubmitting ? (
-            <Button className="py-4 text-sm font-semibold" disabled>
+          {isSubmitting || loading ? (
+            <Button className="py-4 text-sm font-semibold self-end" disabled>
               <Loader2 className="animate-spin" />
               Please wait
             </Button>

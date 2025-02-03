@@ -1,6 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { addUser } from "../slices/authSlice.js";
 import { toast } from "@/hooks/use-toast.js";
+import ChangePassword from "@/components/auth/ChangePassword.jsx";
 
 export const authApi = createApi({
     reducerPath: 'authApi',
@@ -108,7 +109,42 @@ export const authApi = createApi({
                 }
             }
         }),
+        updateProfile: builder.mutation({
+            query: (body) => ({
+                url: `/update-user`,
+                method: 'PATCH',
+                body,
+                prepareHeaders: (headers) => {
+                    headers.set('Content-Type', 'multipart/form-data');
+                    return headers;
+                }
+            }),
+            onQueryStarted: async(_, { dispatch, queryFulfilled }) => {
+                try {
+                    const result = await queryFulfilled;
+                    dispatch(addUser(result?.data));
+                    toast({variant: 'success', title: result.data.message})
+                } catch (error) {
+                    toast({variant: 'error', title: error?.error?.data?.message})
+                }
+            }
+        }),
+        ChangePassword: builder.mutation({
+            query: (body) => ({
+                url: `/update-password`,
+                method: 'PATCH',
+                body,
+            }),
+            onQueryStarted: async(_, { queryFulfilled }) => {
+                try {
+                    const result = await queryFulfilled;
+                    toast({variant: 'success', title: result.data.message})
+                } catch (error) {
+                    toast({variant: 'error', title: error?.error?.data?.message})
+                }
+            }
+        })
     })
 })
 
-export const { useLoginUserMutation, useRegisterUserMutation, useVerifyUserMutation, useResendOTPMutation, useForgotPasswordMutation, useResetPasswordMutation } = authApi;
+export const { useLoginUserMutation, useRegisterUserMutation, useVerifyUserMutation, useResendOTPMutation, useForgotPasswordMutation, useResetPasswordMutation, useUpdateProfileMutation , useChangePasswordMutation} = authApi;
