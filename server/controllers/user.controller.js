@@ -6,6 +6,7 @@ import asyncHandler from '../middlewares/asyncHandler.middleware.js'
 import otpTemplate from '../templates/sendOTP.template.js'
 import resetPasswordTemplate from '../templates/resetPassword.template.js'
 import crypto from 'crypto';
+import { deleteImage } from '../middlewares/upload.middleware.js';
 
 //INFO: Sign JWT token
 const signToken = (userId) => {
@@ -207,10 +208,36 @@ export const resetPassword = asyncHandler(async (req, res) => {
 
 //INFO: Update User's Profile
 export const updateProfile = asyncHandler(async (req, res) => {
-    const { name, avatar, username, about } = req.body; 
-    const user = await User.findByIdAndUpdate(req.user._id, req.body, {new: true, validateModifiedOnly: true});
+    let token;
+    if(req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+        token = req.headers.authorization.split(' ')[1];
+    }
+    const { name, username, about } = req.body;
+    const img = req?.file ? req.file.path : null;
+    if(!token) {
+        return res.status(400).json({message: 'Invalid token'});
+    }
 
-    res.status(200).json({user, message: 'Profile updated successfully'});
+    const { id } = jwt.verify(token, process.env.JWT_SECRET);
+
+    const user = await User.findById(id);
+    if(!user) {
+        return res.status(404).json({message: 'User not found'});
+    }
+
+    if(img && user.avatar) {
+        const public_id = "PingPals/" + user.avatar.split('/').pop().split('.')[0];
+        await deleteImage(public_id);
+    }
+
+    user.name = name || user.name;
+    user.avatar = img || user.avatar;
+    user.username = username || user.username;
+    user.about = about || user.about;
+
+    await user.save({validateModifiedOnly: true});
+
+    res.status(200).json({user, message: 'Profile updated successfully', token});
 })
 
 //INFO: Change Password
