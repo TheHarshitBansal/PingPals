@@ -208,17 +208,9 @@ export const resetPassword = asyncHandler(async (req, res) => {
 
 //INFO: Update User's Profile
 export const updateProfile = asyncHandler(async (req, res) => {
-    let token;
-    if(req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
-        token = req.headers.authorization.split(' ')[1];
-    }
+    const {id} = req.user;
     const { name, username, about } = req.body;
     const img = req?.file ? req.file.path : null;
-    if(!token) {
-        return res.status(400).json({message: 'Invalid token'});
-    }
-
-    const { id } = jwt.verify(token, process.env.JWT_SECRET);
 
     const user = await User.findById(id);
     if(!user) {
@@ -242,10 +234,7 @@ export const updateProfile = asyncHandler(async (req, res) => {
 
 //INFO: Change Password
 export const changePassword = asyncHandler(async (req, res) => {
-    let token;
-    if(req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
-        token = req.headers.authorization.split(' ')[1];
-    }
+    const {id} = req.user;
     const {currentPassword, newPassword, confirmPassword } = req.body;
 
     if(!currentPassword || !newPassword || !confirmPassword) {
@@ -256,11 +245,9 @@ export const changePassword = asyncHandler(async (req, res) => {
         return res.status(400).json({message: 'Passwords do not match'});
     }
 
-    if(!token) {
+    if(!id) {
         return res.status(400).json({message: 'Invalid token'});
     }
-
-    const { id } = jwt.verify(token, process.env.JWT_SECRET);
 
     const user = await User.findById(id).select('+password');
     if(!await user.comparePassword(currentPassword, user.password)) {
