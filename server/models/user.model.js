@@ -54,7 +54,12 @@ const userSchema = new Schema({
             message: 'OTP must be a 4-digit number'
         }
     },
-    otpExpires: Date
+    otpExpires: Date,
+    socket_id: String,
+    friends: [{
+        type: Schema.ObjectId,
+        ref: 'User'
+    }]
 });
 
 // Hash password and OTP before saving
