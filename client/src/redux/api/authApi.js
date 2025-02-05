@@ -1,7 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { addUser } from "../slices/authSlice.js";
 import { toast } from "@/hooks/use-toast.js";
-import ChangePassword from "@/components/auth/ChangePassword.jsx";
 
 export const authApi = createApi({
     reducerPath: 'authApi',

@@ -12,6 +12,7 @@ import userRoutes from './routes/user.routes.js';
 import errorMiddleware from './middlewares/error.middleware.js';
 import {Server} from 'socket.io'
 import User from './models/user.model.js';
+import FriendReq from './models/friendReq.model.js';
 
 const app = express();
 const PORT = process.env.PORT || 8000;
@@ -67,14 +68,50 @@ io.on('connection', async (socket) => {
 
     //INFO: Socket Events
     socket.on('friend_request', async (data) => {
-        const friend = await User.findById(data.friend_id);
+        const receiver = await User.findById(data.receiver).select('socket_id');
+        const sender = await User.findById(data.sender).select('socket_id');
 
-        //TODO: Creating a friend request
-
-        //INFO: Emitting a friend request to the friend
-        io.to(friend.socket_id).emit('new_friend_request', {
-
+        //INFO: Creating a friend request
+        await FriendReq.create({
+            sender: data.sender,
+            receiver: data.receiver
         }); 
+
+        //INFO: Emitting a received friend request to the receiver
+        io.to(receiver.socket_id).emit('new_friend_request', {
+            message: 'You have received a new friend request',
+        }); 
+
+        //INFO: Emitting a sent friend request to the sender
+        io.to(sender.socket_id).emit('friend_request_sent', {
+            message: 'Friend request sent successfully',
+        });
+    })
+
+    //INFO: Accepting a friend request
+    socket.on('accept_request', async (data) => {
+        const request = await FriendReq.findById(data.request_id);
+
+        //INFO: Updating the friends list of the sender
+        await User.findByIdAndUpdate(request.sender, {$push: {friends: request.receiver}});
+        //INFO: Updating the friends list of the receiver
+        await User.findByIdAndUpdate(request.receiver, {$push: {friends: request.sender}});
+
+        await FriendReq.findByIdAndDelete(data.request_id);
+
+        //INFO: Emitting a friend request accepted to the sender
+        io.to(request.sender).emit('request_accepted', {
+            message: 'Friend request accepted successfully',
+        });
+        //INFO: Emitting a friend request accepted to the receiver
+        io.to(request.receiver).emit('request_accepted', {
+            message: 'Friend request accepted successfully',
+        });
+
+        socket.on('end', async () => {
+            console.log("Closing socket connection");
+            socket.disconnect(0);
+        })
     })
 })
 

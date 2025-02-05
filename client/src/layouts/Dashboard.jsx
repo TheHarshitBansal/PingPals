@@ -8,11 +8,54 @@ import DarkModeSwitcher from "@/components/DarkModeSwitcher.jsx";
 import { useEffect, useState } from "react";
 import ProfileOptions from "@/components/profile/ProfileOptions.jsx";
 import { Skeleton } from "@/components/ui/skeleton.jsx";
+import { useDispatch, useSelector } from "react-redux";
+import { connectSocket, socket } from "@/socket.js";
+import { toast } from "@/hooks/use-toast.js";
 
 const Dashboard = () => {
+  const { isAuthenticated, user } = useSelector((state) => state.auth);
   const [active, setActive] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      window.onload = () => {
+        if (!window.location.hash) {
+          window.location = window.location + "#loaded";
+          window.location.reload();
+        }
+      };
+      window.reload();
+
+      if (!socket) {
+        connectSocket(user._id);
+      }
+
+      //INFO: New Friend Request
+      socket.on("new_friend_request", (data) => {
+        toast("success", data.message);
+      });
+
+      //INFO: Friend Request Sent
+      socket.on("friend_request_sent", (data) => {
+        toast("success", data.message);
+      });
+
+      //INFO: Friend Request Accepted
+      socket.on("request_accepted", (data) => {
+        toast("success", data.message);
+      });
+    }
+
+    return () => {
+      if (socket) {
+        socket.off("new_friend_request");
+        socket.off("friend_request_sent");
+        socket.off("request_accepted");
+      }
+    };
+  }, [isAuthenticated, socket]);
 
   useEffect(() => {
     if (location.pathname === "/") {
