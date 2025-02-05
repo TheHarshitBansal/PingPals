@@ -7,6 +7,7 @@ import otpTemplate from '../templates/sendOTP.template.js'
 import resetPasswordTemplate from '../templates/resetPassword.template.js'
 import crypto from 'crypto';
 import { deleteImage } from '../middlewares/upload.middleware.js';
+import FriendReq from '../models/friendReq.model.js';
 
 //INFO: Sign JWT token
 const signToken = (userId) => {
@@ -258,4 +259,21 @@ export const changePassword = asyncHandler(async (req, res) => {
     await user.save({validateBeforeSave: false});
 
     res.status(200).json({message: 'Password changed successfully'});
+})
+
+//INFO: Get Friends
+export const getFriends = asyncHandler(async (req, res) => {
+    const {id} = req.user;
+    const user = await User.findById(id).populate('friends', 'id name username avatar about');
+    const friends = user.friends;
+
+    res.status(200).json({friends, message: 'Friends fetched successfully'});
+})
+
+//INFO: Get Requests
+export const getRequests = asyncHandler(async (req, res) => {
+    const {id} = req.user;
+    const requests = await FriendReq.find({receiver: id}).populate('sender', 'id name username avatar about');
+
+    res.status(200).json({requests, message: 'Requests fetched successfully'});
 })
