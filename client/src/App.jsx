@@ -4,8 +4,8 @@ import LoadingSpinner from "./components/LoadingSpinner.jsx";
 import RequireAuth from "./components/auth/RequireAuth.jsx";
 import NotRequireAuth from "./components/auth/NotRequireAuth.jsx";
 import NotFound from "./pages/NotFound.jsx";
+const ProfileGeneral = lazy(() => import("./pages/profile/ProfileGeneral.jsx"));
 const Verification = lazy(() => import("./pages/auth/Verification.jsx"));
-const Profile = lazy(() => import("./pages/profile/Profile.jsx"));
 const CallLog = lazy(() => import("./pages/call/CallLog.jsx"));
 const GroupGeneralApp = lazy(() => import("./pages/group/GroupGeneralApp.jsx"));
 const ForgotPassword = lazy(() => import("./pages/auth/ForgotPassword.jsx"));
@@ -54,7 +54,7 @@ const App = () => {
             <Route path="group" element={<GroupGeneralApp />} />
             <Route path="calls" element={<CallLog />} />
             <Route path="settings" element={<Settings />} />
-            <Route path="profile" element={<Profile />} />
+            <Route path="profile" element={<ProfileGeneral />} />
           </Route>
         </Route>
         <Route path="*" element={<NotFound />} />
