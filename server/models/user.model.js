@@ -59,7 +59,16 @@ const userSchema = new Schema({
     friends: [{
         type: Schema.ObjectId,
         ref: 'User'
-    }]
+    }],
+    status:{
+        type: String,
+        enum: ['Online', 'Offline'],
+        default: 'Online'
+    },
+    requests: [{
+        type: Schema.ObjectId,
+        ref: 'User'
+    }],
 });
 
 // Hash password and OTP before saving

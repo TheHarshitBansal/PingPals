@@ -277,3 +277,22 @@ export const getRequests = asyncHandler(async (req, res) => {
 
     res.status(200).json({requests, message: 'Requests fetched successfully'});
 })
+
+//INFO: Find People
+export const findPeople = asyncHandler(async (req, res) => {
+    const { name } = req.body;
+    if(!name) {
+        return res.status(400).json({message: 'Please provide a name to search'});
+    }
+    const currentUserId = req.user.id;
+
+    const people = await User.find({
+        $or: [
+            { name: { $regex: name, $options: 'i' } },
+            { username: { $regex: name, $options: 'i' } }
+        ],
+        _id: { $ne: currentUserId }
+    }).select('id name username avatar about');
+
+    res.status(200).json({ people, message: 'People fetched successfully' });
+});

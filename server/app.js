@@ -13,6 +13,8 @@ import errorMiddleware from './middlewares/error.middleware.js';
 import {Server} from 'socket.io'
 import User from './models/user.model.js';
 import FriendReq from './models/friendReq.model.js';
+import path from 'path';
+import Message from './models/message.model.js';
 
 const app = express();
 const PORT = process.env.PORT || 8000;
@@ -63,7 +65,7 @@ io.on('connection', async (socket) => {
     console.log('User connected', user_id, socket_id);
 
     if(user_id){
-        await User.findByIdAndUpdate(user_id, {socket_id});
+        await User.findByIdAndUpdate(user_id, {socket_id, status: 'Online'});
     }
 
     //INFO: Socket Events
@@ -77,6 +79,9 @@ io.on('connection', async (socket) => {
             receiver: data.receiver
         }); 
 
+        receiver.requests.push(data.sender);
+        await receiver.save();
+
         //INFO: Emitting a received friend request to the receiver
         io.to(receiver.socket_id).emit('new_friend_request', {
             message: 'You have received a new friend request',
@@ -87,6 +92,7 @@ io.on('connection', async (socket) => {
             message: 'Friend request sent successfully',
         });
     })
+
 
     //INFO: Accepting a friend request
     socket.on('accept_request', async (data) => {
@@ -107,12 +113,33 @@ io.on('connection', async (socket) => {
         io.to(request.receiver).emit('request_accepted', {
             message: 'Friend request accepted successfully',
         });
+    })
 
-        socket.on('end', async () => {
+    //INFO: Fetching Chats
+    socket.on('get_direct_chats', async ({user_id}, callback) => {
+        const allConversations = await Message.find({participants: {$all: [user_id]}}).populate('participants', 'name avatar, status _id');
+
+        callback(allConversations);
+    })
+
+        //INFO: Handle Text & Link Messages
+        socket.on('text_message', async (data) => {
+
+        })
+
+        //INFO: Handling File & Media Messages
+        socket.on("file_message", async (data) =>  {
+             
+            const fileExtension = path.extname(data.file.name);
+            const fileName = `${Date.now()}_${Math.floor(Math.random()*1000)}${fileExtension}`
+        })
+
+        socket.on('end', async (data) => {
+            await User.findByIdAndUpdate(data.user_id, {status: 'Offline'});
             console.log("Closing socket connection");
             socket.disconnect(0);
         })
     })
-})
+
 
 export default app;

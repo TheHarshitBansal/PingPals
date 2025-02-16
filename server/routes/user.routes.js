@@ -1,6 +1,6 @@
 import express from 'express';
 import {upload} from '../middlewares/upload.middleware.js';
-import { changePassword, forgotPassword, getFriends, getRequests, login, protect, register, resetPassword, sendOTP, updateProfile, verifyOTP } from '../controllers/user.controller.js';
+import { changePassword, findPeople, forgotPassword, getFriends, getRequests, login, protect, register, resetPassword, sendOTP, updateProfile, verifyOTP } from '../controllers/user.controller.js';
 
 const router = express.Router();
 
@@ -14,5 +14,6 @@ router.patch('/update-user', protect, upload.single('avatar'), updateProfile)
 router.patch('/update-password', protect, changePassword);
 router.get('/get-friends', protect, getFriends);
 router.get('/get-requests', protect, getRequests);
+router.post('/search', protect, findPeople);
 
 export default router;

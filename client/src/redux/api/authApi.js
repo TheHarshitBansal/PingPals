@@ -142,8 +142,15 @@ export const authApi = createApi({
                     toast({variant: 'error', title: error?.error?.data?.message})
                 }
             }
-        })
+        }),
+        findPeople: builder.query({
+            query: (body) => ({
+                url: `/search`,
+                method: 'POST',
+                body,
+            }),
+        }),
     })
 })
 
-export const { useLoginUserMutation, useRegisterUserMutation, useVerifyUserMutation, useResendOTPMutation, useForgotPasswordMutation, useResetPasswordMutation, useUpdateProfileMutation , useChangePasswordMutation} = authApi;
+export const { useLoginUserMutation, useRegisterUserMutation, useVerifyUserMutation, useResendOTPMutation, useForgotPasswordMutation, useResetPasswordMutation, useUpdateProfileMutation , useChangePasswordMutation, useFindPeopleQuery} = authApi;
