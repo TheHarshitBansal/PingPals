@@ -3,11 +3,13 @@ import { persistReducer, persistStore } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import AppReducer from './slices/appSlice.js';
 import AuthReducer from './slices/authSlice.js';
+import conversationReducer from './slices/conversationSlice.js';
 import { authApi } from './api/authApi.js';
 
 const rootReducer = combineReducers({
     app: AppReducer,
     auth: AuthReducer,
+    conversation: conversationReducer,
     [authApi.reducerPath]: authApi.reducer,
 })
 
