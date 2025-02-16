@@ -1,12 +1,13 @@
+import SearchPeople from "@/components/profile/SearchPeople.jsx";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const FriendRequestSection = () => {
   return (
     <div className="w-full">
-      <Tabs defaultValue="account" className="w-full">
+      <Tabs defaultValue="search" className="w-full">
         <TabsList className="w-full rounded-sm h-10 flex justify-evenly py-6">
-          <TabsTrigger value="explore" className="w-full text-lg">
-            Explore
+          <TabsTrigger value="search" className="w-full text-lg">
+            Search
           </TabsTrigger>
           <TabsTrigger value="friends" className="w-full text-lg">
             Friends
@@ -15,8 +16,8 @@ const FriendRequestSection = () => {
             Requests
           </TabsTrigger>
         </TabsList>
-        <TabsContent value="account">
-          Make changes to your account here.
+        <TabsContent value="search">
+          <SearchPeople />
         </TabsContent>
         <TabsContent value="password">Change your password here.</TabsContent>
       </Tabs>

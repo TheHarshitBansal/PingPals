@@ -6,6 +6,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { styled } from "@mui/material";
 import { Skeleton } from "@/components/ui/skeleton.jsx";
 import users from "@/data/users.js";
+import { useDispatch } from "react-redux";
+import { openChat } from "@/redux/slices/appSlice.js";
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
   "& .MuiBadge-badge": {
@@ -38,9 +40,23 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 
 // INFO: Individual Chat Element
 
-export const ChatElement = ({ name, message, avatar, time, badge, online }) => {
+export const ChatElement = ({
+  id,
+  name,
+  message,
+  avatar,
+  time,
+  badge,
+  online,
+}) => {
+  const dispatch = useDispatch();
   return (
-    <div className="w-full h-20 rounded-sm hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center justify-between px-3 py-2 border-y border-gray-100 dark:border-gray-900">
+    <div
+      className="w-full h-20 rounded-sm hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center justify-between px-3 py-2 border-y border-gray-100 dark:border-gray-900 cursor-pointer"
+      onClick={() => {
+        dispatch(openChat(id));
+      }}
+    >
       <div className="flex items-center justify-between">
         <div className="flex gap-x-2">
           {online ? (
@@ -103,6 +119,7 @@ const Chats = () => {
       <div className="flex-1 overflow-y-auto px-5 no-scrollbar">
         {users.map((user, index) => (
           <ChatElement
+            id={user.id}
             key={index}
             name={user.name}
             message={user.message}
