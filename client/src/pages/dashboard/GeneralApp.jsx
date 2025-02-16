@@ -9,11 +9,12 @@ import { useEffect } from "react";
 import { socket } from "@/socket.js";
 
 const GeneralApp = () => {
+  const conversation = useSelector((state) => state.conversation);
   const app = useSelector((state) => state.app);
   const user = useSelector((state) => state.auth.user);
 
   useEffect(() => {
-    socket.emit("get_direct_chats", { user_id: user._id }, (data) => {});
+    //socket.emit("get_direct_chats", { user_id: user._id }, (data) => {});
   }, []);
   return (
     <div className="flex h-screen w-full">
@@ -21,7 +22,11 @@ const GeneralApp = () => {
       <Chats />
 
       {/* Chat Messages */}
-      {app.chat_id === null ? <HomePage /> : <MessageView />}
+      {conversation.currentConversation === null ? (
+        <HomePage />
+      ) : (
+        <MessageView />
+      )}
 
       {/* Chat Profile */}
       {app.sidebar.isOpen && app.sidebar.type === "PROFILE" && (

@@ -4,11 +4,15 @@ import HomePage from "../HomePage.jsx";
 import MessageView from "../dashboard/MessageView.jsx";
 
 const GroupGeneralApp = () => {
-  const app = useSelector((state) => state.app);
+  const conversation = useSelector((state) => state.conversation);
   return (
     <div className="flex h-screen w-full">
       <GroupChat />
-      {app.chat_id === null ? <HomePage /> : <MessageView />}
+      {conversation.currentConversation === null ? (
+        <HomePage />
+      ) : (
+        <MessageView />
+      )}
     </div>
   );
 };

@@ -1,37 +1,31 @@
 import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
-    directChat: {
-        conversations: [],
-        currentConversation: null,
-        currentMessages: [],
-    },
-    groupChat: {
-        conversations: [],
-        currentConversation: null,
-        currentMessages: [],
-    },
+    directConversations: [],
+    groupConversations: [],
+    currentConversation: null,
+    currentMessages: [],
 }
 
 const conversationSlice = createSlice({
-    name: conversation,
+    name: "conversation",
     initialState,
     reducers:{
-        fetchDirectChats(state, action){
-            state.directChat.conversations = action.payload;
+        fetchDirectConversations: (state, action) => {
+            state.directConversations = action.payload;
         },
-        fetchGroupChats(state, action){
-            state.groupChat.conversations = action.payload;
+        fetchGroupConversations: (state, action) => {
+            state.groupConversations = action.payload;
         },
-        setCurrentDirectChat(state, action){
-            state.directChat.currentConversation = action.payload;
+        setCurrentConversation: (state, action) => {
+            state.currentConversation = action.payload;
         },
-        setCurrentGroupChat(state, action){
-            state.groupChat.currentConversation = action.payload;
+        fetchMessages: (state, action) => {
+            state.currentMessages = action.payload;
         },
     }
 })
 
-export const { fetchDirectChats, fetchGroupChats, setCurrentDirectChat, setCurrentGroupChat } = conversationSlice.actions;
+export const { fetchDirectConversations, fetchGroupConversations, setCurrentConversation, fetchMessages } = conversationSlice.actions;
 
 export default conversationSlice.reducer;

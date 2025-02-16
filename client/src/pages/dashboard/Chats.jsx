@@ -7,7 +7,7 @@ import { styled } from "@mui/material";
 import { Skeleton } from "@/components/ui/skeleton.jsx";
 import users from "@/data/users.js";
 import { useDispatch } from "react-redux";
-import { openChat } from "@/redux/slices/appSlice.js";
+import { setCurrentConversation } from "@/redux/slices/conversationSlice.js";
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
   "& .MuiBadge-badge": {
@@ -54,7 +54,7 @@ export const ChatElement = ({
     <div
       className="w-full h-20 rounded-sm hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center justify-between px-3 py-2 border-y border-gray-100 dark:border-gray-900 cursor-pointer"
       onClick={() => {
-        dispatch(openChat(id));
+        dispatch(setCurrentConversation(id));
       }}
     >
       <div className="flex items-center justify-between">
