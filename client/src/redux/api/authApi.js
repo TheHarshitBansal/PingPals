@@ -150,7 +150,13 @@ export const authApi = createApi({
                 body,
             }),
         }),
+        getUser: builder.query({
+            query: (body) => ({
+                url: '/get-user',
+                method: "GET",
+            })
+        })
     })
 })
 
-export const { useLoginUserMutation, useRegisterUserMutation, useVerifyUserMutation, useResendOTPMutation, useForgotPasswordMutation, useResetPasswordMutation, useUpdateProfileMutation , useChangePasswordMutation, useFindPeopleQuery} = authApi;
+export const { useLoginUserMutation, useRegisterUserMutation, useVerifyUserMutation, useResendOTPMutation, useForgotPasswordMutation, useResetPasswordMutation, useUpdateProfileMutation , useChangePasswordMutation, useFindPeopleQuery, useGetUserQuery} = authApi;

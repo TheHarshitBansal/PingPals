@@ -91,8 +91,10 @@ export const verifyOTP = asyncHandler(async (req, res) => {
     await user.save({new: true, validateModifiedOnly: true});
 
     const token = signToken(user._id);
+    const sendUser = await User.findById(user.id).select("name avatar username email about socket_id friends requests status");
 
-    res.status(200).json({token, message: 'OTP verified successfully', user});
+
+    res.status(200).json({token, message: 'OTP verified successfully', user:sendUser});
 })
 
 //INFO: Login a user
@@ -113,8 +115,9 @@ export const login = asyncHandler(async (req, res) => {
 
     user.password = undefined;
     const token = signToken(user._id);
+    const sendUser = await User.findById(user.id).select("name avatar username email about socket_id friends requests status");
 
-    res.status(200).json({token, message: 'Login successful', user});
+    res.status(200).json({token, message: 'Login successful', user:sendUser});
 })
 
 //INFO: Protect routes
@@ -229,8 +232,10 @@ export const updateProfile = asyncHandler(async (req, res) => {
     user.about = about || user.about;
 
     await user.save({validateModifiedOnly: true});
+    const sendUser = await User.findById(user.id).select("name avatar username email about socket_id friends requests status");
 
-    res.status(200).json({user, message: 'Profile updated successfully', token});
+
+    res.status(200).json({user:sendUser, message: 'Profile updated successfully', token});
 })
 
 //INFO: Change Password
@@ -261,6 +266,14 @@ export const changePassword = asyncHandler(async (req, res) => {
     res.status(200).json({message: 'Password changed successfully'});
 })
 
+//INFO: Get User Profile
+export const getProfile = asyncHandler(async(req, res)=>{
+    const {id} = req.user;
+    const user = await findById(id).select("name avatar username email about socket_id friends requests status");
+
+    res.status(200).json({user, message: "User Details Fetched Successfully"})
+})
+
 //INFO: Get Friends
 export const getFriends = asyncHandler(async (req, res) => {
     const {id} = req.user;
@@ -273,7 +286,8 @@ export const getFriends = asyncHandler(async (req, res) => {
 //INFO: Get Requests
 export const getRequests = asyncHandler(async (req, res) => {
     const {id} = req.user;
-    const requests = await FriendReq.find({receiver: id}).populate('sender', 'id name username avatar about');
+    const user = await User.findById(id).populate('requests', 'id name username avatar about');
+    const requests = user.requests;
 
     res.status(200).json({requests, message: 'Requests fetched successfully'});
 })
@@ -292,7 +306,7 @@ export const findPeople = asyncHandler(async (req, res) => {
             { username: { $regex: name, $options: 'i' } }
         ],
         _id: { $ne: currentUserId }
-    }).select('id name username avatar about');
+    }).select('id name username avatar about requests');
 
     res.status(200).json({ people, message: 'People fetched successfully' });
 });

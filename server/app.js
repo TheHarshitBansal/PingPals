@@ -54,7 +54,7 @@ app.use('/api/v1/user', userRoutes);
 
 app.use(errorMiddleware)
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
     connectToDb();
 })
@@ -66,79 +66,98 @@ io.on('connection', async (socket) => {
 
     if(user_id){
         await User.findByIdAndUpdate(user_id, {socket_id, status: 'Online'});
+        io.to(socket_id).emit('database-updated');
     }
 
     //INFO: Socket Events
     socket.on('friend_request', async (data) => {
-        const receiver = await User.findById(data.receiver).select('socket_id');
-        const sender = await User.findById(data.sender).select('socket_id');
+        const receiver = await User.findByIdAndUpdate(data.receiver, {$push: {requests: data.sender}}).select('socket_id').exec();
+        const sender = await User.findById(data.sender).select('socket_id').exec();
 
-        //INFO: Creating a friend request
+    //INFO: Creating a friend request
         await FriendReq.create({
-            sender: data.sender,
-            receiver: data.receiver
+            sender: sender.id,
+            receiver: receiver.id,
         }); 
 
-        receiver.requests.push(data.sender);
-        await receiver.save();
-
-        //INFO: Emitting a received friend request to the receiver
+    //INFO: Emitting a received friend request to the receiver
+    if(receiver && receiver.socket_id){
         io.to(receiver.socket_id).emit('new_friend_request', {
             message: 'You have received a new friend request',
         }); 
-
-        //INFO: Emitting a sent friend request to the sender
+    }
+        
+    //INFO: Emitting a sent friend request to the sender
+    if(sender && sender.socket_id){
         io.to(sender.socket_id).emit('friend_request_sent', {
             message: 'Friend request sent successfully',
         });
+    }
+
+    socket.to(receiver.socket_id).emit('database-updated');
+    socket.to(sender.socket_id).emit('database-updated');
     })
 
+    //INFO: Unsending a friend request
+    socket.on('unsend_request', async (data) => {
+        await User.findByIdAndUpdate(data.receiver, {$pull: {requests: data.sender}});
+        await FriendReq.findOneAndDelete({sender: data.sender, receiver: data.receiver});
 
-    //INFO: Accepting a friend request
-    socket.on('accept_request', async (data) => {
-        const request = await FriendReq.findById(data.request_id);
+        const sender = await User.findById(data.sender).select('socket_id').exec();
 
-        //INFO: Updating the friends list of the sender
-        await User.findByIdAndUpdate(request.sender, {$push: {friends: request.receiver}});
-        //INFO: Updating the friends list of the receiver
-        await User.findByIdAndUpdate(request.receiver, {$push: {friends: request.sender}});
-
-        await FriendReq.findByIdAndDelete(data.request_id);
-
-        //INFO: Emitting a friend request accepted to the sender
-        io.to(request.sender).emit('request_accepted', {
-            message: 'Friend request accepted successfully',
-        });
-        //INFO: Emitting a friend request accepted to the receiver
-        io.to(request.receiver).emit('request_accepted', {
-            message: 'Friend request accepted successfully',
-        });
-    })
-
-    //INFO: Fetching Chats
-    socket.on('get_direct_chats', async ({user_id}, callback) => {
-        const allConversations = await Message.find({participants: {$all: [user_id]}}).populate('participants', 'name avatar, status _id');
-
-        callback(allConversations);
-    })
-
-        //INFO: Handle Text & Link Messages
-        socket.on('text_message', async (data) => {
-
+        if(sender && sender.socket_id){
+        io.to(sender.socket_id).emit('request-unsend', {
+            message: 'Friend request revoked',
         })
+        io.to(sender.socket_id).emit('database-updated');
+    }
+    })
 
-        //INFO: Handling File & Media Messages
-        socket.on("file_message", async (data) =>  {
+
+    // //INFO: Accepting a friend request
+    // socket.on('accept_request', async (data) => {
+    //     const request = await FriendReq.findById(data.request_id);
+
+    //     //INFO: Updating the friends list of the sender
+    //     await User.findByIdAndUpdate(request.sender, {$push: {friends: request.receiver}});
+    //     //INFO: Updating the friends list of the receiver
+    //     await User.findByIdAndUpdate(request.receiver, {$push: {friends: request.sender}});
+
+    //     await FriendReq.findByIdAndDelete(data.request_id);
+
+    //     //INFO: Emitting a friend request accepted to the sender
+    //     io.to(request.sender).emit('request_accepted', {
+    //         message: 'Friend request accepted successfully',
+    //     });
+    //     //INFO: Emitting a friend request accepted to the receiver
+    //     io.to(request.receiver).emit('request_accepted', {
+    //         message: 'Friend request accepted successfully',
+    //     });
+    // })
+
+    // //INFO: Fetching Chats
+    // socket.on('get_direct_chats', async ({user_id}, callback) => {
+    //     const allConversations = await Message.find({participants: {$all: [user_id]}}).populate('participants', 'name avatar status _id');
+
+    //     callback(allConversations);
+    // })
+
+    //     //INFO: Handle Text & Link Messages
+    //     socket.on('text_message', async (data) => {
+
+    //     })
+
+    //     //INFO: Handling File & Media Messages
+    //     socket.on("file_message", async (data) =>  {
              
-            const fileExtension = path.extname(data.file.name);
-            const fileName = `${Date.now()}_${Math.floor(Math.random()*1000)}${fileExtension}`
-        })
+    //         const fileExtension = path.extname(data.file.name);
+    //         const fileName = `${Date.now()}_${Math.floor(Math.random()*1000)}${fileExtension}`
+    //     })
 
-        socket.on('end', async (data) => {
-            await User.findByIdAndUpdate(data.user_id, {status: 'Offline'});
-            console.log("Closing socket connection");
-            socket.disconnect(0);
-        })
+    socket.on('disconnect', async () => {
+        console.log(`User disconnected: ${user_id} (${socket.id})`);
+        await User.findByIdAndUpdate(user_id, { status: "Offline" });
+    });
     })
 
 

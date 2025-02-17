@@ -3,17 +3,15 @@ import { useState, useEffect } from "react";
 import { Avatar, AvatarImage } from "../ui/avatar.jsx";
 import { AvatarFallback } from "@radix-ui/react-avatar";
 import { Skeleton } from "../ui/skeleton.jsx";
-import { UserCheck2, UserPlus2 } from "lucide-react";
+import { UserMinus2Icon, UserPlus2 } from "lucide-react";
 import { socket } from "@/socket.js";
-import { toast } from "@/hooks/use-toast.js";
 import { useSelector } from "react-redux";
 
 const SearchPeople = () => {
   const user = useSelector((state) => state.auth.user);
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
-
-  const { data, isSuccess, isLoading } = useFindPeopleQuery({
+  const { data, isSuccess, isLoading, refetch } = useFindPeopleQuery({
     name: debouncedSearch,
   });
 
@@ -43,7 +41,7 @@ const SearchPeople = () => {
         <div className="mt-6 w-4/5 mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
           {data.people.map((person) => (
             <div
-              key={person.id}
+              key={person._id}
               className="border p-4 rounded-lg shadow-md flex items-center gap-x-4 w-fit"
             >
               <Avatar className="cursor-pointer h-20 w-20">
@@ -61,29 +59,34 @@ const SearchPeople = () => {
                   {person.about}
                 </p>
               </div>
-              {!person.requests?.includes(user.id) ? (
+              {person.requests.includes(user._id) ? (
+                <div
+                  className="text-gray-500 dark:text-gray-400"
+                  onClick={() => {
+                    //INFO: Unsend friend request functionality
+                    socket.emit("unsend_request", {
+                      receiver: person._id,
+                      sender: user._id,
+                    });
+                    refetch();
+                  }}
+                >
+                  <UserMinus2Icon size={24} className="cursor-pointer" />
+                </div>
+              ) : (
                 <button
                   className="text-gray-500 dark:text-gray-400"
                   onClick={() => {
                     //INFO: Add friend functionality
-                    socket.emit(
-                      "friend_request",
-                      {
-                        receiver: person.id,
-                        sender: user.id,
-                      },
-                      (data) => {
-                        toast({ variant: "success", title: data.message });
-                      }
-                    );
+                    socket.emit("friend_request", {
+                      receiver: person._id,
+                      sender: user._id,
+                    });
+                    refetch();
                   }}
                 >
                   <UserPlus2 size={24} className="cursor-pointer" />
                 </button>
-              ) : (
-                <div className="text-gray-500 dark:text-gray-400">
-                  <UserCheck2 size={24} className="cursor-pointer" />
-                </div>
               )}
             </div>
           ))}

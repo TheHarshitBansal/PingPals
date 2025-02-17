@@ -5,8 +5,7 @@ import Badge from "@mui/material/Badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { styled } from "@mui/material";
 import { Skeleton } from "@/components/ui/skeleton.jsx";
-import users from "@/data/users.js";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setCurrentConversation } from "@/redux/slices/conversationSlice.js";
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
@@ -102,6 +101,9 @@ export const ChatElement = ({
 // INFO: Chats Component
 
 const Chats = () => {
+  const conversations = useSelector(
+    (state) => state.conversation.directConversations
+  );
   return (
     <div className="relative h-screen min-w-80 max-w-80 shadow-light dark:shadow-dark flex flex-col">
       {/* Header */}
@@ -117,7 +119,7 @@ const Chats = () => {
 
       {/* Chat List */}
       <div className="flex-1 overflow-y-auto px-5 no-scrollbar">
-        {users.map((user, index) => (
+        {conversations.map((user, index) => (
           <ChatElement
             id={user.id}
             key={index}
