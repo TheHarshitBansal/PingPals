@@ -12,7 +12,6 @@ const GeneralApp = () => {
   const conversation = useSelector((state) => state.conversation);
   const app = useSelector((state) => state.app);
   const user = useSelector((state) => state.auth.user);
-  const dispatch = useDispatch();
 
   useEffect(() => {
     if (user?._id) {
