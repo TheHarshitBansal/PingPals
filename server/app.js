@@ -69,7 +69,7 @@ io.on('connection', async (socket) => {
         return;
     }
         await User.findByIdAndUpdate(user_id, {socket_id, status: 'Online'});
-        io.to(socket_id).emit('database-updated');
+        socket.broadcast.emit('database-updated');
 
     //INFO: Socket Events
     socket.on('friend_request', async (data) => {
@@ -166,12 +166,28 @@ io.on('connection', async (socket) => {
         })
     })
 
-    // //INFO: Fetching Chats
-    // socket.on('get_direct_chats', async ({user_id}, callback) => {
-    //     const allConversations = await Message.find({participants: {$all: [user_id]}}).populate('participants', 'name avatar status _id');
+    //INFO: Starting a chat
+    socket.on('start_chat', async (data) => {
+        const existingChat = await Message.findOne({participants:{$size:2, $all:[user_id, data.receiver]}}).populate("participants", "name username avatar status").exec();
 
-    //     callback(allConversations);
-    // })
+        if(!existingChat){
+            let newChat = await Message.create({
+                participants: [user_id, data.receiver],
+                messages: [],
+            });
+            newChat = await newChat.populate("participants", "name username avatar status about _id");
+            socket.emit('open_chat', newChat);
+        } else {
+            socket.emit('open_chat', existingChat);
+        }
+    })
+
+    //INFO: Fetching Chats
+    socket.on('get_direct_chats', async ({user_id}) => {
+        const allConversations = await Message.find({participants: {$all: [user_id]}}).populate('participants', 'name username avatar status _id about');
+
+        socket.emit('direct_chats', allConversations);
+    })
 
     //     //INFO: Handle Text & Link Messages
     //     socket.on('text_message', async (data) => {
@@ -188,6 +204,7 @@ io.on('connection', async (socket) => {
     socket.on('disconnect', async () => {
         console.log(`User disconnected: ${user_id} (${socket.id})`);
         await User.findByIdAndUpdate(user_id, { status: "Offline" });
+        socket.broadcast.emit('database-updated');
     });
     })
 

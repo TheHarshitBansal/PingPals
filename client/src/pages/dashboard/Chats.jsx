@@ -48,15 +48,28 @@ export const ChatElement = ({
   badge,
   online,
 }) => {
+  const user = useSelector((state) => state.auth.user);
+  const chats = useSelector((state) => state.conversation.directConversations);
+  const currentCoversation = useSelector(
+    (state) => state.conversation.currentConversation
+  );
+  const currentConvo = chats.find(
+    (chat) =>
+      chat?.participants?.find((person) => person._id !== user._id)._id === id
+  );
   const dispatch = useDispatch();
   return (
     <div
-      className="w-full h-20 rounded-sm hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center justify-between px-3 py-2 border-y border-gray-100 dark:border-gray-900 cursor-pointer"
+      className={`w-full h-20 rounded-sm hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center justify-between px-3 py-2 border-y border-gray-100 dark:border-gray-900 cursor-pointer ${
+        currentCoversation?._id === currentConvo?._id
+          ? "bg-gray-200 dark:bg-gray-800"
+          : ""
+      }`}
       onClick={() => {
-        dispatch(setCurrentConversation(id));
+        dispatch(setCurrentConversation(currentConvo));
       }}
     >
-      <div className="flex items-center justify-between">
+      <div className={`flex items-center justify-between`}>
         <div className="flex gap-x-2">
           {online ? (
             <StyledBadge
@@ -64,7 +77,7 @@ export const ChatElement = ({
               anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
               variant="dot"
             >
-              <Avatar className="cursor-pointer">
+              <Avatar className="cursor-pointer h-12 w-12">
                 <AvatarImage src={avatar} loading="lazy" />
                 <AvatarFallback>
                   <Skeleton className="h-16 w-16 rounded-full" />
@@ -101,9 +114,25 @@ export const ChatElement = ({
 // INFO: Chats Component
 
 const Chats = () => {
-  const conversations = useSelector(
-    (state) => state.conversation.directConversations
-  );
+  const chats = useSelector((state) => state.conversation.directConversations);
+  const user = useSelector((state) => state.auth.user);
+  const conversations = chats.map((chats) => {
+    const chat = chats.participants.find((person) => person._id !== user._id);
+
+    return {
+      id: chat._id,
+      name: chat.name,
+      avatar: chat.avatar,
+      online: user.status,
+    };
+  });
+  {
+    conversations.length === 0 && (
+      <div className="relative h-screen min-w-80 max-w-80 shadow-light dark:shadow-dark flex items-center justify-center">
+        <h1 className="text-2xl font-bold">No Chats</h1>
+      </div>
+    );
+  }
   return (
     <div className="relative h-screen min-w-80 max-w-80 shadow-light dark:shadow-dark flex flex-col">
       {/* Header */}

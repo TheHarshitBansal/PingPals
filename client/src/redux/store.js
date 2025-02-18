@@ -17,7 +17,7 @@ const rootPersistConfig = {
     key: 'root',
     storage,
     keyPrefix: 'redux-',
-    whitelist: ['auth'],
+    whitelist: ['auth', 'conversation'],
 }
 
 export const store = configureStore({

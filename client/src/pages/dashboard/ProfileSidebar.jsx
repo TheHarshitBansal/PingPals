@@ -1,8 +1,7 @@
 import { Separator } from "@/components/ui/separator.jsx";
-import users from "@/data/users.js";
 import { setSidebarType, toggleSidebar } from "@/redux/slices/appSlice.js";
 import { Ban, BellOff, ChevronRight, Star, Trash, X } from "lucide-react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { faker } from "@faker-js/faker";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
@@ -34,6 +33,11 @@ const ProfileSidebar = () => {
     dispatch(setSidebarType("STARRED"));
   };
 
+  const chat = useSelector((state) => state?.conversation?.currentConversation);
+  const user = useSelector((state) => state?.auth?.user);
+
+  const users = chat?.participants?.filter((person) => person._id !== user._id);
+
   return (
     <div className="flex flex-col shadow-light dark:shadow-dark w-1/4 h-full">
       {/* Profile Header */}
@@ -54,7 +58,7 @@ const ProfileSidebar = () => {
           />
           <div>
             <h3 className="text-lg font-medium">{users[0].name}</h3>
-            <h3 className="text-base">{users[0].phone}</h3>
+            <h3 className="text-base">@{users[0].username}</h3>
           </div>
         </div>
         <div className="flex px-2 space-x-2 text-gray-500 dark:text-gray-400 text-sm">

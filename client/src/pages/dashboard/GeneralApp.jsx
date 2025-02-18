@@ -1,7 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { socket } from "@/socket.js";
-import { fetchDirectConversations } from "@/redux/slices/conversationSlice.js";
 import Chats from "./Chats.jsx";
 import MessageView from "./MessageView.jsx";
 import ProfileSidebar from "./ProfileSidebar.jsx";
@@ -17,19 +16,9 @@ const GeneralApp = () => {
 
   useEffect(() => {
     if (user?._id) {
-      socket.emit(
-        "get_direct_chats",
-        { user_id: user._id },
-        (conversations) => {
-          dispatch(fetchDirectConversations(conversations));
-        }
-      );
-
-      return () => {
-        socket.off("get_direct_chats");
-      };
+      socket?.emit("get_direct_chats", { user_id: user._id });
     }
-  }, [user?._id, dispatch]);
+  });
 
   return (
     <div className="flex h-screen w-full">

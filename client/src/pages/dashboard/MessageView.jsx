@@ -1,4 +1,3 @@
-import users from "@/data/users.js";
 import {
   CaretDown,
   Gif,
@@ -32,6 +31,10 @@ const MessageView = () => {
 
   const [isGifOpen, setIsGifOpen] = useState(false);
   const profileSidebar = useSelector((state) => state?.app?.sidebar?.isOpen);
+  const chat = useSelector((state) => state?.conversation?.currentConversation);
+  const user = useSelector((state) => state?.auth?.user);
+
+  const users = chat?.participants?.filter((person) => person._id !== user._id);
 
   const handleSidebar = () => {
     dispatch(toggleSidebar());
@@ -62,7 +65,7 @@ const MessageView = () => {
                 {users[0].name}
               </h5>
               <p className="text-sm text-gray-500 dark:text-gray-400">
-                {users[0].online ? "Online" : "Offline"}
+                {users[0].status ? "Online" : "Offline"}
               </p>
             </div>
           </div>

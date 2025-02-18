@@ -13,6 +13,10 @@ import { connectSocket, socket } from "@/socket.js";
 import { toast } from "@/hooks/use-toast.js";
 import { useGetUserQuery } from "@/redux/api/authApi.js";
 import { updateUser } from "@/redux/slices/authSlice.js";
+import {
+  fetchDirectConversations,
+  setCurrentConversation,
+} from "@/redux/slices/conversationSlice.js";
 
 const Dashboard = () => {
   const { data, refetch } = useGetUserQuery(undefined);
@@ -26,45 +30,58 @@ const Dashboard = () => {
     if (isAuthenticated) {
       connectSocket(user._id);
 
-      socket.on("new_friend_request", (data) => {
-        toast({ variant: "success", title: data.message });
-      });
+      if (socket) {
+        socket.on("new_friend_request", (data) => {
+          toast({ variant: "success", title: data.message });
+        });
 
-      socket.on("friend_request_sent", (data) => {
-        toast({ variant: "success", title: data.message });
-      });
+        socket.on("friend_request_sent", (data) => {
+          toast({ variant: "success", title: data.message });
+        });
 
-      socket.on("request_accepted", (data) => {
-        toast({ variant: "success", title: data.message });
-      });
+        socket.on("request_accepted", (data) => {
+          toast({ variant: "success", title: data.message });
+        });
 
-      socket.on("request-unsend", (data) => {
-        toast({ variant: "success", title: data.message });
-      });
+        socket.on("request-unsend", (data) => {
+          toast({ variant: "success", title: data.message });
+        });
 
-      socket.on("request_rejected", (data) => {
-        toast({ variant: "success", title: data.message });
-      });
+        socket.on("request_rejected", (data) => {
+          toast({ variant: "success", title: data.message });
+        });
 
-      socket.on("friend_removed", (data) => {
-        toast({ variant: "success", title: data.message });
-      });
+        socket.on("friend_removed", (data) => {
+          toast({ variant: "success", title: data.message });
+        });
 
-      socket.on("database-updated", async () => {
-        const updatedData = await refetch();
-        if (updatedData?.data?.user) {
-          dispatch(updateUser(updatedData.data.user));
-        }
-      });
+        socket.on("open_chat", (data) => {
+          navigate(`/chat`);
+          dispatch(setCurrentConversation(data));
+        });
+
+        socket.on("direct_chats", (data) => {
+          dispatch(fetchDirectConversations(data));
+        });
+
+        socket.on("database-updated", async () => {
+          const updatedData = await refetch();
+          if (updatedData?.data?.user) {
+            dispatch(updateUser(updatedData.data.user));
+          }
+        });
+      }
 
       return () => {
-        socket.off("new_friend_request");
-        socket.off("friend_request_sent");
-        socket.off("request_accepted");
-        socket.off("request-unsend");
-        socket.off("request_rejected");
-        socket.off("friend_removed");
-        socket.off("database-updated");
+        socket?.off("new_friend_request");
+        socket?.off("friend_request_sent");
+        socket?.off("request_accepted");
+        socket?.off("request-unsend");
+        socket?.off("request_rejected");
+        socket?.off("friend_removed");
+        socket?.off("open_chat");
+        socket?.off("direct_chats");
+        socket?.off("database-updated");
       };
     }
   }, [isAuthenticated, user._id, refetch, data, dispatch]);
@@ -124,7 +141,7 @@ const Dashboard = () => {
             </div>
             <ProfileOptions>
               <Avatar className="cursor-pointer">
-                <AvatarImage src={faker.image.avatar()} />
+                <AvatarImage src={user.avatar} />
                 <AvatarFallback>
                   <Skeleton className="h-16 w-16 rounded-full" />
                 </AvatarFallback>

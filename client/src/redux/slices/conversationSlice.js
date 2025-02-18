@@ -12,20 +12,7 @@ const conversationSlice = createSlice({
     initialState,
     reducers:{
         fetchDirectConversations: (state, action) => {
-            const list = action.payload.map((conversation) => {
-                const this_user = conversation.participants.find((participant) => participant._id !== user_id);
-                return{
-                    id: this_user._id,
-                    name: this_user.name,
-                    avatar: this_user.avatar,
-                    online: this_user.status,
-                    message: "hii",
-                    time: "12:00",
-                    badge: 2,
-                }
-            })
-
-            state.directConversations = list; 
+            state.directConversations = action.payload;
         },
         fetchGroupConversations: (state, action) => {
             state.groupConversations = action.payload;
