@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 import ProfileOptions from "@/components/profile/ProfileOptions.jsx";
 import { Skeleton } from "@/components/ui/skeleton.jsx";
 import { useDispatch, useSelector } from "react-redux";
-import { connectSocket, socket } from "@/socket.js"; // ✅ Fixed import
+import { connectSocket, socket } from "@/socket.js";
 import { toast } from "@/hooks/use-toast.js";
 import { useGetUserQuery } from "@/redux/api/authApi.js";
 import { updateUser } from "@/redux/slices/authSlice.js";
@@ -24,40 +24,36 @@ const Dashboard = () => {
 
   useEffect(() => {
     if (isAuthenticated) {
-      window.onload = () => {
-        if (!window.location.hash) {
-          window.location = window.location + "#loaded";
-          window.location.reload();
-        }
-      };
-
       connectSocket(user._id);
 
-      //INFO: New Friend Request
       socket.on("new_friend_request", (data) => {
         toast({ variant: "success", title: data.message });
       });
 
-      //INFO: Friend Request Sent
       socket.on("friend_request_sent", (data) => {
         toast({ variant: "success", title: data.message });
       });
 
-      //INFO: Friend Request Accepted
       socket.on("request_accepted", (data) => {
         toast({ variant: "success", title: data.message });
       });
 
-      //INFO: Friend Request Unsend
       socket.on("request-unsend", (data) => {
         toast({ variant: "success", title: data.message });
       });
 
-      //INFO: Database Updations
-      socket.on("database-updated", () => {
-        refetch();
-        if (data) {
-          dispatch(updateUser(data));
+      socket.on("request_rejected", (data) => {
+        toast({ variant: "success", title: data.message });
+      });
+
+      socket.on("friend_removed", (data) => {
+        toast({ variant: "success", title: data.message });
+      });
+
+      socket.on("database-updated", async () => {
+        const updatedData = await refetch();
+        if (updatedData?.data?.user) {
+          dispatch(updateUser(updatedData.data.user));
         }
       });
 
@@ -65,9 +61,13 @@ const Dashboard = () => {
         socket.off("new_friend_request");
         socket.off("friend_request_sent");
         socket.off("request_accepted");
+        socket.off("request-unsend");
+        socket.off("request_rejected");
+        socket.off("friend_removed");
+        socket.off("database-updated");
       };
     }
-  }, [isAuthenticated, user._id, refetch, data]);
+  }, [isAuthenticated, user._id, refetch, data, dispatch]);
 
   useEffect(() => {
     const routes = {

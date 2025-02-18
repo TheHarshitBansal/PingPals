@@ -3,7 +3,13 @@ import { useState, useEffect } from "react";
 import { Avatar, AvatarImage } from "../ui/avatar.jsx";
 import { AvatarFallback } from "@radix-ui/react-avatar";
 import { Skeleton } from "../ui/skeleton.jsx";
-import { UserMinus2Icon, UserPlus2 } from "lucide-react";
+import {
+  Check,
+  MessageSquareMoreIcon,
+  UserMinus2Icon,
+  UserPlus2,
+  X,
+} from "lucide-react";
 import { socket } from "@/socket.js";
 import { useSelector } from "react-redux";
 
@@ -14,6 +20,14 @@ const SearchPeople = () => {
   const { data, isSuccess, isLoading, refetch } = useFindPeopleQuery({
     name: debouncedSearch,
   });
+
+  useEffect(() => {
+    if (socket) {
+      socket.on("database-updated", () => {
+        refetch();
+      });
+    }
+  }, [refetch]);
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -30,7 +44,10 @@ const SearchPeople = () => {
           type="text"
           placeholder="Search People (Name or Username)"
           className="bg-transparent border p-4 rounded-lg outline-none w-full"
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={(e) => {
+            setSearch(e.target.value);
+            refetch();
+          }}
           value={search}
         />
       </form>
@@ -38,7 +55,7 @@ const SearchPeople = () => {
       {isLoading && <div className="text-center mt-4">Loading...</div>}
 
       {isSuccess && data?.people?.length > 0 ? (
-        <div className="mt-6 w-4/5 mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+        <div className="mt-6 w-4/5 mx-auto grid grid-cols-2 gap-4">
           {data.people.map((person) => (
             <div
               key={person._id}
@@ -59,33 +76,83 @@ const SearchPeople = () => {
                   {person.about}
                 </p>
               </div>
-              {person.requests.includes(user._id) ? (
-                <div
-                  className="text-gray-500 dark:text-gray-400"
-                  onClick={() => {
-                    //INFO: Unsend friend request functionality
-                    socket.emit("unsend_request", {
-                      receiver: person._id,
-                      sender: user._id,
-                    });
-                    refetch();
-                  }}
-                >
-                  <UserMinus2Icon size={24} className="cursor-pointer" />
-                </div>
-              ) : (
+              {/* //HACK: Show Add Friend Button */}
+              {!person?.requests?.includes(user._id) &&
+                !user?.requests?.includes(person._id) &&
+                !user?.friends?.includes(person._id) && (
+                  <button
+                    className="text-gray-500 dark:text-gray-400"
+                    onClick={() => {
+                      //INFO: Add friend functionality
+                      socket.emit("friend_request", {
+                        receiver: person._id,
+                        sender: user._id,
+                      });
+                      refetch();
+                    }}
+                  >
+                    <UserPlus2 size={24} className="cursor-pointer" />
+                  </button>
+                )}
+              {/* //HACK: Show Unsend Friend Button */}
+              {person?.requests?.includes(user._id) &&
+                !user.requests.includes(person._id) &&
+                !user?.friends?.includes(person._id) && (
+                  <div
+                    className="text-gray-500 dark:text-gray-400"
+                    onClick={() => {
+                      //INFO: Unsend friend request functionality
+                      socket.emit("unsend_request", {
+                        receiver: person._id,
+                        sender: user._id,
+                      });
+                      refetch();
+                    }}
+                  >
+                    <UserMinus2Icon size={24} className="cursor-pointer" />
+                  </div>
+                )}
+
+              {/* //HACK: Show Accept Friend Button */}
+              {user?.requests?.includes(person._id) && (
+                <>
+                  <button
+                    className="text-green-500 dark:text-green-400"
+                    onClick={() => {
+                      //INFO: Add friend functionality
+                      socket.emit("accept_request", {
+                        sender: person._id,
+                      });
+                      refetch();
+                    }}
+                  >
+                    <Check />
+                  </button>
+                  <button
+                    className="text-red-500 dark:text-red-400"
+                    onClick={() => {
+                      //INFO: Reject friend functionality
+                      socket.emit("reject_request", {
+                        sender: person._id,
+                      });
+                      refetch();
+                    }}
+                  >
+                    <X />
+                  </button>
+                </>
+              )}
+
+              {/* //HACK: Show Message Button */}
+              {user?.friends?.includes(person._id) && (
                 <button
-                  className="text-gray-500 dark:text-gray-400"
+                  className="text-blue-500 dark:text-blue-400"
                   onClick={() => {
-                    //INFO: Add friend functionality
-                    socket.emit("friend_request", {
-                      receiver: person._id,
-                      sender: user._id,
-                    });
-                    refetch();
+                    //INFO: Redirect to chat
+                    // navigate(`/chat/${person._id}`);
                   }}
                 >
-                  <UserPlus2 size={24} className="cursor-pointer" />
+                  <MessageSquareMoreIcon size={24} className="cursor-pointer" />
                 </button>
               )}
             </div>

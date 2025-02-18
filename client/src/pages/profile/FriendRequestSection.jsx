@@ -1,3 +1,5 @@
+import FriendList from "@/components/profile/FriendList.jsx";
+import RequestList from "@/components/profile/RequestList.jsx";
 import SearchPeople from "@/components/profile/SearchPeople.jsx";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -19,7 +21,12 @@ const FriendRequestSection = () => {
         <TabsContent value="search">
           <SearchPeople />
         </TabsContent>
-        <TabsContent value="password">Change your password here.</TabsContent>
+        <TabsContent value="friends">
+          <FriendList />
+        </TabsContent>
+        <TabsContent value="requests">
+          <RequestList />
+        </TabsContent>
       </Tabs>
     </div>
   );

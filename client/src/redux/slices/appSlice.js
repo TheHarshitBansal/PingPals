@@ -4,7 +4,9 @@ const initialState = {
     sidebar:{
         isOpen: false,
         type: 'PROFILE' // PROFILE, STARRED, SHARED
-    }
+    },
+    friends : [],
+    requests: [],
 }
 
 const appSlice = createSlice({
@@ -17,9 +19,15 @@ const appSlice = createSlice({
         setSidebarType: (state, action) => {
             state.sidebar.type = action.payload
         },
+        setFriends: (state, action) => {
+            state.friends = action.payload
+        },
+        setRequests: (state, action) => {
+            state.requests = action.payload
+        }
     }
 })
 
-export const { toggleSidebar, setSidebarType } = appSlice.actions;
+export const { toggleSidebar, setSidebarType, setFriends, setRequests } = appSlice.actions;
 
 export default appSlice.reducer;
