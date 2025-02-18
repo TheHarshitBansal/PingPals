@@ -235,7 +235,7 @@ export const updateProfile = asyncHandler(async (req, res) => {
     const sendUser = await User.findById(user.id).select("name avatar username email about socket_id friends requests status");
 
 
-    res.status(200).json({user:sendUser, message: 'Profile updated successfully', token});
+    res.status(200).json({user:sendUser, message: 'Profile updated successfully'});
 })
 
 //INFO: Change Password
@@ -269,7 +269,7 @@ export const changePassword = asyncHandler(async (req, res) => {
 //INFO: Get User Profile
 export const getProfile = asyncHandler(async(req, res)=>{
     const {id} = req.user;
-    const user = await findById(id).select("name avatar username email about socket_id friends requests status");
+    const user = await User.findById(id).select("name avatar username email about socket_id friends requests status");
 
     res.status(200).json({user, message: "User Details Fetched Successfully"})
 })

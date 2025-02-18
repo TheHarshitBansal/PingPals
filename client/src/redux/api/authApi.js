@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { addUser } from "../slices/authSlice.js";
+import { addUser, updateUser } from "../slices/authSlice.js";
 import { toast } from "@/hooks/use-toast.js";
 
 export const authApi = createApi({
@@ -121,7 +121,7 @@ export const authApi = createApi({
             onQueryStarted: async(_, { dispatch, queryFulfilled }) => {
                 try {
                     const result = await queryFulfilled;
-                    dispatch(addUser(result?.data));
+                    dispatch(updateUser(result?.data?.user));
                     toast({variant: 'success', title: result.data.message})
                 } catch (error) {
                     toast({variant: 'error', title: error?.error?.data?.message})
@@ -151,12 +151,24 @@ export const authApi = createApi({
             }),
         }),
         getUser: builder.query({
-            query: (body) => ({
+            query: () => ({
                 url: '/get-user',
                 method: "GET",
             })
-        })
+        }),
+        getFriends: builder.query({
+            query: () => ({
+                url: '/get-friends',
+                method: "GET",
+            })
+        }),
+        getRequests: builder.query({
+            query: () => ({
+                url: '/get-requests',
+                method: "GET",
+            })
+        }),
     })
 })
 
-export const { useLoginUserMutation, useRegisterUserMutation, useVerifyUserMutation, useResendOTPMutation, useForgotPasswordMutation, useResetPasswordMutation, useUpdateProfileMutation , useChangePasswordMutation, useFindPeopleQuery, useGetUserQuery} = authApi;
+export const { useLoginUserMutation, useRegisterUserMutation, useVerifyUserMutation, useResendOTPMutation, useForgotPasswordMutation, useResetPasswordMutation, useUpdateProfileMutation , useChangePasswordMutation, useFindPeopleQuery, useGetUserQuery, useGetFriendsQuery, useGetRequestsQuery} = authApi;
