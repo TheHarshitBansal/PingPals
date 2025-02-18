@@ -38,7 +38,7 @@ const RequestList = () => {
           {requests.map((person) => (
             <div
               key={person._id}
-              className="border p-6 rounded-2xl shadow-md flex items-center gap-x-6 min-w-fit bg-white dark:bg-gray-900 hover:shadow-lg transition-shadow duration-200"
+              className="border p-6 rounded-2xl shadow-md flex items-center gap-x-6 min-w-[50%] bg-white dark:bg-gray-900 hover:shadow-lg transition-shadow duration-200"
             >
               <Avatar className="cursor-pointer h-20 w-20">
                 <AvatarImage src={person.avatar} loading="lazy" />

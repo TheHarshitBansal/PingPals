@@ -59,22 +59,24 @@ const SearchPeople = () => {
           {data.people.map((person) => (
             <div
               key={person._id}
-              className="border p-4 rounded-lg shadow-md flex items-center gap-x-4 w-fit"
+              className="border p-4 rounded-lg shadow-md flex items-center justify-between min-w-[50%]"
             >
-              <Avatar className="cursor-pointer h-20 w-20">
-                <AvatarImage src={person.avatar} loading="lazy" />
-                <AvatarFallback>
-                  <Skeleton className="h-16 w-16 rounded-full" />
-                </AvatarFallback>
-              </Avatar>
-              <div className="flex flex-col space-y-0">
-                <h3 className="font-semibold text-lg">{person.name}</h3>
-                <p className="text-gray-500 dark:text-gray-400">
-                  @{person.username}
-                </p>
-                <p className="text-sm text-gray-400 dark:text-gray-600">
-                  {person.about}
-                </p>
+              <div className="flex items-center gap-x-4">
+                <Avatar className="cursor-pointer h-20 w-20">
+                  <AvatarImage src={person.avatar} loading="lazy" />
+                  <AvatarFallback>
+                    <Skeleton className="h-16 w-16 rounded-full" />
+                  </AvatarFallback>
+                </Avatar>
+                <div className="flex flex-col space-y-0">
+                  <h3 className="font-semibold text-lg">{person.name}</h3>
+                  <p className="text-gray-500 dark:text-gray-400">
+                    @{person.username}
+                  </p>
+                  <p className="text-sm text-gray-400 dark:text-gray-600">
+                    {person.about}
+                  </p>
+                </div>
               </div>
               {/* //HACK: Show Add Friend Button */}
               {!person?.requests?.includes(user._id) &&
@@ -115,7 +117,7 @@ const SearchPeople = () => {
 
               {/* //HACK: Show Accept Friend Button */}
               {user?.requests?.includes(person._id) && (
-                <>
+                <div className="flex gap-x-4">
                   <button
                     className="text-green-500 dark:text-green-400"
                     onClick={() => {
@@ -140,7 +142,7 @@ const SearchPeople = () => {
                   >
                     <X />
                   </button>
-                </>
+                </div>
               )}
 
               {/* //HACK: Show Message Button */}

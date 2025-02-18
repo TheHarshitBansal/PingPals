@@ -18,6 +18,7 @@ const ProfileOptions = ({ children }) => {
 
   const handleLogout = () => {
     dispatch(removeUser());
+    localStorage.removeItem("redux-root");
     toast({ variant: "success", title: "Logged Out Successfully" });
   };
 

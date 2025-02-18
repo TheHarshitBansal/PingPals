@@ -7,6 +7,17 @@ import { useDispatch, useSelector } from "react-redux";
 import { useGetFriendsQuery } from "@/redux/api/authApi.js";
 import { useEffect } from "react";
 import { setFriends } from "@/redux/slices/appSlice.js";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 const FriendList = () => {
   const dispatch = useDispatch();
@@ -37,7 +48,7 @@ const FriendList = () => {
           {friends.map((person) => (
             <div
               key={person._id}
-              className="border p-6 rounded-2xl shadow-md flex items-center gap-x-6 min-w-fit bg-white dark:bg-gray-900 hover:shadow-lg transition-shadow duration-200"
+              className="border p-6 rounded-2xl shadow-md flex items-center gap-x-6 min-w-[50%] bg-white dark:bg-gray-900 hover:shadow-lg transition-shadow duration-200"
             >
               <Avatar className="cursor-pointer h-20 w-20">
                 <AvatarImage src={person.avatar} loading="lazy" />
@@ -68,20 +79,42 @@ const FriendList = () => {
                     <MessageSquareMoreIcon size={18} />
                     Message
                   </button>
-
-                  <button
-                    className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-red-500 rounded-lg hover:bg-red-600 transition-all"
-                    onClick={() => {
-                      //INFO: Remove friend functionality
-                      socket.emit("remove_friend", {
-                        receiver: person._id,
-                      });
-                      refetch();
-                    }}
-                  >
-                    <LucideUserMinus size={18} />
-                    Remove
-                  </button>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <button className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-red-500 rounded-lg hover:bg-red-600 transition-all">
+                        <LucideUserMinus size={18} />
+                        Remove
+                      </button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>
+                          Are you absolutely sure?
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                          This action cannot be undone. You will have to send
+                          friend request to them in order to chat again.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction asChild>
+                          <button
+                            className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-600 transition-all"
+                            onClick={() => {
+                              //INFO: Remove friend functionality
+                              socket.emit("remove_friend", {
+                                receiver: person._id,
+                              });
+                              refetch();
+                            }}
+                          >
+                            Remove
+                          </button>
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                 </div>
               </div>
             </div>
