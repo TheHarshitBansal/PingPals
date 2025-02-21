@@ -69,7 +69,7 @@ io.on('connection', async (socket) => {
         return;
     }
         await User.findByIdAndUpdate(user_id, {socket_id, status: 'Online'});
-        socket.broadcast.emit('database-updated');
+        socket.broadcast.emit('database-changed');
 
     //INFO: Socket Events
     socket.on('friend_request', async (data) => {
@@ -189,10 +189,67 @@ io.on('connection', async (socket) => {
         socket.emit('direct_chats', allConversations);
     })
 
-    //     //INFO: Handle Text & Link Messages
-    //     socket.on('text_message', async (data) => {
+    //INFO: Fetching Messages
+    socket.on('get_messages', async ({conversation_id}) => {
+        const conversation = await Message.findById(conversation_id);
+        socket.emit('dispatch_messages', conversation?.messages);
+    })
 
-    //     })
+    //INFO: Handle Date Separator
+    socket.on("message", async (data) => {
+        try {
+            const conversation = await Message.findById(data.conversation_id);
+            if (!conversation) return;
+    
+            const formatDate = (date) => {
+                const d = new Date(date);
+                return `${String(d.getDate()).padStart(2, '0')}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getFullYear()).slice(-2)}`;
+            };
+    
+            const messageDate = new Date(); // Current date
+            const lastMessageDate = conversation.lastMessage ? new Date(conversation.lastMessage) : null;
+    
+            if (!lastMessageDate || lastMessageDate.toDateString() !== messageDate.toDateString()) {
+                conversation.messages.push({
+                    type: "Separator",
+                    createdAt: formatDate(messageDate),
+                });
+            }
+    
+            conversation.lastMessage = messageDate; // Store as a Date object
+            await conversation.save();
+        } catch (error) {
+            console.error("Error handling message event:", error);
+        }
+    });
+
+    //INFO: Handle Text Messages
+    socket.on("text_message", async (data)=>{
+        const conversation = await Message.findById(data.conversation_id);
+        if(!conversation) return;
+
+        // Function to format time as HH:MM
+        const formatTime = (date) => {
+            const d = new Date(date);
+            return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+        };
+
+        const messageTime = formatTime(new Date()); // Get current time in HH:MM format
+
+        conversation.messages.push({
+            sender: user_id,
+            receiver: data.receiver_id,
+            content: data.content,
+            createdAt: messageTime, // Store formatted time
+        });
+
+        await conversation.save();
+
+        const receiverData = await User.findById(data.receiver_id).select('socket_id').exec();
+
+        io.to(receiverData?.socket_id).emit('database-changed');
+        io.emit('database-changed');
+    })
 
     //     //INFO: Handling File & Media Messages
     //     socket.on("file_message", async (data) =>  {
@@ -204,7 +261,7 @@ io.on('connection', async (socket) => {
     socket.on('disconnect', async () => {
         console.log(`User disconnected: ${user_id} (${socket.id})`);
         await User.findByIdAndUpdate(user_id, { status: "Offline" });
-        socket.broadcast.emit('database-updated');
+        socket.broadcast.emit('database-changed');
     });
     })
 

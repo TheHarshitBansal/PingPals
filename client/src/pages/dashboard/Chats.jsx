@@ -77,7 +77,7 @@ export const ChatElement = ({
               anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
               variant="dot"
             >
-              <Avatar className="cursor-pointer h-12 w-12">
+              <Avatar className="cursor-pointer h-14 w-14">
                 <AvatarImage src={avatar} loading="lazy" />
                 <AvatarFallback>
                   <Skeleton className="h-16 w-16 rounded-full" />
@@ -85,7 +85,7 @@ export const ChatElement = ({
               </Avatar>
             </StyledBadge>
           ) : (
-            <Avatar className="cursor-pointer">
+            <Avatar className="cursor-pointer h-14 w-14">
               <AvatarImage src={avatar} loading="lazy" />
               <AvatarFallback>
                 <Skeleton className="h-16 w-16 rounded-full" />
@@ -123,7 +123,7 @@ const Chats = () => {
       id: chat._id,
       name: chat.name,
       avatar: chat.avatar,
-      online: user.status,
+      online: chat.status,
     };
   });
   {
@@ -157,7 +157,7 @@ const Chats = () => {
             avatar={user.avatar}
             time={user.time}
             badge={user.badge}
-            online={user.online}
+            online={user.online === "Online" ? true : false}
           />
         ))}
       </div>

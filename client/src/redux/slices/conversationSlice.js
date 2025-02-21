@@ -14,9 +14,6 @@ const conversationSlice = createSlice({
         fetchDirectConversations: (state, action) => {
             state.directConversations = action.payload;
         },
-        fetchGroupConversations: (state, action) => {
-            state.groupConversations = action.payload;
-        },
         setCurrentConversation: (state, action) => {
             state.currentConversation = action.payload;
         },
@@ -26,6 +23,6 @@ const conversationSlice = createSlice({
     }
 })
 
-export const { fetchDirectConversations, fetchGroupConversations, setCurrentConversation, fetchMessages } = conversationSlice.actions;
+export const { fetchDirectConversations, setCurrentConversation, fetchMessages } = conversationSlice.actions;
 
 export default conversationSlice.reducer;

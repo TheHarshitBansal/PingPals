@@ -60,10 +60,6 @@ const Dashboard = () => {
           dispatch(setCurrentConversation(data));
         });
 
-        socket.on("direct_chats", (data) => {
-          dispatch(fetchDirectConversations(data));
-        });
-
         socket.on("database-updated", async () => {
           const updatedData = await refetch();
           if (updatedData?.data?.user) {
@@ -80,7 +76,6 @@ const Dashboard = () => {
         socket?.off("request_rejected");
         socket?.off("friend_removed");
         socket?.off("open_chat");
-        socket?.off("direct_chats");
         socket?.off("database-updated");
       };
     }

@@ -16,19 +16,22 @@ const messageSchema = new Schema({
         },
         type: {
             type: String,
-            enum: ['Text', 'Media', 'Document', 'Link '],
+            enum: ['Text', 'Media', 'Document', 'Link', 'Separator', 'Reply'],
             default: 'Text'
         },
         createdAt: {
-            type: Date,
-            default: Date.now()
+            type: String,
         },
         content: String,
         file: {
             type: String,
             default: null
         }
-    }]
+    }],
+    lastMessage: {
+        type: String,
+        default: null,
+    }
 })
 
 const Message = model('Message', messageSchema);

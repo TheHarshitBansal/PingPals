@@ -7,17 +7,39 @@ import ProfileSidebar from "./ProfileSidebar.jsx";
 import StarredSidebar from "./StarredSidebar.jsx";
 import SharedSidebar from "./SharedSidebar.jsx";
 import HomePage from "../HomePage.jsx";
+import { fetchDirectConversations } from "@/redux/slices/conversationSlice.js";
 
 const GeneralApp = () => {
   const conversation = useSelector((state) => state.conversation);
   const app = useSelector((state) => state.app);
   const user = useSelector((state) => state.auth.user);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (user?._id) {
       socket?.emit("get_direct_chats", { user_id: user._id });
     }
-  });
+  }, [user?._id]); // ✅ Run only when `user._id` changes
+
+  useEffect(() => {
+    const handleDirectChats = (data) => {
+      dispatch(fetchDirectConversations(data));
+    };
+
+    const handleDatabaseChange = () => {
+      if (user?._id) {
+        socket?.emit("get_direct_chats", { user_id: user._id });
+      }
+    };
+
+    socket?.on("direct_chats", handleDirectChats);
+    socket?.on("database-changed", handleDatabaseChange);
+
+    return () => {
+      socket?.off("direct_chats", handleDirectChats);
+      socket?.off("database-changed", handleDatabaseChange);
+    };
+  }, [user?._id, conversation.currentConversation?._id, dispatch]); // ✅ Dependencies updated
 
   return (
     <div className="flex h-screen w-full">
