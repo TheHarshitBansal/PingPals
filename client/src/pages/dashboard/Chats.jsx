@@ -37,17 +37,7 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
   },
 }));
 
-// INFO: Individual Chat Element
-
-export const ChatElement = ({
-  id,
-  name,
-  message,
-  avatar,
-  time,
-  badge,
-  online,
-}) => {
+export const ChatElement = ({ id, name, avatar, online, message, time }) => {
   const user = useSelector((state) => state.auth.user);
   const chats = useSelector((state) => state.conversation.directConversations);
   const currentCoversation = useSelector(
@@ -55,7 +45,7 @@ export const ChatElement = ({
   );
   const currentConvo = chats.find(
     (chat) =>
-      chat?.participants?.find((person) => person._id !== user._id)._id === id
+      chat?.participants?.find((person) => person._id !== user._id)?._id === id
   );
 
   const dispatch = useDispatch();
@@ -70,7 +60,7 @@ export const ChatElement = ({
         dispatch(setCurrentConversation(currentConvo));
       }}
     >
-      <div className={`flex items-center justify-between`}>
+      <div className="flex items-center justify-between w-full">
         <div className="flex gap-x-2">
           {online ? (
             <StyledBadge
@@ -96,44 +86,56 @@ export const ChatElement = ({
 
           <div>
             <h3 className="font-semibold line-clamp-1">{name}</h3>
-            <p className="text-sm line-clamp-1">{message}</p>
+            <p className="text-sm line-clamp-1 text-gray-500 dark:text-gray-400">
+              {message || "No messages yet"}
+            </p>
           </div>
         </div>
-        <div className="flex flex-col gap-y-4 items-center">
+        <div className="flex">
           <p className="text-xs text-gray-500 dark:text-gray-400">{time}</p>
-          <Badge
-            badgeContent={badge}
-            color="primary"
-            sx={{ width: "8px", height: "8px" }}
-          />
         </div>
       </div>
     </div>
   );
 };
 
-// INFO: Chats Component
-
 const Chats = () => {
   const chats = useSelector((state) => state.conversation.directConversations);
   const user = useSelector((state) => state.auth.user);
-  const conversations = chats.map((chats) => {
-    const chat = chats.participants.find((person) => person._id !== user._id);
+
+  const conversations = chats.map((chat) => {
+    const participant = chat.participants.find(
+      (person) => person._id !== user._id
+    );
+
+    const lastMessage =
+      chat.messages?.length > 0
+        ? chat.messages[chat.messages.length - 1].content
+        : "No messages yet";
+
+    const lastMessageTime =
+      chat.messages?.length > 0
+        ? chat.messages[chat.messages.length - 1].createdAt
+        : "";
 
     return {
-      id: chat._id,
-      name: chat.name,
-      avatar: chat.avatar,
-      online: chat.status,
+      id: participant._id,
+      name: participant.name,
+      avatar: participant.avatar,
+      online: participant.status === "Online",
+      message: lastMessage,
+      time: lastMessageTime,
     };
   });
-  {
-    conversations.length === 0 && (
+
+  if (conversations.length === 0) {
+    return (
       <div className="relative h-screen min-w-80 max-w-80 shadow-light dark:shadow-dark flex items-center justify-center">
         <h1 className="text-2xl font-bold">No Chats</h1>
       </div>
     );
   }
+
   return (
     <div className="relative h-screen min-w-80 max-w-80 shadow-light dark:shadow-dark flex flex-col">
       {/* Header */}
@@ -156,12 +158,12 @@ const Chats = () => {
             message={user.message}
             avatar={user.avatar}
             time={user.time}
-            badge={user.badge}
-            online={user.online === "Online" ? true : false}
+            online={user.online}
           />
         ))}
       </div>
     </div>
   );
 };
+
 export default Chats;

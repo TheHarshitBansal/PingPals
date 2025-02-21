@@ -4,9 +4,8 @@ const extractLinks = (text) => {
   
     const modifiedString = text.replace(urlRegex, (url) => {
       const urlObject = new URL(url);
-      const domain = urlObject.hostname;
       linksArray.push(url);
-      return `<span class="underline"><a href="${url}" target="_blank">${domain}</a></span>`;
+      return `<span class="underline"><a href="${url}" target="_blank">${url}</a></span>`;
     });
   
     return { modifiedString, linksArray };
