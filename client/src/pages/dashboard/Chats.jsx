@@ -57,6 +57,7 @@ export const ChatElement = ({
     (chat) =>
       chat?.participants?.find((person) => person._id !== user._id)._id === id
   );
+
   const dispatch = useDispatch();
   return (
     <div

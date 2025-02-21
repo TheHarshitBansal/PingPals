@@ -31,7 +31,7 @@ const messageSchema = new Schema({
     lastMessage: {
         type: String,
         default: null,
-    }
+    },
 })
 
 const Message = model('Message', messageSchema);

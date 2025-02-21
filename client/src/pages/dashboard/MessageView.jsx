@@ -40,7 +40,6 @@ const MessageView = () => {
   const users =
     chat?.participants?.filter((person) => person?._id !== user?._id) || [];
 
-  // Handle message send (prevents empty messages)
   const handleMessageSend = useCallback(
     async (e) => {
       e.preventDefault();
@@ -58,16 +57,16 @@ const MessageView = () => {
 
   useEffect(() => {
     const handleDatabaseChange = () => {
-      if (chat?._id) {
-        socket?.emit("get_messages", {
-          conversation_id: chat?._id,
-        });
-      }
+      socket?.emit("get_messages", {
+        conversation_id: chat?._id,
+      });
     };
 
-    const handleDispatchMessages = (data) => {
+    const handleDispatchMessages = async (data) => {
       dispatch(fetchMessages(data));
     };
+
+    handleDatabaseChange();
 
     socket?.on("database-changed", handleDatabaseChange);
     socket?.on("dispatch_messages", handleDispatchMessages);
@@ -76,7 +75,7 @@ const MessageView = () => {
       socket?.off("database-changed", handleDatabaseChange);
       socket?.off("dispatch_messages", handleDispatchMessages);
     };
-  }, [chat?._id, dispatch]);
+  }, [chat, dispatch, users, handleMessageSend]);
 
   useEffect(() => {
     const handleKeyPress = (e) => {
@@ -193,7 +192,6 @@ const MessageView = () => {
           }
         })}
       </div>
-
       {/* Chat Input */}
       <div className="sticky bottom-0 p-3 ">
         <form
@@ -203,10 +201,15 @@ const MessageView = () => {
           <div className="relative w-full">
             <input
               type="text"
-              placeholder="Message"
+              placeholder={
+                user.friends.includes(users[0]?._id)
+                  ? `Message`
+                  : `You are not friends with this user`
+              }
               className=" h-12 w-full rounded border border-gray-300 dark:border-gray-700 p-2 bg-gray-50 dark:bg-gray-900 shadow-inner text-sm outline-none focus:border-blue-950 dark:focus:border-blue-200 text-black dark:text-white pl-5 pr-19"
               value={message}
               onChange={(e) => setMessage(e.target.value)}
+              disabled={user.friends.includes(users[0]?._id) ? false : true}
             />
 
             <div className="absolute right-5 top-1/2 -translate-y-1/2 flex items-center justify-end space-x-4">
