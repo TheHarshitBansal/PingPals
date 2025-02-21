@@ -138,7 +138,6 @@ const Chats = () => {
       {/* Header */}
       <div className="flex items-center justify-between px-10 py-5 flex-shrink-0">
         <h1 className="text-2xl font-bold">Chats</h1>
-        <CircleDashedIcon size={32} />
       </div>
 
       {/* Search Box */}

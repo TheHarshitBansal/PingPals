@@ -1,9 +1,8 @@
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import Logo from "../assets/logo.png";
-import { CogIcon, MessageSquareMoreIcon, PhoneIcon, Users } from "lucide-react";
+import { CogIcon, MessageSquareMoreIcon, PhoneIcon } from "lucide-react";
 import { Divider } from "@mui/material";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { faker } from "@faker-js/faker";
 import DarkModeSwitcher from "@/components/DarkModeSwitcher.jsx";
 import { useEffect, useState } from "react";
 import ProfileOptions from "@/components/profile/ProfileOptions.jsx";
@@ -13,10 +12,7 @@ import { connectSocket, socket } from "@/socket.js";
 import { toast } from "@/hooks/use-toast.js";
 import { useGetUserQuery } from "@/redux/api/authApi.js";
 import { updateUser } from "@/redux/slices/authSlice.js";
-import {
-  fetchDirectConversations,
-  setCurrentConversation,
-} from "@/redux/slices/conversationSlice.js";
+import { setCurrentConversation } from "@/redux/slices/conversationSlice.js";
 
 const Dashboard = () => {
   const { data, refetch } = useGetUserQuery(undefined);
@@ -85,9 +81,8 @@ const Dashboard = () => {
     const routes = {
       "/": 0,
       "/chat": 1,
-      "/group": 2,
-      "/calls": 3,
-      "/settings": 4,
+      "/calls": 2,
+      "/settings": 3,
     };
     setActive(routes[location.pathname] ?? null);
   }, [location]);
@@ -109,9 +104,8 @@ const Dashboard = () => {
             </div>
             {[
               ["/chat", MessageSquareMoreIcon, 1],
-              ["/group", Users, 2],
-              ["/calls", PhoneIcon, 3],
-              ["/settings", CogIcon, 4],
+              ["/calls", PhoneIcon, 2],
+              ["/settings", CogIcon, 3],
             ].map(([path, Icon, index]) => (
               <div
                 key={path}
