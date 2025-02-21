@@ -90,6 +90,10 @@ const MessageView = () => {
     };
   }, [handleMessageSend]);
 
+  const handleEmojiSelect = (emoji) => {
+    setMessage((prevMessage) => prevMessage + emoji);
+  };
+
   return (
     <div
       className={`flex flex-col h-full border-x border-gray-100 dark:border-gray-900 shadow-light dark:shadow-dark ${
@@ -222,7 +226,7 @@ const MessageView = () => {
               >
                 <Gif size={24} color="gray" weight="bold" />
               </button>
-              <EmojiPicker />
+              <EmojiPicker selectEmoji={handleEmojiSelect} />
             </div>
           </div>
 

@@ -5,7 +5,7 @@ import React from "react";
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
 
-const EmojiPicker = () => {
+const EmojiPicker = ({ selectEmoji }) => {
   const colorMode = JSON.parse(window.localStorage.getItem("colorMode"));
 
   const [isPickerOpen, setIsPickerOpen] = useState(false);
@@ -45,7 +45,13 @@ const EmojiPicker = () => {
 
       {isPickerOpen && (
         <div ref={picker} className="absolute z-40 bottom-10 right-0">
-          <Picker theme={colorMode} data={data} onEmojiSelect={console.log} />
+          <Picker
+            theme={colorMode}
+            data={data}
+            onEmojiSelect={(emoji) => {
+              selectEmoji(emoji.native);
+            }}
+          />
         </div>
       )}
     </div>
