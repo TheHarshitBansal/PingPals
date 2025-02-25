@@ -15,6 +15,7 @@ import User from './models/user.model.js';
 import FriendReq from './models/friendReq.model.js';
 import Message from './models/message.model.js';
 import mongoose from 'mongoose';
+import chatRoutes from './routes/chat.routes.js';
 
 const app = express();
 const PORT = process.env.PORT || 8000;
@@ -51,6 +52,7 @@ const limited = expressRateLimit({
 app.use('/api', limited);
 
 app.use('/api/v1/user', userRoutes);
+app.use('/api/v1/chat', chatRoutes);
 
 app.use(errorMiddleware)
 

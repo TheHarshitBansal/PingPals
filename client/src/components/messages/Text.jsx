@@ -4,11 +4,11 @@ import extractLinks from "@/utils/extractLinks.js";
 import Microlink from "@microlink/react";
 import MessageOptions from "./MessageOptions.jsx";
 
-const Text = ({ incoming, timestamp, read_receipt, content }) => {
+const Text = ({ incoming, timestamp, read_receipt, content, messageId }) => {
   const { modifiedString, linksArray } = extractLinks(content);
   return (
     <div className={`max-w-96 w-fit ${!incoming ? "ml-auto" : ""}`}>
-      <MessageOptions>
+      <MessageOptions messageId={messageId} incoming={incoming}>
         <div
           className={`mb-2.5 rounded-2xl ${
             !incoming

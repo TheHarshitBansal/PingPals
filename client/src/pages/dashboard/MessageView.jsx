@@ -23,6 +23,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton.jsx";
 import { socket } from "@/socket.js";
 import { fetchMessages } from "@/redux/slices/conversationSlice.js";
+import ChatOptions from "@/components/messages/ChatOptions.jsx";
 
 const MessageView = () => {
   const dispatch = useDispatch();
@@ -135,7 +136,9 @@ const MessageView = () => {
             className="bg-gray-100 dark:bg-gray-700"
           />
           <button onClick={() => setIsAudioCall(true)}>
-            <CaretDown size={24} color="gray" />
+            <ChatOptions chatId={chat?._id}>
+              <CaretDown size={24} color="gray" />
+            </ChatOptions>
           </button>
         </div>
       </div>
@@ -153,6 +156,7 @@ const MessageView = () => {
                   incoming={message?.sender === users[0]?._id}
                   timestamp={message?.createdAt}
                   content={message?.content}
+                  messageId={message?._id}
                 />
               );
             case "Media":
@@ -163,6 +167,7 @@ const MessageView = () => {
                   timestamp={message?.timestamp}
                   assets={message?.assets}
                   caption={message?.caption}
+                  messageId={message?._id}
                 />
               );
             default:

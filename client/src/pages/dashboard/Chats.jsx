@@ -1,5 +1,4 @@
-import React from "react";
-import { CircleDashedIcon } from "lucide-react";
+import React, { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import Badge from "@mui/material/Badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -100,10 +99,29 @@ export const ChatElement = ({ id, name, avatar, online, message, time }) => {
 };
 
 const Chats = () => {
+  const [search, setSearch] = useState("");
+
   const chats = useSelector((state) => state.conversation.directConversations);
   const user = useSelector((state) => state.auth.user);
 
-  const conversations = chats.map((chat) => {
+  const [showChats, setShowChats] = useState(chats);
+
+  useEffect(() => {
+    if (!search) {
+      setShowChats(chats);
+    }
+    if (search) {
+      const filteredChats = chats.filter((chat) => {
+        const participant = chat.participants.find(
+          (person) => person._id !== user._id
+        );
+        return participant.name.toLowerCase().includes(search.toLowerCase());
+      });
+      setShowChats(filteredChats);
+    }
+  }, [search]);
+
+  const conversations = showChats.map((chat) => {
     const participant = chat.participants.find(
       (person) => person._id !== user._id
     );
@@ -128,13 +146,9 @@ const Chats = () => {
     };
   });
 
-  if (conversations.length === 0) {
-    return (
-      <div className="relative h-screen min-w-80 max-w-80 shadow-light dark:shadow-dark flex items-center justify-center">
-        <h1 className="text-2xl font-bold">No Chats</h1>
-      </div>
-    );
-  }
+  const handleChange = (e) => {
+    setSearch(e.target.value);
+  };
 
   return (
     <div className="relative h-screen min-w-80 max-w-80 shadow-light dark:shadow-dark flex flex-col">
@@ -145,23 +159,30 @@ const Chats = () => {
 
       {/* Search Box */}
       <div className="px-5 flex-shrink-0">
-        <Input placeholder="Search" className="mb-2" />
+        <Input placeholder="Search" className="mb-2" onChange={handleChange} />
       </div>
 
       {/* Chat List */}
-      <div className="flex-1 overflow-y-auto px-5 no-scrollbar">
-        {conversations.map((user, index) => (
-          <ChatElement
-            id={user.id}
-            key={index}
-            name={user.name}
-            message={user.message}
-            avatar={user.avatar}
-            time={user.time}
-            online={user.online}
-          />
-        ))}
-      </div>
+      {conversations.length === 0 && (
+        <div className="relative h-screen min-w-80 max-w-80 flex items-center justify-center">
+          <h1 className="text-2xl font-bold">No Chats</h1>
+        </div>
+      )}
+      {conversations.length > 0 && (
+        <div className="flex-1 overflow-y-auto px-5 no-scrollbar">
+          {conversations.map((user, index) => (
+            <ChatElement
+              id={user.id}
+              key={index}
+              name={user.name}
+              message={user.message}
+              avatar={user.avatar}
+              time={user.time}
+              online={user.online}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 };

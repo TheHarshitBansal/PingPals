@@ -7,7 +7,6 @@ import otpTemplate from '../templates/sendOTP.template.js'
 import resetPasswordTemplate from '../templates/resetPassword.template.js'
 import crypto from 'crypto';
 import { deleteImage } from '../middlewares/upload.middleware.js';
-import FriendReq from '../models/friendReq.model.js';
 
 //INFO: Sign JWT token
 const signToken = (userId) => {

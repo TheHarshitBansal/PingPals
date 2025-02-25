@@ -3,10 +3,17 @@ import MediaGrid from "./MediaGrid.jsx";
 import React from "react";
 import MessageOptions from "./MessageOptions.jsx";
 
-const Media = ({ incoming, read_receipt, timestamp, assets, caption }) => {
+const Media = ({
+  incoming,
+  read_receipt,
+  timestamp,
+  assets,
+  caption,
+  messageId,
+}) => {
   return (
     <div className={`max-w-96 w-fit ${incoming ? "" : "ml-auto"}`}>
-      <MessageOptions>
+      <MessageOptions messageId={messageId} incoming={incoming}>
         <div
           className={`mb-2.5 rounded-2xl ${
             incoming
