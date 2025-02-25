@@ -1,6 +1,4 @@
-import Document from "@/components/messages/Document.jsx";
 import Media from "@/components/messages/Media.jsx";
-import ReplyMessage from "@/components/messages/ReplyMessage.jsx";
 import Text from "@/components/messages/Text.jsx";
 import { StarredMessages } from "@/data/messages.js";
 import { setSidebarType } from "@/redux/slices/appSlice.js";
@@ -42,25 +40,6 @@ const StarredSidebar = () => {
                 incoming={message?.incoming}
                 assets={message?.assets}
                 caption={message?.caption}
-              />
-            );
-          } else if (message.type === "reply") {
-            return (
-              <ReplyMessage
-                key={index}
-                incoming={message?.incoming}
-                original={message?.original}
-                content={message?.content}
-              />
-            );
-          } else if (message.type === "document") {
-            return (
-              <Document
-                key={index}
-                incoming={message?.incoming}
-                content={message?.content}
-                fileName={message?.fileName}
-                fileSize={message?.fileSize}
               />
             );
           }

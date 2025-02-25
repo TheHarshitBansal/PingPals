@@ -1,28 +1,11 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { docsPreview, fakeImagesMedia, LinkPreviews } from "@/data/messages.js";
+import { fakeImagesMedia, LinkPreviews } from "@/data/messages.js";
 import { setSidebarType } from "@/redux/slices/appSlice.js";
 import { ChevronLeft } from "lucide-react";
 import { useDispatch } from "react-redux";
 import { Skeleton } from "@/components/ui/skeleton";
 import Text from "@/components/messages/Text.jsx";
-import Document from "@/components/messages/Document.jsx";
 import LazyImage from "@/components/LazyImage.jsx";
-
-// INFO: Shared Docs
-const SharedSidebarDocs = () => {
-  return (
-    <div className="w-full grid grid-cols-1 gap-2 py-1 px-2">
-      {docsPreview.map((doc, index) => (
-        <Document
-          key={index}
-          fileName={doc.fileName}
-          fileSize={doc.fileSize}
-          incoming={doc.incoming}
-        />
-      ))}
-    </div>
-  );
-};
 
 // INFO: Shared Links
 const SharedSidebarLinks = () => {
@@ -76,10 +59,9 @@ const SharedSidebar = () => {
 
       {/* //INFO: NAVIGATION MENU */}
       <Tabs defaultValue="media" className="flex flex-col h-full">
-        <TabsList className="grid w-full grid-cols-3 gap-2 p-1 rounded-none flex-shrink-0">
+        <TabsList className="grid w-full grid-cols-2 gap-2 p-1 rounded-none flex-shrink-0">
           <TabsTrigger value="media">Media</TabsTrigger>
           <TabsTrigger value="links">Links</TabsTrigger>
-          <TabsTrigger value="docs">Docs</TabsTrigger>
         </TabsList>
         <TabsContent
           value="media"
@@ -92,12 +74,6 @@ const SharedSidebar = () => {
           className="flex-1 overflow-y-scroll no-scrollbar"
         >
           <SharedSidebarLinks />
-        </TabsContent>
-        <TabsContent
-          value="docs"
-          className="flex-1 overflow-y-scroll no-scrollbar"
-        >
-          <SharedSidebarDocs />
         </TabsContent>
       </Tabs>
     </div>

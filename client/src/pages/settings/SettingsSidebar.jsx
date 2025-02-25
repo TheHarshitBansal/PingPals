@@ -17,6 +17,7 @@ import {
   PencilIcon,
   ReceiptText,
 } from "lucide-react";
+import { useSelector } from "react-redux";
 
 const settings = [
   { svg: <Bell strokeWidth={1.5} />, title: "Notifications" },
@@ -39,6 +40,7 @@ const SidebarElement = ({ svg, title }) => {
 };
 
 const SettingsSidebar = () => {
+  const user = useSelector((state) => state.auth.user);
   return (
     <div className="relative h-screen min-w-80 max-w-80 shadow-light dark:shadow-dark flex flex-col">
       {/* //INFO:Header */}
@@ -50,15 +52,15 @@ const SettingsSidebar = () => {
       <div className="w-full rounded-sm flex items-center justify-between px-6 py-4 mb-5">
         <div className="flex items-center justify-between gap-x-5">
           <Avatar className="h-16 w-16 cursor-pointer">
-            <AvatarImage src={users[0].avatar} loading="lazy" />
+            <AvatarImage src={user?.avatar} loading="lazy" />
             <AvatarFallback>
               <Skeleton className="rounded-full" />
             </AvatarFallback>
           </Avatar>
           <div>
-            <h3 className="font-semibold text-xl">{users[0].name}</h3>
+            <h3 className="font-semibold text-xl">{user?.name}</h3>
             <p className="text-base text-gray-500 dark:text-gray-400">
-              {users[0].bio}
+              {user?.about}
             </p>
           </div>
         </div>

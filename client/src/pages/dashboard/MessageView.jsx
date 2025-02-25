@@ -12,11 +12,9 @@ import { toggleSidebar } from "@/redux/slices/appSlice.js";
 import DateSeparator from "@/components/messages/DateSeparator.jsx";
 import Text from "@/components/messages/Text.jsx";
 import Media from "@/components/messages/Media.jsx";
-import ReplyMessage from "@/components/messages/ReplyMessage.jsx";
 import EmojiPicker from "@/components/EmojiPicker.jsx";
 import Attachments from "@/components/Attachments.jsx";
 import Giphy from "@/components/Giphy.jsx";
-import Document from "@/components/messages/Document.jsx";
 import {
   Avatar,
   AvatarFallback,
@@ -165,27 +163,6 @@ const MessageView = () => {
                   timestamp={message?.timestamp}
                   assets={message?.assets}
                   caption={message?.caption}
-                />
-              );
-            case "Reply":
-              return (
-                <ReplyMessage
-                  key={index}
-                  incoming={message?.incoming}
-                  timestamp={message?.timestamp}
-                  original={message?.original}
-                  content={message?.content}
-                />
-              );
-            case "Document":
-              return (
-                <Document
-                  key={index}
-                  incoming={message?.incoming}
-                  timestamp={message?.timestamp}
-                  content={message?.content}
-                  fileName={message?.fileName}
-                  fileSize={message?.fileSize}
                 />
               );
             default:
