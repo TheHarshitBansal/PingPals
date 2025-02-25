@@ -17,7 +17,7 @@ const Text = ({ incoming, timestamp, read_receipt, content }) => {
           } px-5 py-3 space-y-2`}
         >
           <p
-            className="text-sm"
+            className="text-sm whitespace-pre-wrap"
             dangerouslySetInnerHTML={{ __html: modifiedString }}
           ></p>
           {linksArray.length > 0 && (

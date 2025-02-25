@@ -26,11 +26,11 @@ const ProfileOptions = ({ children }) => {
     <DropdownMenu>
       <DropdownMenuTrigger>{children}</DropdownMenuTrigger>
       <DropdownMenuContent>
-        <DropdownMenuItem className="cursor-pointer">
-          <div
-            className="flex items-center space-x-2"
-            onClick={() => navigate("/profile")}
-          >
+        <DropdownMenuItem
+          className="cursor-pointer"
+          onClick={() => navigate("/profile")}
+        >
+          <div className="flex items-center space-x-2">
             <User size={20} />
             <p>My Profile</p>
           </div>

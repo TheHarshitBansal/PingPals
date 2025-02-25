@@ -2,7 +2,6 @@ import { useEffect, useState, useCallback } from "react";
 import {
   CaretDown,
   Gif,
-  MagnifyingGlass,
   PaperPlaneTilt,
   Phone,
   VideoCamera,
@@ -78,15 +77,16 @@ const MessageView = () => {
   }, [chat, dispatch, users, handleMessageSend]);
 
   useEffect(() => {
-    const handleKeyPress = (e) => {
-      if (e.key === "Enter") {
+    const handleKeyDown = (e) => {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault(); // Prevents newline from being added
         handleMessageSend(e);
       }
     };
 
-    window.addEventListener("keypress", handleKeyPress);
+    window.addEventListener("keydown", handleKeyDown);
     return () => {
-      window.removeEventListener("keypress", handleKeyPress);
+      window.removeEventListener("keydown", handleKeyDown);
     };
   }, [handleMessageSend]);
 
@@ -130,9 +130,6 @@ const MessageView = () => {
           </button>
           <button>
             <Phone size={24} color="gray" />
-          </button>
-          <button onClick={() => setIsAudioCall(true)}>
-            <MagnifyingGlass size={24} color="gray" />
           </button>
           <Divider
             orientation="vertical"
@@ -203,17 +200,17 @@ const MessageView = () => {
           onSubmit={handleMessageSend}
         >
           <div className="relative w-full">
-            <input
-              type="text"
+            <textarea
               placeholder={
                 user.friends.includes(users[0]?._id)
-                  ? `Message`
-                  : `You are not friends with this user`
+                  ? "Message"
+                  : "You are not friends with this user"
               }
-              className=" h-12 w-full rounded border border-gray-300 dark:border-gray-700 p-2 bg-gray-50 dark:bg-gray-900 shadow-inner text-sm outline-none focus:border-blue-950 dark:focus:border-blue-200 text-black dark:text-white pl-5 pr-19"
+              className="h-12 resize-none w-full rounded border border-gray-300 dark:border-gray-700 p-2 bg-gray-50 dark:bg-gray-900 shadow-inner text-sm outline-none focus:border-blue-950 dark:focus:border-blue-200 text-black dark:text-white pl-5 pr-19 flex"
               value={message}
               onChange={(e) => setMessage(e.target.value)}
-              disabled={user.friends.includes(users[0]?._id) ? false : true}
+              disabled={!user.friends.includes(users[0]?._id)}
+              rows={1}
             />
 
             <div className="absolute right-5 top-1/2 -translate-y-1/2 flex items-center justify-end space-x-4">

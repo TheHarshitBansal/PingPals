@@ -5,12 +5,7 @@ import {
   ContextMenuSeparator,
   ContextMenuTrigger,
 } from "@/components/ui/context-menu";
-import {
-  ArrowBendDoubleUpRight,
-  ArrowBendUpLeft,
-  Star,
-  Trash,
-} from "@phosphor-icons/react";
+import { Star, Trash } from "@phosphor-icons/react";
 
 const MessageOptions = ({ children }) => {
   const colorMode = JSON.parse(window.localStorage.getItem("colorMode"));
@@ -19,14 +14,6 @@ const MessageOptions = ({ children }) => {
     <ContextMenu>
       <ContextMenuTrigger>{children}</ContextMenuTrigger>
       <ContextMenuContent>
-        <ContextMenuItem className="flex items-center space-x-2">
-          <ArrowBendUpLeft />
-          <p>Reply</p>
-        </ContextMenuItem>
-        <ContextMenuItem className="flex items-center space-x-2">
-          <ArrowBendDoubleUpRight />
-          <p>Forward</p>
-        </ContextMenuItem>
         <ContextMenuItem className="flex items-center space-x-2">
           <Star />
           <p>Star</p>

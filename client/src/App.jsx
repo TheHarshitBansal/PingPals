@@ -7,7 +7,6 @@ import NotFound from "./pages/NotFound.jsx";
 const ProfileGeneral = lazy(() => import("./pages/profile/ProfileGeneral.jsx"));
 const Verification = lazy(() => import("./pages/auth/Verification.jsx"));
 const CallLog = lazy(() => import("./pages/call/CallLog.jsx"));
-const GroupGeneralApp = lazy(() => import("./pages/group/GroupGeneralApp.jsx"));
 const ForgotPassword = lazy(() => import("./pages/auth/ForgotPassword.jsx"));
 const ResetPassword = lazy(() => import("./pages/auth/ResetPassword.jsx"));
 const HomePage = lazy(() => import("./pages/HomePage.jsx"));

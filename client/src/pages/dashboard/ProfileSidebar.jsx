@@ -1,6 +1,6 @@
 import { Separator } from "@/components/ui/separator.jsx";
 import { setSidebarType, toggleSidebar } from "@/redux/slices/appSlice.js";
-import { Ban, BellOff, ChevronRight, Star, Trash, X } from "lucide-react";
+import { BellOff, ChevronRight, Star, Trash, UserMinus, X } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { faker } from "@faker-js/faker";
 import { Label } from "@/components/ui/label";
@@ -65,20 +65,20 @@ const ProfileSidebar = () => {
           <AlertDialog>
             <AlertDialogTrigger asChild>
               <button className="w-full border border-gray-300 dark:border-gray-700 p-2 rounded-md flex items-center justify-center hover:bg-gray-100 hover:dark:bg-gray-900">
-                <Ban size={20} className="mr-3" />
-                <span>Block</span>
+                <UserMinus size={20} className="mr-3" />
+                <span>Unfriend</span>
               </button>
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
                 <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                 <AlertDialogDescription>
-                  You can unblock this user anytime.
+                  You will have to send friend request again.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
                 <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction>Block User</AlertDialogAction>
+                <AlertDialogAction>Unfriend User</AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
@@ -165,9 +165,6 @@ const ProfileSidebar = () => {
             </div>
           </div>
           <Separator />
-        </div>
-        <div>
-          <h3 className="font-medium text-base">Common Groups</h3>
         </div>
       </div>
     </div>
