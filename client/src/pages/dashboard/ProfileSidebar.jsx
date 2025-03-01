@@ -16,6 +16,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { useDeleteChatMutation } from "@/redux/api/chatApi.js";
+import { socket } from "@/socket.js";
 
 const ProfileSidebar = () => {
   const dispatch = useDispatch();
@@ -28,9 +30,7 @@ const ProfileSidebar = () => {
     dispatch(setSidebarType("SHARED"));
   };
 
-  const handleStarredOpen = () => {
-    dispatch(setSidebarType("STARRED"));
-  };
+  const [deleteChat] = useDeleteChatMutation();
 
   const chat = useSelector((state) => state?.conversation?.currentConversation);
   const user = useSelector((state) => state?.auth?.user);
@@ -82,7 +82,16 @@ const ProfileSidebar = () => {
               </AlertDialogHeader>
               <AlertDialogFooter>
                 <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction>Unfriend User</AlertDialogAction>
+                <AlertDialogAction
+                  onClick={() => {
+                    //INFO: Remove friend functionality
+                    socket.emit("remove_friend", {
+                      receiver: users[0]._id,
+                    });
+                  }}
+                >
+                  Unfriend User
+                </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
@@ -102,7 +111,9 @@ const ProfileSidebar = () => {
               </AlertDialogHeader>
               <AlertDialogFooter>
                 <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction>Delete User</AlertDialogAction>
+                <AlertDialogAction onClick={() => deleteChat(chat?._id)}>
+                  Delete User
+                </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
@@ -133,14 +144,36 @@ const ProfileSidebar = () => {
           </div>
           <div className="flex gap-x-2 overflow-clip">
             {recentMedia.length > 0 ? (
-              recentMedia.map((media, index) => (
-                <LazyImage
-                  key={index}
-                  src={JSON.parse(media.file).path}
-                  alt="media"
-                  className="w-24 h-24 rounded-md object-cover object-center"
-                />
-              ))
+              recentMedia.map((media, index) => {
+                const file = JSON.parse(media.file);
+                const fileType = file.path.split(".").pop().toLowerCase();
+
+                const isImage = /(jpg|jpeg|png|gif|webp)$/i.test(fileType);
+                const isVideo = /(mp4|webm|ogg)$/i.test(fileType);
+
+                return isImage ? (
+                  <LazyImage
+                    key={index}
+                    src={file.path}
+                    alt="media"
+                    className="w-24 h-24 rounded-md object-cover object-center cursor-pointer"
+                  />
+                ) : isVideo ? (
+                  <video
+                    key={index}
+                    src={file.path}
+                    autoPlay={false}
+                    className="w-24 h-24 rounded-md object-cover object-center cursor-pointer"
+                  />
+                ) : (
+                  <LazyImage
+                    key={index}
+                    src={file.path}
+                    alt="media"
+                    className="w-24 h-24 rounded-md object-cover object-center cursor-pointer"
+                  />
+                );
+              })
             ) : (
               <p className="text-gray-500 dark:text-gray-400 text-sm">
                 No media available
@@ -150,19 +183,6 @@ const ProfileSidebar = () => {
         </div>
 
         <div className="flex flex-col gap-2">
-          <Separator />
-          <div
-            className="flex flex-col px-2 gap-y-4 hover:bg-gray-100 hover:dark:bg-gray-900 rounded-md py-2 cursor-pointer"
-            onClick={handleStarredOpen}
-          >
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-x-2">
-                <Star strokeWidth={1.5} size={24} />
-                <h2 className="text-base font-medium">Starred Messages</h2>
-              </div>
-              <ChevronRight size={24} />
-            </div>
-          </div>
           <Separator />
           <div className="flex flex-col px-2 gap-y-4 py-2">
             <div className="flex items-center justify-between">

@@ -4,7 +4,6 @@ import { socket } from "@/socket.js";
 import Chats from "./Chats.jsx";
 import MessageView from "./MessageView.jsx";
 import ProfileSidebar from "./ProfileSidebar.jsx";
-import StarredSidebar from "./StarredSidebar.jsx";
 import SharedSidebar from "./SharedSidebar.jsx";
 import HomePage from "../HomePage.jsx";
 import { fetchDirectConversations } from "@/redux/slices/conversationSlice.js";
@@ -56,9 +55,6 @@ const GeneralApp = () => {
       {/* Sidebars */}
       {app.sidebar.isOpen && app.sidebar.type === "PROFILE" && (
         <ProfileSidebar />
-      )}
-      {app.sidebar.isOpen && app.sidebar.type === "STARRED" && (
-        <StarredSidebar />
       )}
       {app.sidebar.isOpen && app.sidebar.type === "SHARED" && <SharedSidebar />}
     </div>

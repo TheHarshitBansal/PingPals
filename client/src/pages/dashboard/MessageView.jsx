@@ -29,7 +29,6 @@ const MessageView = () => {
   const dispatch = useDispatch();
   const [message, setMessage] = useState("");
   const [isGifOpen, setIsGifOpen] = useState(false);
-  const [isAudioCall, setIsAudioCall] = useState(false);
   const profileSidebar = useSelector((state) => state?.app?.sidebar?.isOpen);
   const chat = useSelector((state) => state?.conversation?.currentConversation);
   const user = useSelector((state) => state?.auth?.user);

@@ -3,16 +3,44 @@ import { Grid } from "@giphy/react-components";
 import { GiphyFetch } from "@giphy/js-fetch-api";
 import React from "react";
 import _ from "lodash";
+import { socket } from "@/socket.js";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchMessages } from "@/redux/slices/conversationSlice.js";
 
 const gif = new GiphyFetch(import.meta.env.VITE_GIPHY_API);
 
 const Giphy = () => {
   const gridRef = useRef(null);
-
+  const [selectedGif, setSelectedGif] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [value, setValue] = useState("");
   const [error, setError] = useState(null);
   const [gifs, setGifs] = useState([]);
+  const dispatch = useDispatch();
+
+  const chat = useSelector((state) => state?.conversation?.currentConversation);
+  const user = useSelector((state) => state?.auth?.user);
+  const users =
+    chat?.participants?.filter((person) => person?._id !== user?._id) || [];
+
+  useEffect(() => {
+    const handleDatabaseChange = () => {
+      socket.emit("get_messages", { conversation_id: chat?._id });
+    };
+
+    const handleDispatchMessages = (data) => {
+      dispatch(fetchMessages(data));
+    };
+
+    handleDatabaseChange();
+    socket.on("database-changed", handleDatabaseChange);
+    socket.on("dispatch_messages", handleDispatchMessages);
+
+    return () => {
+      socket.off("database-changed", handleDatabaseChange);
+      socket.off("dispatch_messages", handleDispatchMessages);
+    };
+  }, [chat?._id, dispatch]);
 
   const fetchGifs = async (offset) => {
     return gif.search(value, { offset, limit: 10 });
@@ -78,6 +106,22 @@ const Giphy = () => {
           fetchGifs={fetchGifs}
           key={value}
           data={gifs}
+          onGifClick={async (gif, e) => {
+            e.preventDefault();
+            await setSelectedGif(gif.images.original.url);
+            if (selectedGif) {
+              socket.emit("message", { conversation_id: chat?._id });
+
+              socket.emit("file_message", {
+                conversation_id: chat?._id,
+                file: JSON.stringify({ path: selectedGif }),
+                receiver_id: users[0]?._id,
+              });
+
+              setValue("");
+              setGifs([]);
+            }
+          }}
         />
       </div>
     </div>

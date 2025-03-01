@@ -1,12 +1,13 @@
 import React from "react";
 import MessageOptions from "./MessageOptions.jsx";
 import LazyImage from "../LazyImage.jsx";
-import FileViewer from "react-file-viewer";
 
 const Media = ({ incoming, timestamp, file, messageId }) => {
   const media = JSON.parse(file);
-  const fileType = media.filename.split(".").pop().toLowerCase();
-  const isImage = ["jpg", "jpeg", "png", "gif", "webp"].includes(fileType);
+  const fileType = media.path.split(".").pop().toLowerCase();
+
+  const isImage = /(jpg|jpeg|png|gif|webp)$/i.test(fileType);
+  const isVideo = /(mp4|webm|ogg)$/i.test(fileType);
 
   return (
     <div className={`max-w-96 w-fit ${incoming ? "" : "ml-auto"}`}>
@@ -21,8 +22,22 @@ const Media = ({ incoming, timestamp, file, messageId }) => {
                 : "rounded-br-none bg-blue-400 dark:bg-blue-500"
             }`}
           />
+        ) : isVideo ? (
+          <video
+            src={media.path}
+            controls
+            className="mb-2.5 rounded-2xl max-w-full h-auto"
+          />
         ) : (
-          <FileViewer fileType={fileType} filePath={media.path} />
+          <LazyImage
+            src={media.path}
+            alt="file"
+            className={`mb-2.5 rounded-2xl ${
+              incoming
+                ? "rounded-bl-none bg-gray-200 dark:bg-gray-800"
+                : "rounded-br-none bg-blue-400 dark:bg-blue-500"
+            }`}
+          />
         )}
 
         <div className="flex items-center justify-end space-x-2">

@@ -6,7 +6,7 @@ import {
   ContextMenuTrigger,
 } from "@/components/ui/context-menu";
 import { useDeleteMessageMutation } from "@/redux/api/chatApi.js";
-import { Star, Trash } from "@phosphor-icons/react";
+import { Trash } from "@phosphor-icons/react";
 import { useSelector } from "react-redux";
 
 const MessageOptions = ({ children, messageId, incoming }) => {
@@ -25,11 +25,6 @@ const MessageOptions = ({ children, messageId, incoming }) => {
     <ContextMenu>
       <ContextMenuTrigger>{children}</ContextMenuTrigger>
       <ContextMenuContent>
-        <ContextMenuItem className="flex items-center space-x-2">
-          <Star />
-          <p>Star</p>
-        </ContextMenuItem>
-        <ContextMenuSeparator />
         <ContextMenuItem
           className="flex items-center space-x-2"
           onClick={handleDelete}

@@ -26,7 +26,7 @@ const Attachments = () => {
   const users =
     chat?.participants?.filter((person) => person?._id !== user?._id) || [];
 
-  const [uploadMedia, { data, isLoading, error }] = useUploadMediaMutation();
+  const [uploadMedia, { data, isLoading }] = useUploadMediaMutation();
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
