@@ -163,10 +163,9 @@ const MessageView = () => {
               return (
                 <Media
                   key={index}
-                  incoming={message?.incoming}
-                  timestamp={message?.timestamp}
-                  assets={message?.assets}
-                  caption={message?.caption}
+                  incoming={message?.sender === users[0]?._id}
+                  timestamp={message?.createdAt}
+                  file={message?.file}
                   messageId={message?._id}
                 />
               );

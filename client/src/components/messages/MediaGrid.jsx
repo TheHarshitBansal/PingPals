@@ -2,8 +2,9 @@ import React from "react";
 import { Skeleton } from "../ui/skeleton.jsx";
 import LazyImage from "../LazyImage.jsx";
 
-const MediaGrid = ({ media }) => {
+const MediaGrid = ({ file }) => {
   const renderGrid = () => {
+    const media = JSON.parse(file);
     if (!media || !Array.isArray(media) || media.length === 0) {
       <Skeleton className="w-full max-h-64 min-h-64 rounded-lg" />;
     }
@@ -13,8 +14,8 @@ const MediaGrid = ({ media }) => {
     if (mediaCount === 1) {
       return (
         <LazyImage
-          src={media[0].url}
-          alt={media[0].alt || "Media"}
+          src={media[0].path}
+          alt={media[0].filename || "Media"}
           className="w-full max-h-64 min-h-64 object-cover rounded-lg"
         />
       );
@@ -24,8 +25,8 @@ const MediaGrid = ({ media }) => {
           {media.map((item, index) => (
             <LazyImage
               key={index}
-              src={item.url}
-              alt={item.alt || `Media ${index + 1}`}
+              src={item.path}
+              alt={item.filename || `Media ${index + 1}`}
               className="w-full max-h-64 min-h-64 object-cover rounded-lg"
             />
           ))}
@@ -37,8 +38,8 @@ const MediaGrid = ({ media }) => {
           {media.map((item, index) => (
             <LazyImage
               key={index}
-              src={item.url}
-              alt={item.alt || `Media ${index + 1}`}
+              src={item.path}
+              alt={item.filename || `Media ${index + 1}`}
               className={`w-full max-h-64 min-h-64 object-cover rounded-lg ${
                 mediaCount === 3 && index === 0 ? "col-span-2" : ""
               }`}
@@ -52,16 +53,16 @@ const MediaGrid = ({ media }) => {
           {media.slice(0, 3).map((item, index) => (
             <LazyImage
               key={index}
-              src={item.url}
-              alt={item.alt || `Media ${index + 1}`}
+              src={item.path}
+              alt={item.filename || `Media ${index + 1}`}
               className="w-full max-h-64 min-h-64 object-cover rounded-lg"
             />
           ))}
           {mediaCount > 4 && (
             <div className="relative">
               <LazyImage
-                src={media[4].url}
-                alt={media[4].alt || `Media 5`}
+                src={media[4].path}
+                alt={media[4].filename || `Media 5`}
                 className="w-full max-h-64 min-h-64 object-cover rounded-lg opacity-50"
               />
               <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-lg">

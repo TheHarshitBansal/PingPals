@@ -2,7 +2,6 @@ import { Separator } from "@/components/ui/separator.jsx";
 import { setSidebarType, toggleSidebar } from "@/redux/slices/appSlice.js";
 import { BellOff, ChevronRight, Star, Trash, UserMinus, X } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
-import { faker } from "@faker-js/faker";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import LazyImage from "@/components/LazyImage.jsx";
@@ -35,8 +34,12 @@ const ProfileSidebar = () => {
 
   const chat = useSelector((state) => state?.conversation?.currentConversation);
   const user = useSelector((state) => state?.auth?.user);
-
   const users = chat?.participants?.filter((person) => person._id !== user._id);
+
+  // Get media files from current conversation
+  const mediaFiles =
+    chat?.messages?.filter((msg) => msg.type === "Media") || [];
+  const recentMedia = mediaFiles.slice(-3); // Get the last 3 media files
 
   return (
     <div className="flex flex-col shadow-light dark:shadow-dark w-1/4 h-full">
@@ -52,15 +55,16 @@ const ProfileSidebar = () => {
       <div className="p-4 space-y-4">
         <div className="flex items-center gap-x-5 px-2">
           <LazyImage
-            src={users[0].avatar}
-            alt={users[0].name}
+            src={users[0]?.avatar}
+            alt={users[0]?.name}
             className="w-16 h-16 rounded-full object-cover object-center"
           />
           <div>
-            <h3 className="text-lg font-medium">{users[0].name}</h3>
-            <h3 className="text-base">@{users[0].username}</h3>
+            <h3 className="text-lg font-medium">{users[0]?.name}</h3>
+            <h3 className="text-base">@{users[0]?.username}</h3>
           </div>
         </div>
+
         <div className="flex px-2 space-x-2 text-gray-500 dark:text-gray-400 text-sm">
           <AlertDialog>
             <AlertDialogTrigger asChild>
@@ -73,7 +77,7 @@ const ProfileSidebar = () => {
               <AlertDialogHeader>
                 <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                 <AlertDialogDescription>
-                  You will have to send friend request again.
+                  You will have to send a friend request again.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
@@ -103,43 +107,48 @@ const ProfileSidebar = () => {
             </AlertDialogContent>
           </AlertDialog>
         </div>
+
         <Separator />
+
         <div className="flex flex-col px-2 gap-y-1">
           <h2 className="text-base font-medium">About</h2>
           <p className="text-gray-500 dark:text-gray-400 text-sm">
-            {users[0].about}
+            {users[0]?.about || "No bio available"}
           </p>
         </div>
+
         <Separator />
+
+        {/* Shared Media */}
         <div className="flex flex-col gap-y-4 px-2">
           <div className="flex justify-between items-center">
-            <h3 className="text-base font-medium">Media, Links & Docs</h3>
+            <h3 className="text-base font-medium">Media</h3>
             <div
               className="flex items-center gap-x-1 text-blue-500 dark:text-blue-400 cursor-pointer"
               onClick={handleSharedOpen}
             >
-              <span>{faker.number.int({ max: 100 })}</span>
+              <span>{mediaFiles.length}</span> {/* Show media count */}
               <ChevronRight size={24} />
             </div>
           </div>
           <div className="flex gap-x-2 overflow-clip">
-            <LazyImage
-              src={faker.image.url()}
-              alt="media"
-              className="w-24 h-24 rounded-md object-cover object-center"
-            />
-            <LazyImage
-              src={faker.image.url()}
-              alt="media"
-              className="w-24 h-24 rounded-md object-cover object-center"
-            />
-            <LazyImage
-              src={faker.image.url()}
-              alt="media"
-              className="w-24 h-24 rounded-md object-cover object-center"
-            />
+            {recentMedia.length > 0 ? (
+              recentMedia.map((media, index) => (
+                <LazyImage
+                  key={index}
+                  src={JSON.parse(media.file).path}
+                  alt="media"
+                  className="w-24 h-24 rounded-md object-cover object-center"
+                />
+              ))
+            ) : (
+              <p className="text-gray-500 dark:text-gray-400 text-sm">
+                No media available
+              </p>
+            )}
           </div>
         </div>
+
         <div className="flex flex-col gap-2">
           <Separator />
           <div
@@ -170,4 +179,5 @@ const ProfileSidebar = () => {
     </div>
   );
 };
+
 export default ProfileSidebar;

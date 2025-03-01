@@ -42,8 +42,25 @@ export const chatApi = createApi({
                     toast({variant: 'error', title: error?.error?.data?.message})
                 }
             }
+        }),
+        uploadMedia: builder.mutation({
+            query: (formData) => {
+                return {
+                    url: "/upload/file",
+                    method: "POST",
+                    body: formData,
+                };
+            },
+            onQueryStarted: async (_, { queryFulfilled }) => {
+                try {
+                    const result = await queryFulfilled;
+                    toast({ variant: "success", title: result.data.message });
+                } catch (error) {
+                    toast({ variant: "error", title: error?.data?.message || "Upload failed" });
+                }
+            },
         })
     })
 })
 
-export const { useDeleteMessageMutation, useDeleteChatMutation } = chatApi;
+export const { useDeleteMessageMutation, useDeleteChatMutation, useUploadMediaMutation } = chatApi;

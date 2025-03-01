@@ -128,7 +128,9 @@ const Chats = () => {
 
     const lastMessage =
       chat.messages?.length > 0
-        ? chat.messages[chat.messages.length - 1].content
+        ? chat.messages[chat.messages.length - 1].type === "Media"
+          ? "Media"
+          : chat.messages[chat.messages.length - 1].content
         : "No messages yet";
 
     const lastMessageTime =

@@ -6,7 +6,7 @@ import asyncHandler from '../middlewares/asyncHandler.middleware.js'
 import otpTemplate from '../templates/sendOTP.template.js'
 import resetPasswordTemplate from '../templates/resetPassword.template.js'
 import crypto from 'crypto';
-import { deleteImage } from '../middlewares/upload.middleware.js';
+import { deleteFile } from '../middlewares/upload.middleware.js';
 
 //INFO: Sign JWT token
 const signToken = (userId) => {

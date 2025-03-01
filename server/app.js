@@ -253,12 +253,34 @@ io.on('connection', async (socket) => {
         io.emit('database-changed');
     })
 
-    //     //INFO: Handling File & Media Messages
-    //     socket.on("file_message", async (data) =>  {
-             
-    //         const fileExtension = path.extname(data.file.name);
-    //         const fileName = `${Date.now()}_${Math.floor(Math.random()*1000)}${fileExtension}`
-    //     })
+        //INFO: Handling File & Media Messages
+        socket.on("file_message", async (data) =>  {
+            const conversation = await Message.findById(data.conversation_id);
+            if(!conversation) return;
+    
+            // Function to format time as HH:MM
+            const formatTime = (date) => {
+                const d = new Date(date);
+                return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+            };
+    
+            const messageTime = formatTime(new Date()); // Get current time in HH:MM format
+    
+            conversation.messages.push({
+                sender: user_id,
+                receiver: data.receiver_id,
+                createdAt: messageTime,
+                type: "Media",
+                file: data.file,
+            });
+    
+            await conversation.save();
+    
+            const receiverData = await User.findById(data.receiver_id).select('socket_id').exec();
+    
+            io.to(receiverData?.socket_id).emit('database-changed');
+            io.emit('database-changed');
+        })
 
     socket.on('disconnect', async () => {
         console.log(`User disconnected: ${user_id} (${socket.id})`);
