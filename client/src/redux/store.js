@@ -4,8 +4,10 @@ import storage from "redux-persist/lib/storage";
 import AppReducer from "./slices/appSlice.js";
 import AuthReducer from "./slices/authSlice.js";
 import conversationReducer from "./slices/conversationSlice.js";
+import callReducer from "./slices/callSlice.js";
 import { authApi } from "./api/authApi.js";
 import { chatApi } from "./api/chatApi.js";
+import { callApi } from "./api/callApi.js";
 
 // Transform to exclude currentConversation & currentMessages from persistence
 const conversationTransform = createTransform(
@@ -15,7 +17,7 @@ const conversationTransform = createTransform(
   },
   (outboundState) => ({
     ...outboundState,
-    currentConversation: null, // Ensure default values on reload
+    currentConversation: null,
     currentMessages: [],
   }),
   { whitelist: ["conversation"] }
@@ -33,8 +35,10 @@ const rootReducer = combineReducers({
   app: AppReducer,
   auth: AuthReducer,
   conversation: conversationReducer,
+  call: callReducer,
   [authApi.reducerPath]: authApi.reducer,
   [chatApi.reducerPath]: chatApi.reducer,
+  [callApi.reducerPath]: callApi.reducer,
 });
 
 export const store = configureStore({
@@ -43,7 +47,7 @@ export const store = configureStore({
     getDefaultMiddleware({
       serializableCheck: false,
       immutableCheck: false,
-    }).concat(authApi.middleware, chatApi.middleware),
+    }).concat(authApi.middleware, chatApi.middleware, callApi.middleware),
   devTools: import.meta.env.VITE_NODE_ENV !== "production",
 });
 

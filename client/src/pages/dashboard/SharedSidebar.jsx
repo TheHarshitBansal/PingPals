@@ -4,7 +4,6 @@ import { setSidebarType } from "@/redux/slices/appSlice.js";
 import { ChevronLeft, Image, X } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import Text from "@/components/messages/Text.jsx";
-import FileViewer from "react-file-viewer";
 import LazyImage from "@/components/LazyImage.jsx";
 
 const SharedSidebarLinks = ({ links }) => {

@@ -8,6 +8,10 @@ import {
 } from "@/components/ui/avatar.jsx";
 import { Skeleton } from "@/components/ui/skeleton.jsx";
 import MakeCallDialog from "./MakeCallDialog.jsx";
+import { useFetchCallLogsQuery } from "@/redux/api/callApi.js";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
+import { setCallLogs } from "@/redux/slices/appSlice.js";
 
 const CallElement = ({ name, incoming, missed, avatar, time, voice, date }) => {
   return (
@@ -59,6 +63,17 @@ const CallElement = ({ name, incoming, missed, avatar, time, voice, date }) => {
 };
 
 const CallLog = () => {
+  const dispatch = useDispatch();
+  const { data, refetch, isSuccess } = useFetchCallLogsQuery(undefined);
+
+  useEffect(() => {
+    if (isSuccess && data) {
+      dispatch(setCallLogs(data.data));
+    }
+  }, [isSuccess, data, dispatch, refetch]);
+
+  const callLogs = useSelector((state) => state.app.callLogs);
+
   return (
     <div className="relative h-screen min-w-96 max-w-96 shadow-light dark:shadow-dark flex flex-col">
       {/* Header */}
@@ -81,16 +96,14 @@ const CallLog = () => {
 
       {/* Call <Log> */}
       <div className="flex-1 overflow-y-auto px-5 no-scrollbar">
-        {users.map((user, index) => (
+        {callLogs.map((log, index) => (
           <CallElement
-            key={index}
-            name={user.name}
-            avatar={user.avatar}
-            time={user.time}
-            missed={user.missed}
-            incoming={user.incoming}
-            date={user.date}
-            voice={user.voice}
+            key={log.id}
+            name={log.name}
+            avatar={log.img}
+            missed={log.missed}
+            incoming={log.incoming}
+            voice={log.type === "Voice"}
           />
         ))}
       </div>

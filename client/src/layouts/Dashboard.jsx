@@ -13,6 +13,8 @@ import { toast } from "@/hooks/use-toast.js";
 import { useGetUserQuery } from "@/redux/api/authApi.js";
 import { updateUser } from "@/redux/slices/authSlice.js";
 import { setCurrentConversation } from "@/redux/slices/conversationSlice.js";
+import { useGetFriendsQuery } from "@/redux/api/authApi.js";
+import { setFriends } from "@/redux/slices/appSlice.js";
 
 const Dashboard = () => {
   const { data, refetch } = useGetUserQuery(undefined);
@@ -21,6 +23,14 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
+
+  const { data: friendsData, isSuccess } = useGetFriendsQuery(undefined);
+
+  useEffect(() => {
+    if (isSuccess && friendsData?.friends) {
+      dispatch(setFriends(friendsData.friends));
+    }
+  }, [data, isSuccess, dispatch]);
 
   useEffect(() => {
     if (isAuthenticated) {
