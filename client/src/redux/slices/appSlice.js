@@ -7,7 +7,7 @@ const initialState = {
     },
     friends : [],
     requests: [],
-    callLogs: []
+    incomingCallData: null,
 }
 
 const appSlice = createSlice({
@@ -26,12 +26,15 @@ const appSlice = createSlice({
         setRequests: (state, action) => {
             state.requests = action.payload
         },
-        setCallLogs: (state, action) => {
-            state.callLogs = action.payload
-        }
+        setIncomingCallData(state, action) {
+            state.incomingCallData = action.payload;
+          },
+          clearIncomingCallData(state) {
+            state.incomingCallData = null;
+          }
     }
 })
 
-export const { toggleSidebar, setSidebarType, setFriends, setRequests, setCallLogs } = appSlice.actions;
+export const { toggleSidebar, setSidebarType, setFriends, setRequests, setIncomingCallData, clearIncomingCallData } = appSlice.actions;
 
 export default appSlice.reducer;

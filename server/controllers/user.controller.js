@@ -222,7 +222,7 @@ export const updateProfile = asyncHandler(async (req, res) => {
 
     if(img && user.avatar) {
         const public_id = "PingPals/" + user.avatar.split('/').pop().split('.')[0];
-        await deleteImage(public_id);
+        await deleteFile(public_id);
     }
 
     user.name = name || user.name;

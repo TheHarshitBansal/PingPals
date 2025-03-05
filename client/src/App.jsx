@@ -50,7 +50,6 @@ const App = () => {
           <Route path="/" element={<Dashboard />}>
             <Route index element={<HomePage />} />
             <Route path="chat" element={<GeneralApp />} />
-            <Route path="calls" element={<CallLog />} />
             <Route path="settings" element={<Settings />} />
             <Route path="profile" element={<ProfileGeneral />} />
           </Route>

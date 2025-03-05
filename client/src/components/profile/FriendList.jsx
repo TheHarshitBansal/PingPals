@@ -4,7 +4,9 @@ import { Skeleton } from "../ui/skeleton.jsx";
 import { LucideUserMinus, MessageSquareMoreIcon } from "lucide-react";
 import { socket } from "@/socket.js";
 import { useDispatch, useSelector } from "react-redux";
+import { useGetFriendsQuery } from "@/redux/api/authApi.js";
 import { useEffect } from "react";
+import { setFriends } from "@/redux/slices/appSlice.js";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -19,7 +21,14 @@ import {
 
 const FriendList = () => {
   const dispatch = useDispatch();
+  const { data, refetch, isSuccess, isLoading } = useGetFriendsQuery(undefined);
   const friends = useSelector((state) => state.app.friends);
+
+  useEffect(() => {
+    if (isSuccess && data?.friends) {
+      dispatch(setFriends(data.friends));
+    }
+  }, [data, isSuccess, dispatch]);
 
   useEffect(() => {
     socket.on("database-updated", async () => {

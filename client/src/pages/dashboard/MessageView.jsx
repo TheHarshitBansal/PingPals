@@ -1,9 +1,9 @@
+// MessageView.js
 import { useEffect, useState, useCallback } from "react";
 import {
   CaretDown,
   Gif,
   PaperPlaneTilt,
-  Phone,
   VideoCamera,
 } from "@phosphor-icons/react";
 import { Divider } from "@mui/material";
@@ -23,48 +23,52 @@ import {
 import { Skeleton } from "@/components/ui/skeleton.jsx";
 import { socket } from "@/socket.js";
 import { fetchMessages } from "@/redux/slices/conversationSlice.js";
+import {
+  setIncomingCallData,
+  clearIncomingCallData,
+} from "@/redux/slices/appSlice.js"; // Import from appSlice
 import ChatOptions from "@/components/messages/ChatOptions.jsx";
+import VideoCall from "@/components/VideoCall.jsx";
 
 const MessageView = () => {
   const dispatch = useDispatch();
   const [message, setMessage] = useState("");
   const [isGifOpen, setIsGifOpen] = useState(false);
+  const [isCallActive, setIsCallActive] = useState(false);
   const profileSidebar = useSelector((state) => state?.app?.sidebar?.isOpen);
   const chat = useSelector((state) => state?.conversation?.currentConversation);
   const user = useSelector((state) => state?.auth?.user);
   const messages = useSelector((state) => state?.conversation?.currentMessages);
+  const incomingCallData = useSelector((state) => state.app.incomingCallData); // Get from appSlice
 
   const users =
     chat?.participants?.filter((person) => person?._id !== user?._id) || [];
+  const receiverId = users[0]?._id;
+  const receiverName = users[0]?.name || "Unknown User";
 
   const handleMessageSend = useCallback(
     async (e) => {
       e.preventDefault();
-      if (message.trim() === "") return; // Prevent sending empty messages
+      if (message.trim() === "") return;
       await socket?.emit("message", { conversation_id: chat._id });
       await socket?.emit("text_message", {
         conversation_id: chat._id,
         content: message,
-        receiver_id: users[0]?._id,
+        receiver_id: receiverId,
       });
-      setMessage(""); // Clear input after sending
+      setMessage("");
     },
-    [message]
+    [message, chat, receiverId]
   );
 
   useEffect(() => {
     const handleDatabaseChange = () => {
-      socket?.emit("get_messages", {
-        conversation_id: chat?._id,
-      });
+      socket?.emit("get_messages", { conversation_id: chat?._id });
     };
-
     const handleDispatchMessages = async (data) => {
       dispatch(fetchMessages(data));
     };
-
-    handleDatabaseChange();
-
+    if (chat?._id) handleDatabaseChange();
     socket?.on("database-changed", handleDatabaseChange);
     socket?.on("dispatch_messages", handleDispatchMessages);
 
@@ -72,24 +76,32 @@ const MessageView = () => {
       socket?.off("database-changed", handleDatabaseChange);
       socket?.off("dispatch_messages", handleDispatchMessages);
     };
-  }, [chat, dispatch, users, handleMessageSend]);
+  }, [chat, dispatch]);
 
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === "Enter" && !e.shiftKey) {
-        e.preventDefault(); // Prevents newline from being added
+        e.preventDefault();
         handleMessageSend(e);
       }
     };
-
     window.addEventListener("keydown", handleKeyDown);
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
+    return () => window.removeEventListener("keydown", handleKeyDown);
   }, [handleMessageSend]);
+
+  useEffect(() => {
+    if (incomingCallData) {
+      setIsCallActive(true);
+    }
+  }, [incomingCallData]);
 
   const handleEmojiSelect = (emoji) => {
     setMessage((prevMessage) => prevMessage + emoji);
+  };
+
+  const handleCallClose = () => {
+    setIsCallActive(false);
+    dispatch(clearIncomingCallData()); // Use appSlice action
   };
 
   return (
@@ -121,24 +133,18 @@ const MessageView = () => {
             </p>
           </div>
         </div>
-
         <div className="cursor-pointer flex items-center space-x-6 h-full">
-          <button>
+          <button onClick={() => setIsCallActive(true)}>
             <VideoCamera size={24} color="gray" />
-          </button>
-          <button>
-            <Phone size={24} color="gray" />
           </button>
           <Divider
             orientation="vertical"
             flexItem
             className="bg-gray-100 dark:bg-gray-700"
           />
-          <button onClick={() => setIsAudioCall(true)}>
-            <ChatOptions chatId={chat?._id}>
-              <CaretDown size={24} color="gray" />
-            </ChatOptions>
-          </button>
+          <ChatOptions chatId={chat?._id}>
+            <CaretDown size={24} color="gray" />
+          </ChatOptions>
         </div>
       </div>
 
@@ -173,8 +179,9 @@ const MessageView = () => {
           }
         })}
       </div>
+
       {/* Chat Input */}
-      <div className="sticky bottom-0 p-3 ">
+      <div className="sticky bottom-0 p-3">
         <form
           className="flex items-center justify-between space-x-4"
           onSubmit={handleMessageSend}
@@ -192,7 +199,6 @@ const MessageView = () => {
               disabled={!user.friends.includes(users[0]?._id)}
               rows={1}
             />
-
             <div className="absolute right-5 top-1/2 -translate-y-1/2 flex items-center justify-end space-x-4">
               <Attachments />
               <button
@@ -206,7 +212,6 @@ const MessageView = () => {
               <EmojiPicker selectEmoji={handleEmojiSelect} />
             </div>
           </div>
-
           <button
             type="submit"
             className="flex items-center justify-center h-12 max-w-12 w-full rounded-md bg-blue-500 text-white hover:bg-opacity-80"
@@ -217,6 +222,18 @@ const MessageView = () => {
         </form>
         {isGifOpen && <Giphy />}
       </div>
+
+      {/* Video Call */}
+      <VideoCall
+        isOpen={isCallActive}
+        handleClose={handleCallClose}
+        conversationId={chat?._id}
+        userId={user?._id}
+        receiverId={receiverId}
+        receiverName={receiverName}
+        incomingCallData={incomingCallData}
+        users={users}
+      />
     </div>
   );
 };

@@ -1,3 +1,4 @@
+// Dashboard.jsx
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import Logo from "../assets/logo.png";
 import { CogIcon, MessageSquareMoreIcon, PhoneIcon } from "lucide-react";
@@ -11,10 +12,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { connectSocket, socket } from "@/socket.js";
 import { toast } from "@/hooks/use-toast.js";
 import { useGetUserQuery } from "@/redux/api/authApi.js";
-import { updateUser } from "@/redux/slices/authSlice.js";
+import { updateUser } from "@/redux/slices/authSlice.js"; // Import action
 import { setCurrentConversation } from "@/redux/slices/conversationSlice.js";
-import { useGetFriendsQuery } from "@/redux/api/authApi.js";
-import { setFriends } from "@/redux/slices/appSlice.js";
+import { setIncomingCallData } from "@/redux/slices/appSlice.js";
 
 const Dashboard = () => {
   const { data, refetch } = useGetUserQuery(undefined);
@@ -24,16 +24,8 @@ const Dashboard = () => {
   const location = useLocation();
   const dispatch = useDispatch();
 
-  const { data: friendsData, isSuccess } = useGetFriendsQuery(undefined);
-
   useEffect(() => {
-    if (isSuccess && friendsData?.friends) {
-      dispatch(setFriends(friendsData.friends));
-    }
-  }, [data, isSuccess, dispatch]);
-
-  useEffect(() => {
-    if (isAuthenticated) {
+    if (isAuthenticated && user?._id) {
       connectSocket(user._id);
 
       if (socket) {
@@ -72,6 +64,21 @@ const Dashboard = () => {
             dispatch(updateUser(updatedData.data.user));
           }
         });
+
+        // Global incoming call listener
+        socket.on(
+          "incoming_video_call",
+          ({ caller_id, offer, conversation_id }) => {
+            console.log(
+              `Dashboard: User ${user._id} received incoming call from ${caller_id} for conversation ${conversation_id}`
+            );
+            if (caller_id !== user._id) {
+              dispatch(
+                setIncomingCallData({ caller_id, offer, conversation_id })
+              );
+            }
+          }
+        );
       }
 
       return () => {
@@ -83,16 +90,16 @@ const Dashboard = () => {
         socket?.off("friend_removed");
         socket?.off("open_chat");
         socket?.off("database-updated");
+        socket?.off("incoming_video_call");
       };
     }
-  }, [isAuthenticated, user._id, refetch, data, dispatch]);
+  }, [isAuthenticated, user?._id, refetch, dispatch, navigate]);
 
   useEffect(() => {
     const routes = {
       "/": 0,
       "/chat": 1,
-      "/calls": 2,
-      "/settings": 3,
+      "/settings": 2,
     };
     setActive(routes[location.pathname] ?? null);
   }, [location]);
@@ -114,8 +121,7 @@ const Dashboard = () => {
             </div>
             {[
               ["/chat", MessageSquareMoreIcon, 1],
-              ["/calls", PhoneIcon, 2],
-              ["/settings", CogIcon, 3],
+              ["/settings", CogIcon, 2],
             ].map(([path, Icon, index]) => (
               <div
                 key={path}

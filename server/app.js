@@ -16,8 +16,6 @@ import FriendReq from './models/friendReq.model.js';
 import Message from './models/message.model.js';
 import mongoose from 'mongoose';
 import chatRoutes from './routes/chat.routes.js';
-import callRoutes from './routes/call.routes.js';
-import Call from './models/call.model.js';
 
 const app = express();
 const PORT = process.env.PORT || 8000;
@@ -55,7 +53,6 @@ app.use('/api', limited);
 
 app.use('/api/v1/user', userRoutes);
 app.use('/api/v1/chat', chatRoutes);
-app.use('/api/v1/call', callRoutes);
 
 app.use(errorMiddleware)
 
@@ -285,108 +282,61 @@ io.on('connection', async (socket) => {
             io.emit('database-changed');
         })
 
-
-    //INFO: Handling Call Events
-    socket.on('start_call', async (data) => {
-        const {from, to, roomId, type} = data;
-
-        const fromUser = await User.findById(from).select('socket_id').exec();
-        const toUser = await User.findById(to).select('socket_id').exec();
-
-        io.to(toUser.socket_id).emit('incoming_call', {
-            from: fromUser,
-            roomId,
-            streamId: from,
-            userId: to,
-            userName: to,
-            type,
-        });
-    })
-
-    //INFO: Not picking a call
-    socket.on('call_not_picked', async (data) => {
-        const { to, from, type } = data;
-        const toUser = await User.findById(to).select('socket_id').exec();
-
-        await Call.findOneAndUpdate({
-            participants: {$size: 2, $all: [from, to]},
-            type,
-        },{
-            verdict: "Missed",
-            status: "Ended",
-            endedAt: Date.now(),
-        });
-
-        io.to(toUser.socket_id).emit('call_missed', {
-            from,
-            to,
-            type,
-        });
-    })
-
-    //INFO: Accepting a call
-    socket.on('call_accepted', async (data) => {
-        const {from, to, type} = data;
-
-        const fromUser = await User.findById(from).select('socket_id').exec();
-
-        await Call.findOneAndUpdate({
-            participants: {$size: 2, $all: [from, to]},
-            type,
-        },{
-            verdict: "Accepted",
-            status: "Ongoing",
-        })
-
-        io.to(fromUser.socket_id).emit('call_accepted', {
-            from,
-            to,
-            type,
-        });
-    })
-
-    //INFO: Call Denied
-    socket.on('call_denied', async (data) => {
-        const {from, to, type} = data;
-        const fromUser = await User.findById(from).select('socket_id').exec();
-
-        await Call.findOneAndUpdate({
-            participants: {$size: 2, $all: [from, to]},
-            type,
-        },{
-            verdict: "Denied",
-            status: "Ended",
-            endedAt: Date.now(),
-        });
-
-        io.to(fromUser.socket_id).emit('call_denied', {
-            from,
-            to,
-            type,
-        });
-    })
-
-    //INFO: User Busy on another Call
-    socket.on('user_busy', async (data) => {
-        const {from, to, type} = data;
-        const fromUser = await User.findById(from).select('socket_id').exec();
-
-        await Call.findOneAndUpdate({
-            participants: {$size: 2, $all: [from, to]},
-            type,
-        },{
-            verdict: "Busy",
-            status: "Ended",
-            endedAt: Date.now(),
-        });
-
-        io.to(fromUser.socket_id).emit('on_another_call', {
-            from,
-            to,
-            type,
-        });
-    })
-
+    
+        socket.on('start_video_call', async (data) => {
+            const { receiver_id, conversation_id, offer } = data;
+            const caller = await User.findById(user_id).select('socket_id').exec();
+            const receiver = await User.findById(receiver_id).select('socket_id').exec();
+        
+            console.log(`Caller ${user_id} (socket: ${caller?.socket_id}) initiating call to receiver ${receiver_id} (socket: ${receiver?.socket_id})`);
+        
+            if (receiver && receiver.socket_id && receiver.socket_id !== caller.socket_id) {
+              console.log(`Emitting incoming_video_call to receiver ${receiver_id} at socket ${receiver.socket_id}`);
+              io.to(receiver.socket_id).emit('incoming_video_call', {
+                caller_id: user_id,
+                conversation_id,
+                offer,
+              });
+            } else {
+              console.error(`Receiver ${receiver_id} not found, offline, or same as caller`);
+            }
+          });
+        
+          socket.on('accept_video_call', async (data) => {
+            const { caller_id, conversation_id, answer } = data;
+            const caller = await User.findById(caller_id).select('socket_id').exec();
+        
+            console.log(`Receiver ${user_id} accepting call from ${caller_id} (socket: ${caller?.socket_id})`);
+        
+            if (caller && caller.socket_id) {
+              io.to(caller.socket_id).emit('video_call_accepted', {
+                receiver_id: user_id,
+                conversation_id,
+                answer,
+              });
+            }
+          });
+        
+          socket.on('ice_candidate', (data) => {
+            const { to_user_id, candidate } = data;
+            User.findById(to_user_id).select('socket_id').exec().then(receiver => {
+              if (receiver && receiver.socket_id) {
+                console.log(`Sending ICE candidate to ${to_user_id} at socket ${receiver.socket_id}`);
+                io.to(receiver.socket_id).emit('ice_candidate', { from: user_id, candidate });
+              }
+            });
+          });
+        
+          socket.on('end_video_call', async (data) => {
+            const { receiver_id } = data;
+            const receiver = await User.findById(receiver_id).select('socket_id').exec();
+        
+            if (receiver && receiver.socket_id) {
+              console.log(`Ending call for ${receiver_id} at socket ${receiver.socket_id}`);
+              io.to(receiver.socket_id).emit('video_call_ended', { caller_id: user_id });
+            }
+          });
+    
     socket.on('disconnect', async () => {
         console.log(`User disconnected: ${user_id} (${socket.id})`);
         await User.findByIdAndUpdate(user_id, { status: "Offline" });
