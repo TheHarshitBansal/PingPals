@@ -71,7 +71,7 @@ const GoogleCallback = () => {
     };
 
     processGoogleCallback();
-  }, [handleGoogleAuth, navigate]);
+  }, [navigate]);
 
   const renderStatusIcon = () => {
     switch (status) {
