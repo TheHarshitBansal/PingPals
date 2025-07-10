@@ -6,16 +6,18 @@ import AuthReducer from "./slices/authSlice.js";
 import conversationReducer from "./slices/conversationSlice.js";
 import { authApi } from "./api/authApi.js";
 import { chatApi } from "./api/chatApi.js";
+import { oauthApi } from "./api/oauthApi.js";
 
 // Transform to exclude currentConversation & currentMessages from persistence
 const conversationTransform = createTransform(
   (inboundState) => {
-    const { currentConversation, currentMessages, ...persistedState } = inboundState;
+    const { currentConversation, currentMessages, ...persistedState } =
+      inboundState;
     return persistedState;
   },
   (outboundState) => ({
     ...outboundState,
-    currentConversation: null, // Ensure default values on reload
+    currentConversation: null,
     currentMessages: [],
   }),
   { whitelist: ["conversation"] }
@@ -35,6 +37,7 @@ const rootReducer = combineReducers({
   conversation: conversationReducer,
   [authApi.reducerPath]: authApi.reducer,
   [chatApi.reducerPath]: chatApi.reducer,
+  [oauthApi.reducerPath]: oauthApi.reducer,
 });
 
 export const store = configureStore({

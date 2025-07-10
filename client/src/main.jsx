@@ -6,12 +6,15 @@ import { BrowserRouter } from "react-router-dom";
 import { Provider } from "react-redux";
 import { store } from "./redux/store.js";
 import { Toaster } from "@/components/ui/toaster";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
 createRoot(document.getElementById("root")).render(
-  <Provider store={store}>
-    <BrowserRouter>
-      <App />
-      <Toaster />
-    </BrowserRouter>
-  </Provider>
+  <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+    <Provider store={store}>
+      <BrowserRouter>
+        <App />
+        <Toaster />
+      </BrowserRouter>
+    </Provider>
+  </GoogleOAuthProvider>
 );

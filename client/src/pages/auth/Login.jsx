@@ -10,6 +10,7 @@ import { useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useLoginUserMutation } from "@/redux/api/authApi.js";
+import { useGoogleLogin } from "@react-oauth/google";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -69,6 +70,12 @@ const Login = () => {
   const onSubmit = async (data) => {
     await loginUser(data);
   };
+
+  const handleGoogleLogin = useGoogleLogin({
+    flow: "auth-code",
+    ux_mode: "redirect",
+    redirect_uri: `${import.meta.env.VITE_FRONTEND_URL}/auth/google`,
+  });
 
   return (
     <div className="relative w-screen h-screen flex flex-col items-center justify-start pt-10 gap-y-3">
@@ -149,7 +156,7 @@ const Login = () => {
           <Separator /> <p>OR</p> <Separator />
         </div>
         <div className="flex justify-center gap-x-4">
-          <button>
+          <button onClick={() => handleGoogleLogin()}>
             <GoogleLogo className="w-8 h-8 text-red-400" />
           </button>
           <button>
