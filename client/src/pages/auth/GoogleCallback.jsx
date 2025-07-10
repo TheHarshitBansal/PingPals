@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { CheckCircle, Loader2, AlertCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useHandleGoogleAuthMutation } from "@/redux/api/oauthApi.js";
+import { useDispatch } from "react-redux";
+import { addUser } from "@/redux/slices/authSlice.js";
 
 const GoogleCallback = () => {
   const navigate = useNavigate();
   const [status, setStatus] = useState("processing");
   const [message, setMessage] = useState("Processing your request...");
-  const [handleGoogleAuth] = useHandleGoogleAuthMutation();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const processGoogleCallback = async () => {
@@ -18,27 +19,53 @@ const GoogleCallback = () => {
 
         if (error) {
           setStatus("error");
-          setMessage("Authentication was cancelled or failed");
+          setMessage("Authentication was cancelled or failed.");
           setTimeout(() => navigate("/auth/login"), 3000);
           return;
         }
 
         if (!code) {
           setStatus("error");
-          setMessage("No authorization code received");
+          setMessage("No authorization code received.");
           setTimeout(() => navigate("/auth/login"), 3000);
           return;
         }
 
         setMessage("Verifying your Google account...");
-        await handleGoogleAuth({ code });
+
+        const result = await fetch(
+          `${import.meta.env.VITE_BASE_URL}/auth/google`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ code }),
+          }
+        )
+          .then((res) => res.json())
+          .then((data) => {
+            dispatch(
+              addUser({
+                user: data.user,
+                token: data.token,
+                isAuthenticated: true,
+              })
+            );
+            navigate("/");
+          })
+          .catch((err) => {
+            console.error("Login error", err);
+            navigate("/login?error=auth_failed");
+          });
 
         setStatus("success");
         setMessage("Successfully authenticated! Redirecting...");
         setTimeout(() => navigate("/"), 2000);
-      } catch (error) {
+      } catch (err) {
+        console.error("Google Auth Error:", err);
         setStatus("error");
-        setMessage("Authentication failed. Please try again.");
+        setMessage(
+          err?.data?.message || "Authentication failed. Please try again."
+        );
         setTimeout(() => navigate("/auth/login"), 3000);
       }
     };
@@ -83,12 +110,9 @@ const GoogleCallback = () => {
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-12 bg-background">
       <div className="w-full max-w-md space-y-8 text-center">
-        {/* Main Content */}
         <div className="space-y-6">
-          {/* Status Icon */}
           <div className="flex justify-center">{renderStatusIcon()}</div>
 
-          {/* Status Message */}
           <div className="space-y-2">
             <h1 className="text-2xl font-bold text-foreground">
               {status === "processing" && "Connecting to Google"}
@@ -98,7 +122,6 @@ const GoogleCallback = () => {
             <p className="text-muted-foreground text-lg">{message}</p>
           </div>
 
-          {/* Progress Indicator */}
           {status === "processing" && (
             <div className="space-y-3">
               <div className="w-full bg-secondary rounded-full h-2">
@@ -113,26 +136,19 @@ const GoogleCallback = () => {
             </div>
           )}
 
-          {/* Success Message */}
           {status === "success" && (
-            <div className="space-y-2">
-              <p className="text-sm text-green-600 dark:text-green-400">
-                Welcome to PingPals! Taking you to your dashboard...
-              </p>
-            </div>
+            <p className="text-sm text-green-600 dark:text-green-400">
+              Welcome to PingPals! Taking you to your dashboard...
+            </p>
           )}
 
-          {/* Error Message */}
           {status === "error" && (
-            <div className="space-y-2">
-              <p className="text-sm text-red-600 dark:text-red-400">
-                Redirecting you back to the login page...
-              </p>
-            </div>
+            <p className="text-sm text-red-600 dark:text-red-400">
+              Redirecting you back to the login page...
+            </p>
           )}
         </div>
 
-        {/* Loading Dots Animation */}
         {status === "processing" && (
           <div className="flex justify-center space-x-2">
             <div className="w-2 h-2 bg-primary rounded-full animate-bounce"></div>

@@ -6,7 +6,6 @@ import AuthReducer from "./slices/authSlice.js";
 import conversationReducer from "./slices/conversationSlice.js";
 import { authApi } from "./api/authApi.js";
 import { chatApi } from "./api/chatApi.js";
-import { oauthApi } from "./api/oauthApi.js";
 
 // Transform to exclude currentConversation & currentMessages from persistence
 const conversationTransform = createTransform(
@@ -37,7 +36,6 @@ const rootReducer = combineReducers({
   conversation: conversationReducer,
   [authApi.reducerPath]: authApi.reducer,
   [chatApi.reducerPath]: chatApi.reducer,
-  [oauthApi.reducerPath]: oauthApi.reducer,
 });
 
 export const store = configureStore({
