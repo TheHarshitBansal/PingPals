@@ -6,7 +6,6 @@ import NotRequireAuth from "./components/auth/NotRequireAuth.jsx";
 import NotFound from "./pages/NotFound.jsx";
 import { useDispatch, useSelector } from "react-redux";
 import { removeUser } from "./redux/slices/authSlice.js";
-import Error from "./pages/Error.jsx";
 import GoogleCallback from "./pages/auth/GoogleCallback.jsx";
 const ProfileGeneral = lazy(() => import("./pages/profile/ProfileGeneral.jsx"));
 const Verification = lazy(() => import("./pages/auth/Verification.jsx"));
