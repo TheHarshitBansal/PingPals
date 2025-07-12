@@ -1,8 +1,6 @@
 import Logo from "@/assets/logo.png";
 import ThemeChangeDialog from "@/components/ThemeChangeDialog.jsx";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator.jsx";
-import { GoogleLogo, LinkedinLogo, GithubLogo } from "@phosphor-icons/react";
 import { EyeIcon, EyeOff, InfoIcon, Loader2, Pencil } from "lucide-react";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -205,20 +203,6 @@ const Register = () => {
             and <Link className="font-semibold underline">Privacy Policy</Link>
           </p>
         </form>
-        <div className="flex items-center justify-center gap-x-5 overflow-x-hidden my-5">
-          <Separator /> <p>OR</p> <Separator />
-        </div>
-        <div className="flex justify-center gap-x-4">
-          <button>
-            <GoogleLogo className="w-8 h-8 text-red-400" />
-          </button>
-          <button>
-            <GithubLogo className="w-8 h-8" />
-          </button>
-          <button>
-            <LinkedinLogo className="w-8 h-8 text-blue-500" />
-          </button>
-        </div>
       </div>
     </div>
   );

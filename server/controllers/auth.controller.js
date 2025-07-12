@@ -71,6 +71,7 @@ export const handleGithubAuth = asyncHandler(async (req, res) => {
   const emailRes = await axios.get("https://api.github.com/user/emails", {
     headers: { Authorization: `Bearer ${access_token}` },
   });
+  console.log("userRes", userRes.data);
 
   const { login, name, avatar_url } = userRes.data;
   const email =
@@ -81,7 +82,7 @@ export const handleGithubAuth = asyncHandler(async (req, res) => {
   if (!user) {
     user = await User.create({
       email,
-      username: login,
+      username: login.toString().toLowerCase(),
       avatar: avatar_url,
       verified: true,
       provider: "github",
