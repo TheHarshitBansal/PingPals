@@ -2,8 +2,8 @@ import Logo from "@/assets/logo.png";
 import ThemeChangeDialog from "@/components/ThemeChangeDialog.jsx";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator.jsx";
-import { GoogleLogo, LinkedinLogo, GithubLogo } from "@phosphor-icons/react";
-import { EyeIcon, EyeOff, Loader2, Pencil } from "lucide-react";
+import { GoogleLogo, GithubLogo } from "@phosphor-icons/react";
+import { EyeIcon, EyeOff, Loader2, Moon, Sun } from "lucide-react";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
@@ -91,7 +91,8 @@ const Login = () => {
     <div className="relative w-screen h-screen flex flex-col items-center justify-start pt-10 gap-y-3">
       <ThemeChangeDialog>
         <Button className="absolute bottom-5 right-5 w-fit" variant="outline">
-          <Pencil />
+          <Sun className="dark:hidden" />
+          <Moon className="hidden dark:block" />
         </Button>
       </ThemeChangeDialog>
       <img src={Logo} className="w-32 h-32" />
