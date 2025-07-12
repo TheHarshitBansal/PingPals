@@ -78,10 +78,11 @@ const Login = () => {
   });
 
   const handleGithubLogin = () => {
-    const clientId = import.meta.env.VITE_GITHUB_CLIENT_ID;
     const redirectUri = `${import.meta.env.VITE_FRONTEND_URL}/auth/github`;
 
-    const url = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scope=user:email`;
+    const url = `https://github.com/login/oauth/authorize?client_id=${
+      import.meta.env.VITE_GITHUB_CLIENT_ID
+    }&redirect_uri=${redirectUri}&scope=user:email`;
 
     window.location.href = url;
   };
