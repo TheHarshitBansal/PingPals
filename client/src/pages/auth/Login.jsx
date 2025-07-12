@@ -77,6 +77,15 @@ const Login = () => {
     redirect_uri: `${import.meta.env.VITE_FRONTEND_URL}/auth/google`,
   });
 
+  const handleGithubLogin = () => {
+    const clientId = import.meta.env.VITE_GITHUB_CLIENT_ID;
+    const redirectUri = `${import.meta.env.VITE_FRONTEND_URL}/auth/github`;
+
+    const url = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scope=user:email`;
+
+    window.location.href = url;
+  };
+
   return (
     <div className="relative w-screen h-screen flex flex-col items-center justify-start pt-10 gap-y-3">
       <ThemeChangeDialog>
@@ -159,11 +168,8 @@ const Login = () => {
           <button onClick={() => handleGoogleLogin()}>
             <GoogleLogo className="w-8 h-8 text-red-400" />
           </button>
-          <button>
+          <button onClick={() => handleGithubLogin()}>
             <GithubLogo className="w-8 h-8" />
-          </button>
-          <button>
-            <LinkedinLogo className="w-8 h-8 text-blue-500" />
           </button>
         </div>
       </div>

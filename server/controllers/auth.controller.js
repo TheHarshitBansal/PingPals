@@ -45,3 +45,54 @@ export const handleGoogleAuth = asyncHandler(async (req, res) => {
     token,
   });
 });
+
+export const handleGithubAuth = asyncHandler(async (req, res) => {
+  const { code } = req.body;
+
+  const tokenRes = await axios.post(
+    "https://github.com/login/oauth/access_token",
+    {
+      client_id: process.env.GITHUB_CLIENT_ID,
+      client_secret: process.env.GITHUB_CLIENT_SECRET,
+      code,
+    },
+    {
+      headers: { Accept: "application/json" },
+    }
+  );
+
+  const { access_token } = tokenRes.data;
+
+  // Fetch user info from GitHub
+  const userRes = await axios.get("https://api.github.com/user", {
+    headers: { Authorization: `Bearer ${access_token}` },
+  });
+
+  const emailRes = await axios.get("https://api.github.com/user/emails", {
+    headers: { Authorization: `Bearer ${access_token}` },
+  });
+
+  const { login, name, avatar_url } = userRes.data;
+  const email =
+    emailRes.data.find((email) => email.primary)?.email ||
+    `${login}@github.com`;
+
+  let user = await User.findOne({ email });
+  if (!user) {
+    user = await User.create({
+      email,
+      username: login,
+      avatar: avatar_url,
+      verified: true,
+      provider: "github",
+      name: name || login,
+    });
+  }
+
+  const token = signToken(user._id);
+  res.status(200).json({
+    message: "Successfully authenticated with GitHub",
+    user,
+    token,
+  });
+});

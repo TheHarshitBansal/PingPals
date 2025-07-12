@@ -7,6 +7,7 @@ import NotFound from "./pages/NotFound.jsx";
 import { useDispatch, useSelector } from "react-redux";
 import { removeUser } from "./redux/slices/authSlice.js";
 import GoogleCallback from "./pages/auth/GoogleCallback.jsx";
+import GithubCallback from "./pages/auth/GithubCallback.jsx";
 const ProfileGeneral = lazy(() => import("./pages/profile/ProfileGeneral.jsx"));
 const Verification = lazy(() => import("./pages/auth/Verification.jsx"));
 const CallLog = lazy(() => import("./pages/call/CallLog.jsx"));
@@ -53,6 +54,7 @@ const App = () => {
           <Route path="/auth/register" element={<Register />} />
           <Route path="/auth/forgot-password" element={<ForgotPassword />} />
           <Route path="/auth/google" element={<GoogleCallback />} />
+          <Route path="/auth/github" element={<GithubCallback />} />
           <Route
             path="/auth/reset-password/:resetToken"
             element={<ResetPassword />}
