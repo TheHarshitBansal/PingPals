@@ -73,7 +73,7 @@ io.on("connection", async (socket) => {
   socket.broadcast.emit("database-changed");
 
   //INFO: Socket Events
-  socket.on("friend_request", async (data) => {
+  socket.on("send-friend_request", async (data) => {
     const receiver = await User.findByIdAndUpdate(data.receiver, {
       $push: { requests: data.sender },
     })
@@ -129,6 +129,13 @@ io.on("connection", async (socket) => {
   //INFO: Accepting a friend request
   socket.on("accept_request", async (data) => {
     //INFO: Updating the friends list of the sender
+    let receiver = await User.findById(user_id);
+    if (!receiver.requests.includes(data.sender)) {
+      io.to(receiver.socket_id).emit("error", {
+        message: "This friend request does not exist",
+      });
+      return;
+    }
     const sender = await User.findByIdAndUpdate(
       data.sender,
       { $push: { friends: user_id } },
@@ -142,7 +149,7 @@ io.on("connection", async (socket) => {
       { $pull: { requests: data.sender } },
       { new: true }
     );
-    const receiver = await User.findByIdAndUpdate(
+    receiver = await User.findByIdAndUpdate(
       user_id,
       { $push: { friends: data.sender } },
       { new: true }
@@ -170,11 +177,19 @@ io.on("connection", async (socket) => {
 
   //INFO: Rejecting a friend request
   socket.on("reject_request", async (data) => {
+    let receiver = await User.findById(user_id);
+    if (!receiver.requests.includes(data.sender)) {
+      io.to(receiver.socket_id).emit("error", {
+        message: "This friend request does not exist",
+      });
+      return;
+    }
+    //INFO: Removing the friend request from the receiver's requests
     await FriendReq.findOneAndDelete({
       sender: data.sender,
       receiver: user_id,
     });
-    const receiver = await User.findByIdAndUpdate(
+    receiver = await User.findByIdAndUpdate(
       user_id,
       { $pull: { requests: data.sender } },
       { new: true }

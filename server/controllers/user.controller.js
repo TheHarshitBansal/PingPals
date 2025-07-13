@@ -19,11 +19,9 @@ export const signToken = (userId) => {
 export const register = asyncHandler(async (req, res) => {
   const { name, username, email, password } = req.body;
   if (!name || !username || !email || !password) {
-    return res
-      .status(400)
-      .json({
-        message: "Please provide a name, username, email, and password",
-      });
+    return res.status(400).json({
+      message: "Please provide a name, username, email, and password",
+    });
   }
 
   const existingUser = await User.findOne({ $or: [{ username }, { email }] });
@@ -288,12 +286,10 @@ export const changePassword = asyncHandler(async (req, res) => {
   const { currentPassword, newPassword, confirmPassword } = req.body;
 
   if (!currentPassword || !newPassword || !confirmPassword) {
-    return res
-      .status(400)
-      .json({
-        message:
-          "Please provide current password, new password, and confirm new password",
-      });
+    return res.status(400).json({
+      message:
+        "Please provide current password, new password, and confirm new password",
+    });
   }
 
   if (newPassword !== confirmPassword) {

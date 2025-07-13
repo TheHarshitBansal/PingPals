@@ -86,7 +86,7 @@ const SearchPeople = () => {
                     className="text-gray-500 dark:text-gray-400"
                     onClick={() => {
                       //INFO: Add friend functionality
-                      socket.emit("friend_request", {
+                      socket.emit("send-friend_request", {
                         receiver: person._id,
                         sender: user._id,
                       });
@@ -150,8 +150,9 @@ const SearchPeople = () => {
                 <button
                   className="text-blue-500 dark:text-blue-400"
                   onClick={() => {
-                    //INFO: Redirect to chat
-                    // navigate(`/chat/${person._id}`);
+                    socket?.emit("start_chat", {
+                      receiver: person._id,
+                    });
                   }}
                 >
                   <MessageSquareMoreIcon size={24} className="cursor-pointer" />

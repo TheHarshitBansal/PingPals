@@ -17,9 +17,11 @@ import { setCurrentConversation } from "@/redux/slices/conversationSlice.js";
 import { setIncomingCallData } from "@/redux/slices/appSlice.js";
 
 const Dashboard = () => {
-  const { data, refetch } = useGetUserQuery(undefined);
+  const { data, refetch, isLoading, isFetching, isSuccess, isError } =
+    useGetUserQuery(undefined);
   const { isAuthenticated, user } = useSelector((state) => state.auth);
   const [active, setActive] = useState(null);
+  const [forceRender, setForceRender] = useState(0); // Force re-render state
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
@@ -59,10 +61,35 @@ const Dashboard = () => {
         });
 
         socket.on("database-updated", async () => {
-          const updatedData = await refetch();
-          if (updatedData?.data?.user) {
-            dispatch(updateUser(updatedData.data.user));
+          // Check if the query has been started (not just if data exists)
+          if (isSuccess || isError || isLoading || isFetching) {
+            try {
+              const result = await refetch();
+
+              if (result.data?.user) {
+                dispatch(updateUser(result.data.user));
+              }
+
+              // Force component re-render by updating state
+              setForceRender((prev) => prev + 1);
+            } catch (error) {
+              console.error("Dashboard: Error refetching user data:", error);
+              // Still force re-render even if refetch fails
+              setForceRender((prev) => prev + 1);
+            }
+          } else {
+            console.warn("Dashboard: Cannot refetch, query not started yet.");
+            // Force re-render even if query hasn't started
+            setForceRender((prev) => prev + 1);
           }
+        });
+
+        socket.on("error", (data) => {
+          toast({
+            variant: "error",
+            title: data.message || "An error occurred",
+          });
+          refetch();
         });
 
         // Global incoming call listener
@@ -91,9 +118,20 @@ const Dashboard = () => {
         socket?.off("open_chat");
         socket?.off("database-updated");
         socket?.off("incoming_video_call");
+        socket?.off("error");
       };
     }
-  }, [isAuthenticated, user?._id, refetch, dispatch, navigate]);
+  }, [
+    isAuthenticated,
+    user?._id,
+    refetch,
+    dispatch,
+    navigate,
+    isSuccess,
+    isError,
+    isLoading,
+    isFetching,
+  ]);
 
   useEffect(() => {
     const routes = {
@@ -105,7 +143,7 @@ const Dashboard = () => {
   }, [location]);
 
   return (
-    <div className="flex">
+    <div className="flex" key={forceRender}>
       <div className="h-screen w-[100px] bg-gray-100 dark:bg-gray-900 shadow-light dark:shadow-dark">
         <div className="h-full w-full flex flex-col items-center justify-between">
           <div className="w-full flex flex-col items-center justify-center gap-y-3">
