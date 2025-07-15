@@ -82,7 +82,7 @@ export const sendOTP = asyncHandler(async (req, res) => {
     user.otpExpires = undefined;
     await user.save({ validateBeforeSave: false });
 
-    return res.status(500).json({ message: "Error sending OTP" });
+    return res.status(500).json({ message: "Error sending OTP", error });
   }
 });
 
