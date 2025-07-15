@@ -188,6 +188,14 @@ const MessageView = () => {
     }
   }, [incomingCallData]);
 
+  // Close video call when chat is deleted or set to null
+  useEffect(() => {
+    if (!chat && isCallActive) {
+      setIsCallActive(false);
+      dispatch(clearIncomingCallData());
+    }
+  }, [chat, isCallActive, dispatch]);
+
   const handleEmojiSelect = (emoji) => {
     setMessage((prevMessage) => prevMessage + emoji);
   };
