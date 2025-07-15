@@ -36,6 +36,35 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
   },
 }));
 
+const StyledRedBadge = styled(Badge)(({ theme }) => ({
+  "& .MuiBadge-badge": {
+    backgroundColor: "#f44336",
+    color: "#f44336",
+    boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
+    "&::after": {
+      position: "absolute",
+      top: 0,
+      left: 0,
+      width: "100%",
+      height: "100%",
+      borderRadius: "50%",
+      animation: "ripple-red 5s infinite ease-in-out",
+      border: "1px solid currentColor",
+      content: '""',
+    },
+  },
+  "@keyframes ripple-red": {
+    "0%": {
+      transform: "scale(.8)",
+      opacity: 1,
+    },
+    "100%": {
+      transform: "scale(2.4)",
+      opacity: 0,
+    },
+  },
+}));
+
 export const ChatElement = ({ id, name, avatar, online, message, time }) => {
   const user = useSelector((state) => state.auth.user);
   const chats = useSelector((state) => state.conversation.directConversations);
@@ -75,12 +104,18 @@ export const ChatElement = ({ id, name, avatar, online, message, time }) => {
               </Avatar>
             </StyledBadge>
           ) : (
-            <Avatar className="cursor-pointer h-14 w-14">
-              <AvatarImage src={avatar} loading="lazy" />
-              <AvatarFallback>
-                <Skeleton className="h-16 w-16 rounded-full" />
-              </AvatarFallback>
-            </Avatar>
+            <StyledRedBadge
+              overlap="circular"
+              anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+              variant="dot"
+            >
+              <Avatar className="cursor-pointer h-14 w-14">
+                <AvatarImage src={avatar} loading="lazy" />
+                <AvatarFallback>
+                  <Skeleton className="h-16 w-16 rounded-full" />
+                </AvatarFallback>
+              </Avatar>
+            </StyledRedBadge>
           )}
 
           <div>

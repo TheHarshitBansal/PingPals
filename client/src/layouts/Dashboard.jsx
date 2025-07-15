@@ -3,6 +3,8 @@ import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import Logo from "../assets/logo.png";
 import { CogIcon, MessageSquareMoreIcon, PhoneIcon } from "lucide-react";
 import { Divider } from "@mui/material";
+import Badge from "@mui/material/Badge";
+import { styled } from "@mui/material";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import DarkModeSwitcher from "@/components/DarkModeSwitcher.jsx";
 import { useEffect, useState } from "react";
@@ -15,6 +17,64 @@ import { useGetUserQuery } from "@/redux/api/authApi.js";
 import { updateUser } from "@/redux/slices/authSlice.js"; // Import action
 import { setCurrentConversation } from "@/redux/slices/conversationSlice.js";
 import { setIncomingCallData } from "@/redux/slices/appSlice.js";
+
+const StyledBadge = styled(Badge)(({ theme }) => ({
+  "& .MuiBadge-badge": {
+    backgroundColor: "#44b700",
+    color: "#44b700",
+    boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
+    "&::after": {
+      position: "absolute",
+      top: 0,
+      left: 0,
+      width: "100%",
+      height: "100%",
+      borderRadius: "50%",
+      animation: "ripple 5s infinite ease-in-out",
+      border: "1px solid currentColor",
+      content: '""',
+    },
+  },
+  "@keyframes ripple": {
+    "0%": {
+      transform: "scale(.8)",
+      opacity: 1,
+    },
+    "100%": {
+      transform: "scale(2.4)",
+      opacity: 0,
+    },
+  },
+}));
+
+const StyledRedBadge = styled(Badge)(({ theme }) => ({
+  "& .MuiBadge-badge": {
+    backgroundColor: "#f44336",
+    color: "#f44336",
+    boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
+    "&::after": {
+      position: "absolute",
+      top: 0,
+      left: 0,
+      width: "100%",
+      height: "100%",
+      borderRadius: "50%",
+      animation: "ripple-red 5s infinite ease-in-out",
+      border: "1px solid currentColor",
+      content: '""',
+    },
+  },
+  "@keyframes ripple-red": {
+    "0%": {
+      transform: "scale(.8)",
+      opacity: 1,
+    },
+    "100%": {
+      transform: "scale(2.4)",
+      opacity: 0,
+    },
+  },
+}));
 
 const Dashboard = () => {
   const { data, refetch, isLoading, isFetching, isSuccess, isError } =
@@ -181,12 +241,33 @@ const Dashboard = () => {
               <DarkModeSwitcher />
             </div>
             <ProfileOptions>
-              <Avatar className="cursor-pointer">
-                <AvatarImage src={user.avatar} />
-                <AvatarFallback>
-                  <Skeleton className="h-16 w-16 rounded-full" />
-                </AvatarFallback>
-              </Avatar>
+              {user?.status === "Online" ? (
+                <StyledBadge
+                  overlap="circular"
+                  anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                  variant="dot"
+                >
+                  <Avatar className="cursor-pointer">
+                    <AvatarImage src={user.avatar} />
+                    <AvatarFallback>
+                      <Skeleton className="h-16 w-16 rounded-full" />
+                    </AvatarFallback>
+                  </Avatar>
+                </StyledBadge>
+              ) : (
+                <StyledRedBadge
+                  overlap="circular"
+                  anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                  variant="dot"
+                >
+                  <Avatar className="cursor-pointer">
+                    <AvatarImage src={user.avatar} />
+                    <AvatarFallback>
+                      <Skeleton className="h-16 w-16 rounded-full" />
+                    </AvatarFallback>
+                  </Avatar>
+                </StyledRedBadge>
+              )}
             </ProfileOptions>
           </div>
         </div>
