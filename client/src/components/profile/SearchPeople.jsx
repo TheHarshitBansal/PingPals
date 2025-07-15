@@ -199,10 +199,32 @@ const SearchPeople = () => {
                         person._id
                       );
 
+                      // Debug: Log available conversations
+                      console.log(
+                        "Available direct conversations:",
+                        directConversations
+                      );
+                      console.log(
+                        "Looking for participant with ID:",
+                        person._id
+                      );
+
                       // First, check if conversation already exists
                       const existingConversation = directConversations?.find(
-                        (conv) =>
-                          conv.participants?.some((p) => p._id === person._id)
+                        (conv) => {
+                          console.log(
+                            "Checking conversation:",
+                            conv._id,
+                            "participants:",
+                            conv.participants?.map((p) => ({
+                              id: p._id,
+                              name: p.name,
+                            }))
+                          );
+                          return conv.participants?.some(
+                            (p) => p._id === person._id
+                          );
+                        }
                       );
 
                       if (existingConversation) {
@@ -210,8 +232,19 @@ const SearchPeople = () => {
                           "Found existing conversation:",
                           existingConversation._id
                         );
-                        dispatch(setCurrentConversation(existingConversation));
-                        navigate("/chat");
+                        console.log("About to dispatch setCurrentConversation");
+
+                        const result = dispatch(
+                          setCurrentConversation(existingConversation)
+                        );
+                        console.log("Dispatch result:", result);
+
+                        // Add a small delay to let Redux update
+                        setTimeout(() => {
+                          console.log("After dispatch - navigating to chat");
+                          navigate("/chat");
+                        }, 100);
+
                         toast({
                           title: "Chat opened",
                           description: `Conversation with ${person.name} ready!`,

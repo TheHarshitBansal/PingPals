@@ -74,10 +74,17 @@ export const ChatElement = ({ id, name, avatar, online, message, time }) => {
   const currentCoversation = useSelector(
     (state) => state.conversation.currentConversation
   );
-  const currentConvo = chats.find(
-    (chat) =>
-      chat?.participants?.find((person) => person._id !== user._id)?._id === id
-  );
+
+  const currentConvo = chats?.find((chat) => {
+    const otherParticipant = chat?.participants?.find(
+      (person) => person._id !== user._id
+    );
+    const matches = otherParticipant?._id === id;
+    console.log(
+      `ChatElement: Checking chat ${chat?._id}, otherParticipant: ${otherParticipant?._id}, matches: ${matches}`
+    );
+    return matches;
+  });
 
   const dispatch = useDispatch();
   return (
@@ -88,7 +95,9 @@ export const ChatElement = ({ id, name, avatar, online, message, time }) => {
           : ""
       }`}
       onClick={() => {
-        dispatch(setCurrentConversation(currentConvo));
+        if (currentConvo) {
+          dispatch(setCurrentConversation(currentConvo));
+        }
       }}
     >
       <div className="flex items-center justify-between w-full">
@@ -123,7 +132,7 @@ export const ChatElement = ({ id, name, avatar, online, message, time }) => {
 
           <div className="min-w-0 flex-1">
             <h3 className="font-semibold line-clamp-1 text-sm md:text-base lg:text-lg">
-              {name}
+              {name || "Unknown User"}
             </h3>
             <p className="text-xs md:text-sm line-clamp-1 text-gray-500 dark:text-gray-400">
               {message || "No messages yet"}
@@ -142,7 +151,7 @@ export const ChatElement = ({ id, name, avatar, online, message, time }) => {
 
 const Chats = () => {
   const [search, setSearch] = useState("");
-  const [forceRefresh, setForceRefresh] = useState(0); // Add force refresh state
+  const [forceRefresh, setForceRefresh] = useState(0);
   const dispatch = useDispatch();
 
   const chats = useSelector((state) => state.conversation.directConversations);
@@ -150,62 +159,49 @@ const Chats = () => {
 
   const [showChats, setShowChats] = useState(chats);
 
-  // Add socket event listeners for real-time updates
   useEffect(() => {
     if (socket) {
-      // Handle database updates by invalidating cache
       const handleDatabaseUpdate = () => {
-        // Invalidate all cache tags to ensure fresh data including user status
         dispatch(
           authApi.util.invalidateTags(["User", "People", "Friends", "Requests"])
         );
-        // Force component re-render for immediate UI update
         setForceRefresh((prev) => prev + 1);
       };
 
-      // Handle socket errors
       const handleSocketError = (data) => {
         toast({
           variant: "destructive",
           title: "Error",
           description: data.message || "An error occurred",
         });
-        // Invalidate cache to ensure data consistency
         dispatch(
           authApi.util.invalidateTags(["User", "People", "Friends", "Requests"])
         );
       };
 
-      // Handle real-time message updates - force immediate cache invalidation
       const handleMessageUpdate = () => {
-        // Force re-render of chat conversations with immediate invalidation
         dispatch(
           authApi.util.invalidateTags(["User", "People", "Friends", "Requests"])
         );
         setForceRefresh((prev) => prev + 1);
       };
 
-      // Handle new messages specifically
       const handleNewMessage = () => {
-        // Immediately invalidate cache when new messages arrive
         dispatch(
           authApi.util.invalidateTags(["User", "People", "Friends", "Requests"])
         );
         setForceRefresh((prev) => prev + 1);
       };
 
-      // Listen to database update events - this should handle all status changes
       socket.on("database-updated", handleDatabaseUpdate);
       socket.on("database-changed", handleMessageUpdate);
       socket.on("error", handleSocketError);
 
-      // Listen to specific message events for immediate updates
       socket.on("direct_chats", handleMessageUpdate);
       socket.on("dispatch_messages", handleNewMessage);
       socket.on("text_message", handleNewMessage);
       socket.on("message", handleNewMessage);
 
-      // Cleanup function
       return () => {
         socket.off("database-updated", handleDatabaseUpdate);
         socket.off("database-changed", handleMessageUpdate);
@@ -220,6 +216,11 @@ const Chats = () => {
 
   useEffect(() => {
     setShowChats(chats);
+    console.log(
+      "Chats: Updated showChats with:",
+      chats?.length || 0,
+      "conversations"
+    );
   }, [chats]);
 
   useEffect(() => {
@@ -237,14 +238,21 @@ const Chats = () => {
     }
   }, [search, chats]);
 
-  const conversations = showChats
+  const conversations = (showChats || [])
     .map((chat) => {
+      // Ensure chat object exists and has required properties
+      if (!chat || !chat.participants || !Array.isArray(chat.participants)) {
+        console.warn("Chats: Invalid chat object:", chat);
+        return null;
+      }
+
       const participant = chat.participants.find(
-        (person) => person._id !== user._id
+        (person) => person && person._id && person._id !== user._id
       );
 
       // Handle cases where participant might be undefined
-      if (!participant) {
+      if (!participant || !participant._id) {
+        console.warn("Chats: Found chat with no valid participant:", chat);
         return null;
       }
 
@@ -290,16 +298,27 @@ const Chats = () => {
 
       const lastMessageTime = latestMessage?.createdAt || "";
 
-      return {
+      const conversationItem = {
         id: participant._id,
-        name: participant.name,
-        avatar: participant.avatar,
+        name: participant.name || "Unknown User",
+        avatar: participant.avatar || "",
         online: participant.status === "Online",
         message: lastMessage,
         time: lastMessageTime,
       };
+
+      // Validate the conversation item before returning
+      if (!conversationItem.id) {
+        console.warn("Chats: Conversation item missing ID:", conversationItem);
+        return null;
+      }
+
+      console.log("Chats: Processed conversation item:", conversationItem);
+      return conversationItem;
     })
     .filter(Boolean); // Remove null entries
+
+  console.log("Chats: Total conversations processed:", conversations.length);
 
   const handleChange = (e) => {
     setSearch(e.target.value);
@@ -334,10 +353,10 @@ const Chats = () => {
       )}
       {conversations.length > 0 && (
         <div className="flex-1 overflow-y-auto px-3 md:px-5 lg:px-6 no-scrollbar">
-          {conversations.map((user, index) => (
+          {conversations.map((user) => (
             <ChatElement
               id={user.id}
-              key={index}
+              key={user.id}
               name={user.name}
               message={user.message}
               avatar={user.avatar}

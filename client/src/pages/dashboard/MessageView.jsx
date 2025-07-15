@@ -47,17 +47,6 @@ const MessageView = () => {
   const messages = useSelector((state) => state?.conversation?.currentMessages);
   const incomingCallData = useSelector((state) => state.app.incomingCallData); // Get from appSlice
 
-  // Debug: Log conversation and messages state
-  useEffect(() => {
-    console.log("MessageView: Chat state changed:", {
-      chat: chat
-        ? `${chat._id} with ${chat.participants?.length} participants`
-        : "null",
-      messagesCount: messages?.length || 0,
-      user: user?.name || "unknown",
-    });
-  }, [chat, messages, user]);
-
   const users =
     chat?.participants?.filter((person) => person?._id !== user?._id) || [];
   const receiverId = users[0]?._id;
