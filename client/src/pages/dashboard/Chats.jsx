@@ -69,22 +69,9 @@ const StyledRedBadge = styled(Badge)(({ theme }) => ({
 }));
 
 export const ChatElement = ({ id, name, avatar, online, message, time }) => {
-  const user = useSelector((state) => state.auth.user);
-  const chats = useSelector((state) => state.conversation.directConversations);
   const currentCoversation = useSelector(
     (state) => state.conversation.currentConversation
   );
-
-  const currentConvo = chats?.find((chat) => {
-    const otherParticipant = chat?.participants?.find(
-      (person) => person._id !== user._id
-    );
-    const matches = otherParticipant?._id === id;
-    console.log(
-      `ChatElement: Checking chat ${chat?._id}, otherParticipant: ${otherParticipant?._id}, matches: ${matches}`
-    );
-    return matches;
-  });
 
   const dispatch = useDispatch();
   return (
@@ -95,9 +82,7 @@ export const ChatElement = ({ id, name, avatar, online, message, time }) => {
           : ""
       }`}
       onClick={() => {
-        if (currentConvo) {
-          dispatch(setCurrentConversation(currentConvo));
-        }
+        dispatch(setCurrentConversation(currentConvo));
       }}
     >
       <div className="flex items-center justify-between w-full">
@@ -216,11 +201,6 @@ const Chats = () => {
 
   useEffect(() => {
     setShowChats(chats);
-    console.log(
-      "Chats: Updated showChats with:",
-      chats?.length || 0,
-      "conversations"
-    );
   }, [chats]);
 
   useEffect(() => {
