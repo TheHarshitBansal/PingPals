@@ -104,34 +104,40 @@ const ProfileSidebar = () => {
   const recentMedia = mediaFiles.slice(-3); // Get the last 3 media files
 
   return (
-    <div className="flex flex-col shadow-light dark:shadow-dark w-1/4 h-full">
+    <div className="flex flex-col shadow-light dark:shadow-dark w-full lg:w-1/4 h-full">
       {/* Profile Header */}
-      <div className="sticky border-b border-gray-300 dark:border-gray-700 flex items-center justify-between w-full p-6 ">
-        <div className="font-semibold text-lg">Profile</div>
+      <div className="sticky border-b border-gray-300 dark:border-gray-700 flex items-center justify-between w-full p-4 sm:p-6 ">
+        <div className="font-semibold text-base sm:text-lg">Profile</div>
         <button onClick={handleUserDetailsOpen}>
-          <X size={24} color="gray" />
+          <X size={20} className="sm:hidden" color="gray" />
+          <X size={24} className="hidden sm:block" color="gray" />
         </button>
       </div>
 
       {/* Profile Details */}
-      <div className="p-4 space-y-4">
-        <div className="flex items-center gap-x-5 px-2">
+      <div className="p-3 sm:p-4 space-y-3 sm:space-y-4 overflow-y-auto">
+        <div className="flex items-center gap-x-3 sm:gap-x-5 px-2">
           <LazyImage
             src={users[0]?.avatar}
             alt={users[0]?.name}
-            className="w-16 h-16 rounded-full object-cover object-center"
+            className="w-12 h-12 sm:w-16 sm:h-16 rounded-full object-cover object-center flex-shrink-0"
           />
-          <div>
-            <h3 className="text-lg font-medium">{users[0]?.name}</h3>
-            <h3 className="text-base">@{users[0]?.username}</h3>
+          <div className="min-w-0 flex-1">
+            <h3 className="text-base sm:text-lg font-medium truncate">
+              {users[0]?.name}
+            </h3>
+            <h3 className="text-sm sm:text-base text-gray-600 dark:text-gray-400 truncate">
+              @{users[0]?.username}
+            </h3>
           </div>
         </div>
 
         <div className="flex px-2 space-x-2 text-gray-500 dark:text-gray-400 text-sm">
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <button className="w-full border border-gray-300 dark:border-gray-700 p-2 rounded-md flex items-center justify-center hover:bg-gray-100 hover:dark:bg-gray-900">
-                <UserMinus size={20} className="mr-3" />
+              <button className="w-full border border-gray-300 dark:border-gray-700 p-2 rounded-md flex items-center justify-center hover:bg-gray-100 hover:dark:bg-gray-900 text-xs sm:text-sm">
+                <UserMinus size={16} className="sm:hidden mr-2" />
+                <UserMinus size={20} className="hidden sm:block mr-3" />
                 <span>Unfriend</span>
               </button>
             </AlertDialogTrigger>
@@ -152,8 +158,9 @@ const ProfileSidebar = () => {
           </AlertDialog>
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <button className="w-full border border-gray-300 dark:border-gray-700 p-2 rounded-md flex items-center justify-center hover:bg-gray-100 hover:dark:bg-gray-900">
-                <Trash size={20} className="mr-3 " />
+              <button className="w-full border border-gray-300 dark:border-gray-700 p-2 rounded-md flex items-center justify-center hover:bg-gray-100 hover:dark:bg-gray-900 text-xs sm:text-sm">
+                <Trash size={16} className="sm:hidden mr-2" />
+                <Trash size={20} className="hidden sm:block mr-3" />
                 <span>Delete</span>
               </button>
             </AlertDialogTrigger>
@@ -177,8 +184,8 @@ const ProfileSidebar = () => {
         <Separator />
 
         <div className="flex flex-col px-2 gap-y-1">
-          <h2 className="text-base font-medium">About</h2>
-          <p className="text-gray-500 dark:text-gray-400 text-sm">
+          <h2 className="text-sm sm:text-base font-medium">About</h2>
+          <p className="text-gray-500 dark:text-gray-400 text-xs sm:text-sm">
             {users[0]?.about || "No bio available"}
           </p>
         </div>
@@ -186,15 +193,16 @@ const ProfileSidebar = () => {
         <Separator />
 
         {/* Shared Media */}
-        <div className="flex flex-col gap-y-4 px-2">
+        <div className="flex flex-col gap-y-3 sm:gap-y-4 px-2">
           <div className="flex justify-between items-center">
-            <h3 className="text-base font-medium">Media</h3>
+            <h3 className="text-sm sm:text-base font-medium">Media</h3>
             <div
-              className="flex items-center gap-x-1 text-blue-500 dark:text-blue-400 cursor-pointer"
+              className="flex items-center gap-x-1 text-blue-500 dark:text-blue-400 cursor-pointer text-xs sm:text-sm"
               onClick={handleSharedOpen}
             >
               <span>{mediaFiles.length}</span> {/* Show media count */}
-              <ChevronRight size={24} />
+              <ChevronRight size={20} className="sm:hidden" />
+              <ChevronRight size={24} className="hidden sm:block" />
             </div>
           </div>
           <div className="flex gap-x-2 overflow-clip">
@@ -211,26 +219,26 @@ const ProfileSidebar = () => {
                     key={index}
                     src={file.path}
                     alt="media"
-                    className="w-24 h-24 rounded-md object-cover object-center cursor-pointer"
+                    className="w-20 h-20 sm:w-24 sm:h-24 rounded-md object-cover object-center cursor-pointer flex-shrink-0"
                   />
                 ) : isVideo ? (
                   <video
                     key={index}
                     src={file.path}
                     autoPlay={false}
-                    className="w-24 h-24 rounded-md object-cover object-center cursor-pointer"
+                    className="w-20 h-20 sm:w-24 sm:h-24 rounded-md object-cover object-center cursor-pointer flex-shrink-0"
                   />
                 ) : (
                   <LazyImage
                     key={index}
                     src={file.path}
                     alt="media"
-                    className="w-24 h-24 rounded-md object-cover object-center cursor-pointer"
+                    className="w-20 h-20 sm:w-24 sm:h-24 rounded-md object-cover object-center cursor-pointer flex-shrink-0"
                   />
                 );
               })
             ) : (
-              <p className="text-gray-500 dark:text-gray-400 text-sm">
+              <p className="text-gray-500 dark:text-gray-400 text-xs sm:text-sm">
                 No media available
               </p>
             )}
@@ -239,11 +247,18 @@ const ProfileSidebar = () => {
 
         <div className="flex flex-col gap-2">
           <Separator />
-          <div className="flex flex-col px-2 gap-y-4 py-2">
+          <div className="flex flex-col px-2 gap-y-3 sm:gap-y-4 py-2">
             <div className="flex items-center justify-between">
               <Label className="flex items-center gap-x-2" htmlFor="mute">
-                <BellOff strokeWidth={1.5} size={24} />
-                <h2 className="text-base font-medium">Mute Notifications</h2>
+                <BellOff strokeWidth={1.5} size={20} className="sm:hidden" />
+                <BellOff
+                  strokeWidth={1.5}
+                  size={24}
+                  className="hidden sm:block"
+                />
+                <h2 className="text-sm sm:text-base font-medium">
+                  Mute Notifications
+                </h2>
               </Label>
               <Switch id={"mute"} />
             </div>

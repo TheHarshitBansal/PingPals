@@ -39,9 +39,11 @@ const MakeCallDialog = ({ children }) => {
   return (
     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className="w-[40%]">
+      <DialogContent className="w-[95%] sm:w-[80%] md:w-[60%] lg:w-[40%] max-w-lg">
         <DialogHeader>
-          <DialogTitle className="text-lg">Make a Call</DialogTitle>
+          <DialogTitle className="text-base sm:text-lg">
+            Make a Call
+          </DialogTitle>
         </DialogHeader>
         <DialogDescription className="w-full" asChild>
           <Popover open={open} onOpenChange={setOpen} className="!w-full">
@@ -50,24 +52,26 @@ const MakeCallDialog = ({ children }) => {
                 variant="outline"
                 role="combobox"
                 aria-expanded={open}
-                className="w-full justify-between"
+                className="w-full justify-between text-sm sm:text-base"
               >
                 {user ? user : "Select Contact..."}
-                <ChevronsUpDown className="opacity-50" />
+                <ChevronsUpDown className="opacity-50 w-4 h-4" />
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-full p-0">
               <Command className="w-full">
                 <CommandInput
                   placeholder="Search Contacts..."
-                  className="h-9 w-full"
+                  className="h-8 sm:h-9 w-full text-sm sm:text-base"
                 />
                 <CommandList className="w-full">
-                  <CommandEmpty>No User found.</CommandEmpty>
+                  <CommandEmpty className="text-sm">
+                    No User found.
+                  </CommandEmpty>
                   <CommandGroup className="w-full">
                     {users.map((contact, idx) => (
                       <CommandItem
-                        className="w-full flex justify-between items-center"
+                        className="w-full flex justify-between items-center text-sm sm:text-base"
                         key={idx}
                         name={contact.name}
                         onSelect={(currentUser) => {
@@ -77,9 +81,9 @@ const MakeCallDialog = ({ children }) => {
                       >
                         {contact.name}
                         <CheckIcon
-                          className={
+                          className={`w-4 h-4 ${
                             user === contact.name ? "opacity-100" : "opacity-0"
-                          }
+                          }`}
                         />
                       </CommandItem>
                     ))}
@@ -89,18 +93,18 @@ const MakeCallDialog = ({ children }) => {
             </PopoverContent>
           </Popover>
         </DialogDescription>
-        <DialogFooter>
+        <DialogFooter className="flex flex-col sm:flex-row gap-2 sm:gap-0">
           <Button
             variant="outline"
-            className="text-green-500 dark:text-green-400 border border-green-500 dark:border-green-400 hover:bg-green-500 dark:hover:bg-green-400 hover:text-white hover:dark:text-white"
+            className="text-green-500 dark:text-green-400 border border-green-500 dark:border-green-400 hover:bg-green-500 dark:hover:bg-green-400 hover:text-white hover:dark:text-white text-sm sm:text-base"
           >
-            <Phone /> Voice Call
+            <Phone className="w-4 h-4 mr-2" /> Voice Call
           </Button>
           <Button
             variant="outline"
-            className="text-green-500 dark:text-green-400 border border-green-500 dark:border-green-400 hover:bg-green-500 dark:hover:bg-green-400 hover:text-white hover:dark:text-white"
+            className="text-green-500 dark:text-green-400 border border-green-500 dark:border-green-400 hover:bg-green-500 dark:hover:bg-green-400 hover:text-white hover:dark:text-white text-sm sm:text-base"
           >
-            <Video /> Video Call
+            <Video className="w-4 h-4 mr-2" /> Video Call
           </Button>
         </DialogFooter>
       </DialogContent>

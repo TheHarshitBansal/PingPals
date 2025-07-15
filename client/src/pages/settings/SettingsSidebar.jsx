@@ -32,9 +32,9 @@ const settings = [
 
 const SidebarElement = ({ svg, title }) => {
   return (
-    <div className="flex items-center gap-4 py-4 px-5 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 border-t rounded-md">
-      {svg}
-      <p className="text-lg font-normal">{title}</p>
+    <div className="flex items-center gap-2 sm:gap-4 py-3 sm:py-4 px-3 sm:px-5 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 border-t rounded-md">
+      <div className="w-5 h-5 sm:w-6 sm:h-6">{svg}</div>
+      <p className="text-sm sm:text-lg font-normal truncate">{title}</p>
     </div>
   );
 };
@@ -42,24 +42,26 @@ const SidebarElement = ({ svg, title }) => {
 const SettingsSidebar = () => {
   const user = useSelector((state) => state.auth.user);
   return (
-    <div className="relative h-screen min-w-80 max-w-80 shadow-light dark:shadow-dark flex flex-col">
+    <div className="relative h-screen w-full sm:min-w-80 sm:max-w-80 lg:min-w-96 lg:max-w-96 shadow-light dark:shadow-dark flex flex-col">
       {/* //INFO:Header */}
-      <div className="flex items-center justify-between px-10 py-5 flex-shrink-0">
-        <h1 className="text-2xl font-bold">Settings</h1>
+      <div className="flex items-center justify-between px-4 sm:px-10 py-5 flex-shrink-0">
+        <h1 className="text-xl sm:text-2xl font-bold">Settings</h1>
       </div>
 
       {/* //INFO: User Details */}
-      <div className="w-full rounded-sm flex items-center justify-between px-6 py-4 mb-5">
-        <div className="flex items-center justify-between gap-x-5">
-          <Avatar className="h-16 w-16 cursor-pointer">
+      <div className="w-full rounded-sm flex items-center justify-between px-3 sm:px-6 py-4 mb-5">
+        <div className="flex items-center justify-between gap-x-3 sm:gap-x-5 w-full">
+          <Avatar className="h-12 w-12 sm:h-16 sm:w-16 cursor-pointer flex-shrink-0">
             <AvatarImage src={user?.avatar} loading="lazy" />
             <AvatarFallback>
               <Skeleton className="rounded-full" />
             </AvatarFallback>
           </Avatar>
-          <div>
-            <h3 className="font-semibold text-xl">{user?.name}</h3>
-            <p className="text-base text-gray-500 dark:text-gray-400">
+          <div className="flex-1 min-w-0">
+            <h3 className="font-semibold text-lg sm:text-xl truncate">
+              {user?.name}
+            </h3>
+            <p className="text-sm sm:text-base text-gray-500 dark:text-gray-400 truncate">
               {user?.about}
             </p>
           </div>
@@ -67,7 +69,7 @@ const SettingsSidebar = () => {
       </div>
 
       {/* //INFO: Settings List */}
-      <div className="flex-1 overflow-y-auto px-5 no-scrollbar">
+      <div className="flex-1 overflow-y-auto px-3 sm:px-5 no-scrollbar">
         {settings.map((setting, index) => {
           switch (setting.title) {
             case "Keyboard Shortcuts":

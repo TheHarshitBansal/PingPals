@@ -82,7 +82,7 @@ export const ChatElement = ({ id, name, avatar, online, message, time }) => {
   const dispatch = useDispatch();
   return (
     <div
-      className={`w-full h-20 rounded-sm hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center justify-between px-3 py-2 border-y border-gray-100 dark:border-gray-900 cursor-pointer ${
+      className={`w-full h-16 sm:h-20 rounded-sm hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center justify-between px-2 sm:px-3 py-2 border-y border-gray-100 dark:border-gray-900 cursor-pointer ${
         currentCoversation?._id === currentConvo?._id
           ? "bg-gray-200 dark:bg-gray-800"
           : ""
@@ -92,17 +92,17 @@ export const ChatElement = ({ id, name, avatar, online, message, time }) => {
       }}
     >
       <div className="flex items-center justify-between w-full">
-        <div className="flex gap-x-2">
+        <div className="flex gap-x-2 min-w-0 flex-1">
           {online ? (
             <StyledBadge
               overlap="circular"
               anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
               variant="dot"
             >
-              <Avatar className="cursor-pointer h-14 w-14">
+              <Avatar className="cursor-pointer h-10 w-10 sm:h-14 sm:w-14 flex-shrink-0">
                 <AvatarImage src={avatar} loading="lazy" />
                 <AvatarFallback>
-                  <Skeleton className="h-16 w-16 rounded-full" />
+                  <Skeleton className="h-full w-full rounded-full" />
                 </AvatarFallback>
               </Avatar>
             </StyledBadge>
@@ -112,23 +112,25 @@ export const ChatElement = ({ id, name, avatar, online, message, time }) => {
               anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
               variant="dot"
             >
-              <Avatar className="cursor-pointer h-14 w-14">
+              <Avatar className="cursor-pointer h-10 w-10 sm:h-14 sm:w-14 flex-shrink-0">
                 <AvatarImage src={avatar} loading="lazy" />
                 <AvatarFallback>
-                  <Skeleton className="h-16 w-16 rounded-full" />
+                  <Skeleton className="h-full w-full rounded-full" />
                 </AvatarFallback>
               </Avatar>
             </StyledRedBadge>
           )}
 
-          <div>
-            <h3 className="font-semibold line-clamp-1">{name}</h3>
-            <p className="text-sm line-clamp-1 text-gray-500 dark:text-gray-400">
+          <div className="min-w-0 flex-1">
+            <h3 className="font-semibold line-clamp-1 text-sm sm:text-base">
+              {name}
+            </h3>
+            <p className="text-xs sm:text-sm line-clamp-1 text-gray-500 dark:text-gray-400">
               {message || "No messages yet"}
             </p>
           </div>
         </div>
-        <div className="flex">
+        <div className="flex flex-shrink-0 ml-2">
           <p className="text-xs text-gray-500 dark:text-gray-400">{time}</p>
         </div>
       </div>
@@ -303,27 +305,33 @@ const Chats = () => {
 
   return (
     <div
-      className="relative h-screen min-w-80 max-w-80 shadow-light dark:shadow-dark flex flex-col"
+      className="relative h-screen w-full sm:min-w-80 sm:max-w-80 lg:min-w-80 lg:max-w-80 shadow-light dark:shadow-dark flex flex-col"
       key={forceRefresh}
     >
       {/* Header */}
-      <div className="flex items-center justify-between px-10 py-5 flex-shrink-0">
-        <h1 className="text-2xl font-bold">Chats</h1>
+      <div className="flex items-center justify-between px-4 sm:px-6 lg:px-10 py-4 sm:py-5 flex-shrink-0">
+        <h1 className="text-xl sm:text-2xl font-bold">Chats</h1>
       </div>
 
       {/* Search Box */}
-      <div className="px-5 flex-shrink-0">
-        <Input placeholder="Search" className="mb-2" onChange={handleChange} />
+      <div className="px-3 sm:px-5 flex-shrink-0">
+        <Input
+          placeholder="Search"
+          className="mb-2 text-sm sm:text-base"
+          onChange={handleChange}
+        />
       </div>
 
       {/* Chat List */}
       {conversations.length === 0 && (
-        <div className="relative h-screen min-w-80 max-w-80 flex items-center justify-center">
-          <h1 className="text-2xl font-bold">No Chats</h1>
+        <div className="relative h-screen w-full flex items-center justify-center px-4">
+          <h1 className="text-xl sm:text-2xl font-bold text-center">
+            No Chats
+          </h1>
         </div>
       )}
       {conversations.length > 0 && (
-        <div className="flex-1 overflow-y-auto px-5 no-scrollbar">
+        <div className="flex-1 overflow-y-auto px-3 sm:px-5 no-scrollbar">
           {conversations.map((user, index) => (
             <ChatElement
               id={user.id}

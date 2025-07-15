@@ -19,7 +19,7 @@ const SharedSidebarLinks = ({ links }) => {
           />
         ))
       ) : (
-        <p className="text-gray-500 text-center">No shared links</p>
+        <p className="text-gray-500 text-center text-sm">No shared links</p>
       )}
     </div>
   );
@@ -37,7 +37,7 @@ const SharedSidebarMedia = ({ media }) => {
 
   return (
     <>
-      <div className="w-full grid grid-cols-3 gap-2 py-1 px-2">
+      <div className="w-full grid grid-cols-2 sm:grid-cols-3 gap-1 sm:gap-2 py-1 px-2">
         {media.length > 0 ? (
           media.map((file, index) => {
             const parsedFile = JSON.parse(file.file);
@@ -54,7 +54,7 @@ const SharedSidebarMedia = ({ media }) => {
                   src={fileUrl}
                   alt="media"
                   key={index}
-                  className="w-24 h-24 rounded-lg object-cover cursor-pointer"
+                  className="w-20 h-20 sm:w-24 sm:h-24 rounded-lg object-cover cursor-pointer"
                 />
               </div>
             ) : fileType.match(/(mp4|webm|ogg)$/) ? (
@@ -64,19 +64,19 @@ const SharedSidebarMedia = ({ media }) => {
                 src={fileUrl}
                 autoPlay={false}
                 onClick={() => handleOpenMedia(file)}
-                className="w-24 h-24 rounded-lg object-cover cursor-pointer"
+                className="w-20 h-20 sm:w-24 sm:h-24 rounded-lg object-cover cursor-pointer"
               />
             ) : (
               <LazyImage
                 src={fileUrl}
                 alt="media"
                 key={index}
-                className="w-24 h-24 rounded-lg object-cover cursor-pointer"
+                className="w-20 h-20 sm:w-24 sm:h-24 rounded-lg object-cover cursor-pointer"
               />
             );
           })
         ) : (
-          <p className="text-gray-500 text-center col-span-3">
+          <p className="text-gray-500 text-center col-span-2 sm:col-span-3 text-sm">
             No shared media
           </p>
         )}
@@ -87,13 +87,13 @@ const SharedSidebarMedia = ({ media }) => {
         <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50">
           {/* Close Button */}
           <button
-            className="absolute top-4 right-4 bg-gray-700 text-white p-2 rounded-full"
+            className="absolute top-2 right-2 sm:top-4 sm:right-4 bg-gray-700 text-white p-1.5 sm:p-2 rounded-full"
             onClick={handleCloseMedia}
           >
-            <X size={24} />
+            <X size={20} className="sm:w-6 sm:h-6" />
           </button>
 
-          <div className="flex items-center justify-center w-[90vw] h-[90vh]">
+          <div className="flex items-center justify-center w-[95vw] h-[90vh] sm:w-[90vw]">
             {(() => {
               const fileUrl = JSON.parse(selectedMedia.file).path;
               const fileType = fileUrl.split(".").pop().toLowerCase();
@@ -103,7 +103,7 @@ const SharedSidebarMedia = ({ media }) => {
                   <img
                     src={fileUrl}
                     alt="media"
-                    className="w-auto h-auto max-w-[90vw] max-h-[90vh] object-contain rounded-lg"
+                    className="w-auto h-auto max-w-[95vw] max-h-[85vh] sm:max-w-[90vw] sm:max-h-[90vh] object-contain rounded-lg"
                   />
                 );
               } else if (fileType.match(/(mp4|webm|ogg)$/)) {
@@ -112,11 +112,15 @@ const SharedSidebarMedia = ({ media }) => {
                     src={fileUrl}
                     controls
                     autoPlay
-                    className="w-auto h-auto max-w-[90vw] max-h-[90vh] object-contain rounded-lg"
+                    className="w-auto h-auto max-w-[95vw] max-h-[85vh] sm:max-w-[90vw] sm:max-h-[90vh] object-contain rounded-lg"
                   />
                 );
               } else {
-                return <p className="text-white">Unsupported file type</p>;
+                return (
+                  <p className="text-white text-sm sm:text-base">
+                    Unsupported file type
+                  </p>
+                );
               }
             })()}
           </div>
@@ -140,18 +144,22 @@ const SharedSidebar = () => {
   };
 
   return (
-    <div className="flex flex-col shadow-light dark:shadow-dark w-1/4 h-screen">
-      <div className="sticky flex-shrink-0 border-b border-gray-300 dark:border-gray-700 flex items-center justify-start gap-x-2 w-full p-6">
+    <div className="flex flex-col shadow-light dark:shadow-dark w-full lg:w-1/4 h-screen">
+      <div className="sticky flex-shrink-0 border-b border-gray-300 dark:border-gray-700 flex items-center justify-start gap-x-2 w-full p-4 sm:p-6">
         <button onClick={handleProfile}>
-          <ChevronLeft size={24} color="gray" />
+          <ChevronLeft size={20} className="sm:w-6 sm:h-6" color="gray" />
         </button>
-        <div className="font-semibold text-lg">Shared Media</div>
+        <div className="font-semibold text-base sm:text-lg">Shared Media</div>
       </div>
 
       <Tabs defaultValue="media" className="flex flex-col h-full">
         <TabsList className="grid w-full grid-cols-2 gap-2 p-1 rounded-none flex-shrink-0">
-          <TabsTrigger value="media">Media</TabsTrigger>
-          <TabsTrigger value="links">Links</TabsTrigger>
+          <TabsTrigger value="media" className="text-sm sm:text-base">
+            Media
+          </TabsTrigger>
+          <TabsTrigger value="links" className="text-sm sm:text-base">
+            Links
+          </TabsTrigger>
         </TabsList>
         <TabsContent
           value="media"

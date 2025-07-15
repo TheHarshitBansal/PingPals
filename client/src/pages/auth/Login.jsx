@@ -88,17 +88,19 @@ const Login = () => {
   };
 
   return (
-    <div className="relative w-screen h-screen flex flex-col items-center justify-start pt-10 gap-y-3">
+    <div className="relative w-screen h-screen flex flex-col items-center justify-start pt-6 sm:pt-10 gap-y-3 px-4 sm:px-6">
       <ThemeChangeDialog>
         <Button className="absolute bottom-5 right-5 w-fit" variant="outline">
           <Sun className="dark:hidden" />
           <Moon className="hidden dark:block" />
         </Button>
       </ThemeChangeDialog>
-      <img src={Logo} className="w-32 h-32" />
-      <div className="flex flex-col w-[30%] gap-y-3">
-        <h1 className="text-3xl font-semibold">Login to PingPals</h1>
-        <h3 className="text-lg font-medium">
+      <img src={Logo} className="w-24 h-24 sm:w-32 sm:h-32" />
+      <div className="flex flex-col w-full max-w-sm sm:max-w-md lg:max-w-lg gap-y-3">
+        <h1 className="text-2xl sm:text-3xl font-semibold">
+          Login to PingPals
+        </h1>
+        <h3 className="text-base sm:text-lg font-medium">
           New User?{" "}
           <Link to={"/auth/register"}>
             <span className="text-blue-600 dark:text-blue-500">
@@ -113,7 +115,7 @@ const Login = () => {
           <input
             type="text"
             placeholder="Email Address or Username"
-            className="bg-transparent border p-4 rounded-lg outline-none"
+            className="bg-transparent border p-3 sm:p-4 rounded-lg outline-none text-sm sm:text-base"
             {...register("identifier")}
           />
           {errors.identifier && (
@@ -121,12 +123,12 @@ const Login = () => {
               {errors.identifier.message}
             </p>
           )}
-          <label className="bg-transparent flex items-center border pr-4 rounded-lg justify-between">
+          <label className="bg-transparent flex items-center border pr-3 sm:pr-4 rounded-lg justify-between">
             <input
               type={showPassword ? "text" : "password"}
               placeholder="Password"
               {...register("password")}
-              className="bg-transparent w-full border-none outline-none p-4"
+              className="bg-transparent w-full border-none outline-none p-3 sm:p-4 text-sm sm:text-base"
             />
             <span
               className="cursor-pointer"
@@ -134,7 +136,11 @@ const Login = () => {
                 setShowPassword(!showPassword);
               }}
             >
-              {showPassword ? <EyeOff /> : <EyeIcon />}
+              {showPassword ? (
+                <EyeOff className="w-4 h-4 sm:w-5 sm:h-5" />
+              ) : (
+                <EyeIcon className="w-4 h-4 sm:w-5 sm:h-5" />
+              )}
             </span>
           </label>
           {errors.password && (
@@ -144,19 +150,22 @@ const Login = () => {
           )}
           <Link
             to={"/auth/forgot-password"}
-            className="text-right underline cursor-pointer"
+            className="text-right underline cursor-pointer text-sm"
           >
             Forgot Password?
           </Link>
           {isSubmitting || loading ? (
-            <Button className="py-6 text-base font-semibold" disabled>
-              <Loader2 className="animate-spin" />
+            <Button
+              className="py-4 sm:py-6 text-sm sm:text-base font-semibold"
+              disabled
+            >
+              <Loader2 className="animate-spin w-4 h-4 sm:w-5 sm:h-5" />
               Please wait
             </Button>
           ) : (
             <Button
               type="submit"
-              className="py-6 text-base font-semibold"
+              className="py-4 sm:py-6 text-sm sm:text-base font-semibold"
               disabled={isLoading}
             >
               Login
@@ -168,10 +177,10 @@ const Login = () => {
         </div>
         <div className="flex justify-center gap-x-4">
           <button onClick={() => handleGoogleLogin()}>
-            <GoogleLogo className="w-8 h-8 text-red-400" />
+            <GoogleLogo className="w-6 h-6 sm:w-8 sm:h-8 text-red-400" />
           </button>
           <button onClick={() => handleGithubLogin()}>
-            <GithubLogo className="w-8 h-8" />
+            <GithubLogo className="w-6 h-6 sm:w-8 sm:h-8" />
           </button>
         </div>
       </div>

@@ -3,7 +3,7 @@ import Profile from "./Profile.jsx";
 
 const ProfileGeneral = () => {
   return (
-    <div className="flex h-full w-full">
+    <div className="flex flex-col lg:flex-row h-full w-full">
       <Profile />
       <FriendRequestSection />
     </div>

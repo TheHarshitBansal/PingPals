@@ -7,14 +7,14 @@ const FriendRequestSection = () => {
   return (
     <div className="w-full">
       <Tabs defaultValue="search" className="w-full">
-        <TabsList className="w-full rounded-sm h-10 flex justify-evenly py-6">
-          <TabsTrigger value="search" className="w-full text-lg">
+        <TabsList className="w-full rounded-sm h-8 sm:h-10 flex justify-evenly py-4 sm:py-6">
+          <TabsTrigger value="search" className="w-full text-sm sm:text-lg">
             Search
           </TabsTrigger>
-          <TabsTrigger value="friends" className="w-full text-lg">
+          <TabsTrigger value="friends" className="w-full text-sm sm:text-lg">
             Friends
           </TabsTrigger>
-          <TabsTrigger value="requests" className="w-full text-lg">
+          <TabsTrigger value="requests" className="w-full text-sm sm:text-lg">
             Requests
           </TabsTrigger>
         </TabsList>

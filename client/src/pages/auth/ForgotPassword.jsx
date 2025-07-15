@@ -34,16 +34,16 @@ const ForgotPassword = () => {
   };
 
   return (
-    <div className="relative w-screen h-screen flex flex-col items-center justify-start pt-10 gap-y-3">
+    <div className="relative w-screen h-screen flex flex-col items-center justify-start pt-6 sm:pt-10 gap-y-3 px-4 sm:px-6">
       <ThemeChangeDialog>
         <Button className="absolute bottom-5 right-5 w-fit" variant="outline">
           <Sun className="dark:hidden" />
           <Moon className="hidden dark:block" />
         </Button>
       </ThemeChangeDialog>
-      <img src={Logo} className="w-32 h-32" />
-      <div className="flex flex-col w-[30%] gap-y-3">
-        <h1 className="text-3xl font-semibold">Forgot Password?</h1>
+      <img src={Logo} className="w-24 h-24 sm:w-32 sm:h-32" />
+      <div className="flex flex-col w-full max-w-sm sm:max-w-md lg:max-w-lg gap-y-3">
+        <h1 className="text-2xl sm:text-3xl font-semibold">Forgot Password?</h1>
         <h3 className="text-sm text-gray-500 dark:text-gray-400 font-medium">
           Kindly enter the email address associated with your account to receive
           the password reset link.
@@ -55,7 +55,7 @@ const ForgotPassword = () => {
           <input
             type="text"
             placeholder="Email Address"
-            className="bg-transparent border p-4 rounded-lg outline-none"
+            className="bg-transparent border p-3 sm:p-4 rounded-lg outline-none text-sm sm:text-base"
             {...register("email")}
           />
           {errors.email && (
@@ -65,14 +65,17 @@ const ForgotPassword = () => {
           )}
 
           {isSubmitting || loading ? (
-            <Button className="py-6 text-base font-semibold" disabled>
-              <Loader2 className="animate-spin" />
+            <Button
+              className="py-4 sm:py-6 text-sm sm:text-base font-semibold"
+              disabled
+            >
+              <Loader2 className="animate-spin w-4 h-4 sm:w-5 sm:h-5" />
               Please wait
             </Button>
           ) : (
             <Button
               type="submit"
-              className="py-6 text-base font-semibold"
+              className="py-4 sm:py-6 text-sm sm:text-base font-semibold"
               disabled={isLoading}
             >
               Send Link

@@ -75,23 +75,23 @@ const Profile = () => {
   };
 
   return (
-    <div className="relative h-screen min-w-80 max-w-80 shadow-light dark:shadow-dark flex flex-col">
+    <div className="relative h-screen w-full sm:min-w-80 sm:max-w-80 lg:min-w-96 lg:max-w-96 shadow-light dark:shadow-dark flex flex-col">
       {/* Header */}
-      <div className="flex items-center justify-between px-10 py-5 flex-shrink-0 mb-10">
-        <h1 className="text-2xl font-bold">Profile</h1>
+      <div className="flex items-center justify-between px-4 sm:px-10 py-5 flex-shrink-0 mb-5 sm:mb-10">
+        <h1 className="text-xl sm:text-2xl font-bold">Profile</h1>
       </div>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="flex flex-col px-5 items-center justify-center space-y-5">
-          <label htmlFor="image" className="mb-5 hover:opacity-70">
+        <div className="flex flex-col px-4 sm:px-5 items-center justify-center space-y-4 sm:space-y-5">
+          <label htmlFor="image" className="mb-3 sm:mb-5 hover:opacity-70">
             {avatar ? (
-              <Avatar className="cursor-pointer h-32 w-32">
+              <Avatar className="cursor-pointer h-24 w-24 sm:h-28 sm:w-28 lg:h-32 lg:w-32">
                 <AvatarImage src={avatar} loading="lazy" />
                 <AvatarFallback>
-                  <Skeleton className="h-32 w-32 rounded-full" />
+                  <Skeleton className="h-24 w-24 sm:h-28 sm:w-28 lg:h-32 lg:w-32 rounded-full" />
                 </AvatarFallback>
               </Avatar>
             ) : (
-              <User className="h-24 w-24 p-2 cursor-pointer text-gray-500 rounded-full border-2 border-gray-500 dark:border-gray-400 dark:text-gray-400" />
+              <User className="h-20 w-20 sm:h-22 sm:w-22 lg:h-24 lg:w-24 p-2 cursor-pointer text-gray-500 rounded-full border-2 border-gray-500 dark:border-gray-400 dark:text-gray-400" />
             )}
           </label>
           <input
@@ -105,7 +105,7 @@ const Profile = () => {
             <Input
               type="text"
               placeholder="Username"
-              className="py-6 px-4"
+              className="py-4 sm:py-6 px-3 sm:px-4 text-sm sm:text-base"
               {...register("username")}
             />
             {errors.username && (
@@ -118,7 +118,7 @@ const Profile = () => {
             <Input
               type="text"
               placeholder="Name"
-              className="py-6 px-4"
+              className="py-4 sm:py-6 px-3 sm:px-4 text-sm sm:text-base"
               {...register("name")}
             />
             {errors.name && (
@@ -131,7 +131,7 @@ const Profile = () => {
             <Input
               type="text"
               placeholder="About"
-              className="py-6 px-4"
+              className="py-4 sm:py-6 px-3 sm:px-4 text-sm sm:text-base"
               {...register("about")}
             />
             {errors.about && (
@@ -141,14 +141,17 @@ const Profile = () => {
             )}
           </div>
           {isSubmitting || loading ? (
-            <Button className="py-4 text-sm font-semibold self-end" disabled>
-              <Loader2 className="animate-spin" />
+            <Button
+              className="py-3 sm:py-4 text-xs sm:text-sm font-semibold self-end"
+              disabled
+            >
+              <Loader2 className="animate-spin w-4 h-4" />
               Please wait
             </Button>
           ) : (
             <Button
               type="submit"
-              className="py-4 text-sm font-semibold self-end"
+              className="py-3 sm:py-4 text-xs sm:text-sm font-semibold self-end"
             >
               Update Profile
             </Button>

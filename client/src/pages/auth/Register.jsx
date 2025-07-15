@@ -89,17 +89,19 @@ const Register = () => {
   };
 
   return (
-    <div className="relative w-screen h-screen flex flex-col items-center justify-start pt-10 gap-y-3">
+    <div className="relative w-screen min-h-screen flex flex-col items-center justify-start pt-6 sm:pt-10 gap-y-3 px-4 sm:px-6">
       <ThemeChangeDialog>
         <Button className="absolute bottom-5 right-5 w-fit" variant="outline">
           <Sun className="dark:hidden" />
           <Moon className="hidden dark:block" />
         </Button>
       </ThemeChangeDialog>
-      <img src={Logo} className="w-32 h-32" />
-      <div className="flex flex-col w-[30%] gap-y-3">
-        <h1 className="text-3xl font-semibold">Register for PingPals</h1>
-        <h3 className="text-lg font-medium">
+      <img src={Logo} className="w-24 h-24 sm:w-32 sm:h-32" />
+      <div className="flex flex-col w-full max-w-sm sm:max-w-md lg:max-w-lg gap-y-3">
+        <h1 className="text-2xl sm:text-3xl font-semibold">
+          Register for PingPals
+        </h1>
+        <h3 className="text-base sm:text-lg font-medium">
           Existing User?{" "}
           <Link to={"/auth/login"}>
             <span className="text-blue-600 dark:text-blue-500">Login Here</span>
@@ -109,12 +111,12 @@ const Register = () => {
           className="flex flex-col gap-y-3"
           onSubmit={handleSubmit(onSubmit)}
         >
-          <div className="flex gap-x-2">
-            <div className="flex flex-col w-1/2 space-y-2">
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-x-2">
+            <div className="flex flex-col w-full sm:w-1/2 space-y-2">
               <input
                 type="text"
                 placeholder="Your Name"
-                className="bg-transparent border p-4 rounded-lg outline-none"
+                className="bg-transparent border p-3 sm:p-4 rounded-lg outline-none text-sm sm:text-base"
                 {...register("name")}
               />
               {errors.name && (
@@ -123,18 +125,22 @@ const Register = () => {
                 </p>
               )}
             </div>
-            <div className="flex flex-col w-1/2 space-y-2">
+            <div className="flex flex-col w-full sm:w-1/2 space-y-2">
               <div className="flex items-center gap-x-2">
                 <input
                   type="text"
                   placeholder="Username"
-                  className="bg-transparent border p-4 rounded-lg outline-none"
+                  className="bg-transparent border p-3 sm:p-4 rounded-lg outline-none text-sm sm:text-base flex-1"
                   {...register("username")}
                 />
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger type="button">
-                      <InfoIcon strokeWidth={1.5} size={20} />
+                      <InfoIcon
+                        strokeWidth={1.5}
+                        size={18}
+                        className="sm:w-5 sm:h-5"
+                      />
                     </TooltipTrigger>
                     <TooltipContent>
                       <p className="font-xs font-semibold">
@@ -155,7 +161,7 @@ const Register = () => {
           <input
             type="text"
             placeholder="Email Address"
-            className="bg-transparent border p-4 rounded-lg outline-none"
+            className="bg-transparent border p-3 sm:p-4 rounded-lg outline-none text-sm sm:text-base"
             {...register("email")}
           />
           {errors.email && (
@@ -163,12 +169,12 @@ const Register = () => {
               {errors.email.message}
             </p>
           )}
-          <label className="bg-transparent flex items-center border pr-4 rounded-lg justify-between">
+          <label className="bg-transparent flex items-center border pr-3 sm:pr-4 rounded-lg justify-between">
             <input
               type={showPassword ? "text" : "password"}
               placeholder="Password"
               {...register("password")}
-              className="bg-transparent w-full border-none outline-none p-4 "
+              className="bg-transparent w-full border-none outline-none p-3 sm:p-4 text-sm sm:text-base"
             />
             <span
               className="cursor-pointer"
@@ -176,7 +182,11 @@ const Register = () => {
                 setShowPassword(!showPassword);
               }}
             >
-              {showPassword ? <EyeOff /> : <EyeIcon />}
+              {showPassword ? (
+                <EyeOff className="w-4 h-4 sm:w-5 sm:h-5" />
+              ) : (
+                <EyeIcon className="w-4 h-4 sm:w-5 sm:h-5" />
+              )}
             </span>
           </label>
           {errors.password && (
@@ -185,14 +195,17 @@ const Register = () => {
             </p>
           )}
           {isSubmitting || loading ? (
-            <Button className="py-6 text-base font-semibold" disabled>
-              <Loader2 className="animate-spin" />
+            <Button
+              className="py-4 sm:py-6 text-sm sm:text-base font-semibold"
+              disabled
+            >
+              <Loader2 className="animate-spin w-4 h-4 sm:w-5 sm:h-5" />
               Please wait
             </Button>
           ) : (
             <Button
               type="submit"
-              className="py-6 text-base font-semibold"
+              className="py-4 sm:py-6 text-sm sm:text-base font-semibold"
               disabled={isLoading}
             >
               Create Account

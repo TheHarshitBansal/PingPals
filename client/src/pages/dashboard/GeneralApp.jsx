@@ -50,22 +50,36 @@ const GeneralApp = () => {
   }, [user?._id, dispatch]); // Removed conversation dependency as it's not needed
 
   return (
-    <div className="flex h-screen w-full">
-      {/* Chats */}
-      <Chats />
+    <div className="flex h-screen w-full overflow-hidden">
+      {/* Chats - Hidden on small screens when a conversation is active */}
+      <div
+        className={`${
+          conversation.currentConversation ? "hidden lg:flex" : "flex"
+        } flex-shrink-0`}
+      >
+        <Chats />
+      </div>
 
       {/* Chat Messages */}
       {conversation.currentConversation === null ? (
-        <HomePage />
+        <div className="hidden lg:flex flex-1">
+          <HomePage />
+        </div>
       ) : (
         <MessageView />
       )}
 
       {/* Sidebars */}
       {app.sidebar.isOpen && app.sidebar.type === "PROFILE" && (
-        <ProfileSidebar />
+        <div className="hidden lg:block">
+          <ProfileSidebar />
+        </div>
       )}
-      {app.sidebar.isOpen && app.sidebar.type === "SHARED" && <SharedSidebar />}
+      {app.sidebar.isOpen && app.sidebar.type === "SHARED" && (
+        <div className="hidden lg:block">
+          <SharedSidebar />
+        </div>
+      )}
     </div>
   );
 };

@@ -69,17 +69,17 @@ const Verification = () => {
   };
 
   return (
-    <div className="relative w-screen h-screen flex flex-col items-center justify-start pt-52 gap-y-3">
+    <div className="relative w-screen h-screen flex flex-col items-center justify-start pt-20 sm:pt-52 gap-y-3 px-4 sm:px-6">
       <ThemeChangeDialog>
         <Button className="absolute bottom-5 right-5 w-fit" variant="outline">
           <Sun className="dark:hidden" />
           <Moon className="hidden dark:block" />
         </Button>
       </ThemeChangeDialog>
-      <img src={Logo} className="w-32 h-32" />
-      <div className="flex flex-col w-[30%] gap-y-5 items-center">
-        <h1 className="text-3xl font-semibold">Enter OTP</h1>
-        <h3 className="text-lg font-medium text-gray-500 dark:text-gray-400">
+      <img src={Logo} className="w-24 h-24 sm:w-32 sm:h-32" />
+      <div className="flex flex-col w-full max-w-sm sm:max-w-md lg:max-w-lg gap-y-5 items-center">
+        <h1 className="text-2xl sm:text-3xl font-semibold">Enter OTP</h1>
+        <h3 className="text-base sm:text-lg font-medium text-gray-500 dark:text-gray-400 text-center">
           We've sent a 4-digit OTP to your email.
         </h3>
         <form
@@ -96,7 +96,7 @@ const Verification = () => {
                   <input
                     type="text"
                     maxLength={1}
-                    className="w-12 h-12 text-center border rounded-lg text-xl bg-transparent outline-none"
+                    className="w-10 h-10 sm:w-12 sm:h-12 text-center border rounded-lg text-lg sm:text-xl bg-transparent outline-none"
                     value={otpValues[index] || ""}
                     onChange={(e) => handleChange(index, e.target.value)}
                     onKeyDown={(e) => handleKeyDown(index, e)}
@@ -112,14 +112,17 @@ const Verification = () => {
             </p>
           )}
           {isSubmitting || loading ? (
-            <Button className="py-6 text-base font-semibold" disabled>
-              <Loader2 className="animate-spin" />
+            <Button
+              className="py-4 sm:py-6 text-sm sm:text-base font-semibold"
+              disabled
+            >
+              <Loader2 className="animate-spin w-4 h-4 sm:w-5 sm:h-5" />
               Please wait
             </Button>
           ) : (
             <Button
               type="submit"
-              className="py-6 text-base font-semibold"
+              className="py-4 sm:py-6 text-sm sm:text-base font-semibold"
               disabled={isLoading}
             >
               Verify OTP

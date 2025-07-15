@@ -520,81 +520,84 @@ const VideoCall = ({
   return (
     <div
       className={`fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center transition-all duration-300 ${
-        isFullScreen ? "p-0" : "p-4"
+        isFullScreen ? "p-0" : "p-2 sm:p-4"
       }`}
     >
       {/* Incoming Call UI */}
       {incomingCall && !callInitiated ? (
-        <div className="bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 p-8 rounded-3xl shadow-2xl border border-gray-200 dark:border-gray-700 max-w-md w-full mx-4 transform transition-all duration-300 hover:scale-105">
+        <div className="bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 p-6 sm:p-8 rounded-3xl shadow-2xl border border-gray-200 dark:border-gray-700 max-w-sm sm:max-w-md w-full mx-4 transform transition-all duration-300 hover:scale-105">
           {/* Avatar and caller info */}
-          <div className="flex flex-col items-center space-y-6">
+          <div className="flex flex-col items-center space-y-4 sm:space-y-6">
             <div className="relative">
-              <div className="w-24 h-24 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg">
+              <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg">
                 {users?.[0]?.avatar ? (
                   <img
                     src={users[0].avatar}
                     alt={receiverName}
-                    className="w-20 h-20 rounded-full object-cover border-4 border-white dark:border-gray-800"
+                    className="w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover border-4 border-white dark:border-gray-800"
                     onError={(e) => {
                       e.target.style.display = "none";
                     }}
                   />
                 ) : (
-                  <span className="text-white text-2xl font-bold">
+                  <span className="text-white text-xl sm:text-2xl font-bold">
                     {receiverName?.charAt(0)?.toUpperCase() || "U"}
                   </span>
                 )}
               </div>
-              <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center shadow-lg animate-pulse">
-                <Phone size={16} className="text-white" />
+              <div className="absolute -bottom-1 -right-1 sm:-bottom-2 sm:-right-2 w-6 h-6 sm:w-8 sm:h-8 bg-green-500 rounded-full flex items-center justify-center shadow-lg animate-pulse">
+                <Phone size={12} className="sm:hidden text-white" />
+                <Phone size={16} className="hidden sm:block text-white" />
               </div>
             </div>
 
-            <div className="text-center space-y-2">
-              <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
+            <div className="text-center space-y-1 sm:space-y-2">
+              <h3 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
                 Incoming Call
               </h3>
-              <p className="text-lg text-gray-600 dark:text-gray-300 font-medium">
+              <p className="text-base sm:text-lg text-gray-600 dark:text-gray-300 font-medium">
                 {receiverName || `User ${incomingCall.caller_id}`}
               </p>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
+              <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
                 Video Call
               </p>
             </div>
           </div>
 
           {/* Action buttons */}
-          <div className="flex justify-center space-x-6 mt-8">
+          <div className="flex justify-center space-x-4 sm:space-x-6 mt-6 sm:mt-8">
             <button
               onClick={declineCall}
-              className="w-16 h-16 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center shadow-lg transition-all duration-200 transform hover:scale-110 active:scale-95"
+              className="w-14 h-14 sm:w-16 sm:h-16 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center shadow-lg transition-all duration-200 transform hover:scale-110 active:scale-95"
             >
-              <PhoneOff size={24} />
+              <PhoneOff size={20} className="sm:hidden" />
+              <PhoneOff size={24} className="hidden sm:block" />
             </button>
             <button
               onClick={acceptCall}
-              className="w-16 h-16 bg-green-500 hover:bg-green-600 text-white rounded-full flex items-center justify-center shadow-lg transition-all duration-200 transform hover:scale-110 active:scale-95"
+              className="w-14 h-14 sm:w-16 sm:h-16 bg-green-500 hover:bg-green-600 text-white rounded-full flex items-center justify-center shadow-lg transition-all duration-200 transform hover:scale-110 active:scale-95"
             >
-              <Phone size={24} />
+              <Phone size={20} className="sm:hidden" />
+              <Phone size={24} className="hidden sm:block" />
             </button>
           </div>
         </div>
       ) : (
         /* Main Video Call UI */
         <div
-          className={`relative bg-gray-900 rounded-2xl overflow-hidden shadow-2xl transition-all duration-300 ${
+          className={`relative bg-gray-900 rounded-xl sm:rounded-2xl overflow-hidden shadow-2xl transition-all duration-300 ${
             isFullScreen
               ? "w-full h-full rounded-none"
-              : "w-full max-w-6xl h-4/5"
+              : "w-full h-full sm:h-4/5 max-w-7xl"
           }`}
         >
           {/* Header with controls */}
-          <div className="absolute top-0 left-0 right-0 z-20 bg-gradient-to-b from-black/50 to-transparent p-6">
+          <div className="absolute top-0 left-0 right-0 z-20 bg-gradient-to-b from-black/50 to-transparent p-3 sm:p-4 md:p-6">
             <div className="flex justify-between items-center">
-              <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-2 sm:space-x-4">
                 <div className="flex items-center space-x-2">
                   <div
-                    className={`w-3 h-3 rounded-full ${
+                    className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full ${
                       connectionState === "connected"
                         ? "bg-green-500"
                         : connectionState === "connecting" || isConnecting
@@ -602,7 +605,7 @@ const VideoCall = ({
                         : "bg-red-500"
                     }`}
                   />
-                  <span className="text-white text-sm font-medium">
+                  <span className="text-white text-xs sm:text-sm font-medium">
                     {connectionState === "connected"
                       ? "Connected"
                       : connectionState === "connecting" || isConnecting
@@ -611,28 +614,34 @@ const VideoCall = ({
                   </span>
                 </div>
                 {callInitiated && (
-                  <div className="text-white text-sm font-mono bg-black/30 px-3 py-1 rounded-full">
+                  <div className="text-white text-xs sm:text-sm font-mono bg-black/30 px-2 py-1 sm:px-3 sm:py-1 rounded-full">
                     {formatDuration(callDuration)}
                   </div>
                 )}
               </div>
 
-              <div className="flex items-center space-x-3">
+              <div className="flex items-center space-x-2 sm:space-x-3">
                 <button
                   onClick={toggleFullScreen}
-                  className="p-2 bg-black/30 hover:bg-black/50 text-white rounded-full transition-all duration-200 hover:scale-110"
+                  className="p-1.5 sm:p-2 bg-black/30 hover:bg-black/50 text-white rounded-full transition-all duration-200 hover:scale-110"
                 >
                   {isFullScreen ? (
-                    <Minimize2 size={20} />
+                    <Minimize2 size={16} className="sm:hidden" />
                   ) : (
-                    <Maximize2 size={20} />
+                    <Maximize2 size={16} className="sm:hidden" />
+                  )}
+                  {isFullScreen ? (
+                    <Minimize2 size={20} className="hidden sm:block" />
+                  ) : (
+                    <Maximize2 size={20} className="hidden sm:block" />
                   )}
                 </button>
                 <button
                   onClick={endCall}
-                  className="p-2 bg-red-500/80 hover:bg-red-500 text-white rounded-full transition-all duration-200 hover:scale-110"
+                  className="p-1.5 sm:p-2 bg-red-500/80 hover:bg-red-500 text-white rounded-full transition-all duration-200 hover:scale-110"
                 >
-                  <X size={20} />
+                  <X size={16} className="sm:hidden" />
+                  <X size={20} className="hidden sm:block" />
                 </button>
               </div>
             </div>
@@ -650,34 +659,36 @@ const VideoCall = ({
               />
               {!callInitiated && !incomingCall && (
                 <div className="absolute inset-0 flex items-center justify-center bg-gray-800">
-                  <div className="text-center space-y-4">
-                    <div className="w-32 h-32 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center mx-auto shadow-lg">
+                  <div className="text-center space-y-3 sm:space-y-4 px-4">
+                    <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center mx-auto shadow-lg">
                       {users?.[0]?.avatar ? (
                         <img
                           src={users[0].avatar}
                           alt={receiverName}
-                          className="w-28 h-28 rounded-full object-cover border-4 border-white"
+                          className="w-20 h-20 sm:w-28 sm:h-28 rounded-full object-cover border-4 border-white"
                           onError={(e) => {
                             e.target.style.display = "none";
                           }}
                         />
                       ) : (
-                        <span className="text-white text-4xl font-bold">
+                        <span className="text-white text-3xl sm:text-4xl font-bold">
                           {receiverName?.charAt(0)?.toUpperCase() || "U"}
                         </span>
                       )}
                     </div>
-                    <p className="text-white text-xl font-medium">
+                    <p className="text-white text-lg sm:text-xl font-medium">
                       {receiverName}
                     </p>
-                    <p className="text-gray-300">Waiting to connect...</p>
+                    <p className="text-gray-300 text-sm sm:text-base">
+                      Waiting to connect...
+                    </p>
                   </div>
                 </div>
               )}
             </div>
 
             {/* Local video (picture-in-picture) */}
-            <div className="absolute bottom-6 right-6 w-48 h-36 bg-gray-700 rounded-xl overflow-hidden shadow-lg border-2 border-white/20">
+            <div className="absolute bottom-3 right-3 sm:bottom-4 sm:right-4 md:bottom-6 md:right-6 w-32 h-24 sm:w-40 sm:h-30 md:w-48 md:h-36 bg-gray-700 rounded-lg sm:rounded-xl overflow-hidden shadow-lg border-2 border-white/20">
               <video
                 ref={localVideoRef}
                 className="w-full h-full object-cover"
@@ -687,7 +698,11 @@ const VideoCall = ({
               />
               {isVideoOff && (
                 <div className="absolute inset-0 bg-gray-700 flex items-center justify-center">
-                  <VideoOff size={32} className="text-gray-400" />
+                  <VideoOff size={24} className="sm:hidden text-gray-400" />
+                  <VideoOff
+                    size={32}
+                    className="hidden sm:block text-gray-400"
+                  />
                 </div>
               )}
             </div>
@@ -695,65 +710,88 @@ const VideoCall = ({
 
           {/* Error message */}
           {errorMessage && (
-            <div className="absolute top-20 left-6 right-6 bg-red-500/90 backdrop-blur-sm text-white p-4 rounded-lg shadow-lg">
-              <p className="font-medium">{errorMessage}</p>
+            <div className="absolute top-16 sm:top-20 left-3 right-3 sm:left-4 sm:right-4 md:left-6 md:right-6 bg-red-500/90 backdrop-blur-sm text-white p-3 sm:p-4 rounded-lg shadow-lg">
+              <p className="font-medium text-sm sm:text-base">{errorMessage}</p>
             </div>
           )}
 
           {/* Loading indicator */}
           {isConnecting && (
             <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-              <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 text-center">
-                <div className="animate-spin w-12 h-12 border-4 border-white/30 border-t-white rounded-full mx-auto mb-4"></div>
-                <p className="text-white text-lg font-medium">Connecting...</p>
+              <div className="bg-white/10 backdrop-blur-sm rounded-xl sm:rounded-2xl p-6 sm:p-8 text-center mx-4">
+                <div className="animate-spin w-10 h-10 sm:w-12 sm:h-12 border-4 border-white/30 border-t-white rounded-full mx-auto mb-3 sm:mb-4"></div>
+                <p className="text-white text-base sm:text-lg font-medium">
+                  Connecting...
+                </p>
               </div>
             </div>
           )}
 
           {/* Bottom controls */}
-          <div className="absolute bottom-0 left-0 right-0 z-20 bg-gradient-to-t from-black/50 to-transparent p-6">
+          <div className="absolute bottom-0 left-0 right-0 z-20 bg-gradient-to-t from-black/50 to-transparent p-3 sm:p-4 md:p-6">
             {!callInitiated && !incomingCall ? (
               <div className="flex justify-center">
                 <button
                   onClick={startCall}
-                  className="px-8 py-4 bg-green-500 hover:bg-green-600 text-white rounded-full font-medium shadow-lg transition-all duration-200 transform hover:scale-105 flex items-center space-x-2"
+                  className="px-6 py-3 sm:px-8 sm:py-4 bg-green-500 hover:bg-green-600 text-white rounded-full font-medium shadow-lg transition-all duration-200 transform hover:scale-105 flex items-center space-x-2"
                 >
-                  <Phone size={20} />
-                  <span>Start Call</span>
+                  <Phone size={18} className="sm:hidden" />
+                  <Phone size={20} className="hidden sm:block" />
+                  <span className="text-sm sm:text-base">Start Call</span>
                 </button>
               </div>
             ) : (
               callInitiated && (
-                <div className="flex justify-center space-x-4">
+                <div className="flex justify-center space-x-3 sm:space-x-4 flex-wrap gap-2 sm:gap-0">
                   <button
                     onClick={toggleMute}
-                    className={`p-4 rounded-full transition-all duration-200 transform hover:scale-110 ${
+                    className={`p-3 sm:p-4 rounded-full transition-all duration-200 transform hover:scale-110 ${
                       isMuted
                         ? "bg-red-500 hover:bg-red-600"
                         : "bg-gray-700 hover:bg-gray-600"
                     } text-white shadow-lg`}
                   >
-                    {isMuted ? <MicOff size={24} /> : <Mic size={24} />}
+                    {isMuted ? (
+                      <>
+                        <MicOff size={20} className="sm:hidden" />
+                        <MicOff size={24} className="hidden sm:block" />
+                      </>
+                    ) : (
+                      <>
+                        <Mic size={20} className="sm:hidden" />
+                        <Mic size={24} className="hidden sm:block" />
+                      </>
+                    )}
                   </button>
 
                   <button
                     onClick={toggleVideo}
-                    className={`p-4 rounded-full transition-all duration-200 transform hover:scale-110 ${
+                    className={`p-3 sm:p-4 rounded-full transition-all duration-200 transform hover:scale-110 ${
                       isVideoOff
                         ? "bg-red-500 hover:bg-red-600"
                         : "bg-gray-700 hover:bg-gray-600"
                     } text-white shadow-lg`}
                   >
-                    {isVideoOff ? <VideoOff size={24} /> : <Video size={24} />}
+                    {isVideoOff ? (
+                      <>
+                        <VideoOff size={20} className="sm:hidden" />
+                        <VideoOff size={24} className="hidden sm:block" />
+                      </>
+                    ) : (
+                      <>
+                        <Video size={20} className="sm:hidden" />
+                        <Video size={24} className="hidden sm:block" />
+                      </>
+                    )}
                   </button>
 
                   <button
                     onClick={toggleScreenShare}
-                    className={`p-4 rounded-full transition-all duration-200 transform hover:scale-110 ${
+                    className={`p-3 sm:p-4 rounded-full transition-all duration-200 transform hover:scale-110 ${
                       isScreenSharing
                         ? "bg-blue-500 hover:bg-blue-600"
                         : "bg-gray-700 hover:bg-gray-600"
-                    } text-white shadow-lg`}
+                    } text-white shadow-lg hidden sm:flex`}
                   >
                     {isScreenSharing ? (
                       <MonitorOff size={24} />
@@ -764,9 +802,10 @@ const VideoCall = ({
 
                   <button
                     onClick={endCall}
-                    className="p-4 bg-red-500 hover:bg-red-600 text-white rounded-full shadow-lg transition-all duration-200 transform hover:scale-110"
+                    className="p-3 sm:p-4 bg-red-500 hover:bg-red-600 text-white rounded-full shadow-lg transition-all duration-200 transform hover:scale-110"
                   >
-                    <PhoneOff size={24} />
+                    <PhoneOff size={20} className="sm:hidden" />
+                    <PhoneOff size={24} className="hidden sm:block" />
                   </button>
                 </div>
               )
