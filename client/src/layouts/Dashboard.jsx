@@ -137,7 +137,6 @@ const Dashboard = () => {
     const routes = {
       "/": 0,
       "/chat": 1,
-      "/settings": 2,
     };
     setActive(routes[location.pathname] ?? null);
   }, [location]);
@@ -157,25 +156,24 @@ const Dashboard = () => {
                 }}
               />
             </div>
-            {[
-              ["/chat", MessageSquareMoreIcon, 1],
-              ["/settings", CogIcon, 2],
-            ].map(([path, Icon, index]) => (
-              <div
-                key={path}
-                className={`h-16 w-16 rounded-lg flex items-center cursor-pointer justify-center ${
-                  active === index
-                    ? "bg-blue-500 text-white"
-                    : "hover:bg-gray-200 dark:hover:bg-gray-800"
-                }`}
-                onClick={() => {
-                  setActive(index);
-                  navigate(path);
-                }}
-              >
-                <Icon size={28} />
-              </div>
-            ))}
+            {[["/chat", MessageSquareMoreIcon, 1]].map(
+              ([path, Icon, index]) => (
+                <div
+                  key={path}
+                  className={`h-16 w-16 rounded-lg flex items-center cursor-pointer justify-center ${
+                    active === index
+                      ? "bg-blue-500 text-white"
+                      : "hover:bg-gray-200 dark:hover:bg-gray-800"
+                  }`}
+                  onClick={() => {
+                    setActive(index);
+                    navigate(path);
+                  }}
+                >
+                  <Icon size={28} />
+                </div>
+              )
+            )}
             <Divider className="w-16 bg-gray-100 dark:bg-gray-700" />
           </div>
           <div className="w-full flex flex-col items-center justify-center mb-8 gap-y-3">

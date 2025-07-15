@@ -15,6 +15,7 @@ export const authApi = createApi({
     },
     credentials: "include",
   }),
+  tagTypes: ["User", "People", "Friends", "Requests"],
   endpoints: (builder) => ({
     registerUser: builder.mutation({
       query: (body) => ({
@@ -149,24 +150,28 @@ export const authApi = createApi({
         method: "POST",
         body,
       }),
+      providesTags: ["People"],
     }),
     getUser: builder.query({
       query: () => ({
         url: "/get-user",
         method: "GET",
       }),
+      providesTags: ["User"],
     }),
     getFriends: builder.query({
       query: () => ({
         url: "/get-friends",
         method: "GET",
       }),
+      providesTags: ["Friends"],
     }),
     getRequests: builder.query({
       query: () => ({
         url: "/get-requests",
         method: "GET",
       }),
+      providesTags: ["Requests"],
     }),
   }),
 });
@@ -185,3 +190,6 @@ export const {
   useGetFriendsQuery,
   useGetRequestsQuery,
 } = authApi;
+
+// Export the api for cache invalidation
+export default authApi;

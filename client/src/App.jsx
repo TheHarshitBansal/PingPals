@@ -10,11 +10,9 @@ import GoogleCallback from "./pages/auth/GoogleCallback.jsx";
 import GithubCallback from "./pages/auth/GithubCallback.jsx";
 const ProfileGeneral = lazy(() => import("./pages/profile/ProfileGeneral.jsx"));
 const Verification = lazy(() => import("./pages/auth/Verification.jsx"));
-const CallLog = lazy(() => import("./pages/call/CallLog.jsx"));
 const ForgotPassword = lazy(() => import("./pages/auth/ForgotPassword.jsx"));
 const ResetPassword = lazy(() => import("./pages/auth/ResetPassword.jsx"));
 const HomePage = lazy(() => import("./pages/HomePage.jsx"));
-const Settings = lazy(() => import("./pages/settings/Settings.jsx"));
 const Login = lazy(() => import("./pages/auth/Login.jsx"));
 const Dashboard = lazy(() => import("./layouts/Dashboard.jsx"));
 const GeneralApp = lazy(() => import("./pages/dashboard/GeneralApp.jsx"));
@@ -64,7 +62,6 @@ const App = () => {
           <Route path="/" element={<Dashboard />}>
             <Route index element={<HomePage />} />
             <Route path="chat" element={<GeneralApp />} />
-            <Route path="settings" element={<Settings />} />
             <Route path="profile" element={<ProfileGeneral />} />
           </Route>
         </Route>

@@ -70,7 +70,7 @@ io.on("connection", async (socket) => {
     return;
   }
   await User.findByIdAndUpdate(user_id, { socket_id, status: "Online" });
-  socket.broadcast.emit("database-changed");
+  socket.broadcast.emit("database-updated");
 
   //INFO: Socket Events
   socket.on("send-friend_request", async (data) => {
@@ -109,7 +109,9 @@ io.on("connection", async (socket) => {
   socket.on("unsend_request", async (data) => {
     const receiver = await User.findByIdAndUpdate(data.receiver, {
       $pull: { requests: data.sender },
-    });
+    })
+      .select("socket_id")
+      .exec();
     await FriendReq.findOneAndDelete({
       sender: data.sender,
       receiver: data.receiver,
@@ -331,8 +333,8 @@ io.on("connection", async (socket) => {
       .select("socket_id")
       .exec();
 
-    io.to(receiverData?.socket_id).emit("database-changed");
-    io.emit("database-changed");
+    io.to(receiverData?.socket_id).emit("database-updated");
+    io.emit("database-updated");
   });
 
   //INFO: Handling File & Media Messages
@@ -364,8 +366,8 @@ io.on("connection", async (socket) => {
       .select("socket_id")
       .exec();
 
-    io.to(receiverData?.socket_id).emit("database-changed");
-    io.emit("database-changed");
+    io.to(receiverData?.socket_id).emit("database-updated");
+    io.emit("database-updated");
   });
 
   socket.on("start_video_call", async (data) => {
@@ -453,7 +455,7 @@ io.on("connection", async (socket) => {
   socket.on("disconnect", async () => {
     console.log(`User disconnected: ${user_id} (${socket.id})`);
     await User.findByIdAndUpdate(user_id, { status: "Offline" });
-    socket.broadcast.emit("database-changed");
+    socket.broadcast.emit("database-updated");
   });
 });
 
