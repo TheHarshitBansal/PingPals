@@ -51,32 +51,36 @@ const GeneralApp = () => {
 
   return (
     <div className="flex h-screen w-full overflow-hidden">
-      {/* Chats - Hidden on small screens when a conversation is active */}
+      {/* Chats Sidebar - Responsive behavior */}
       <div
         className={`${
-          conversation.currentConversation ? "hidden lg:flex" : "flex"
-        } flex-shrink-0`}
+          conversation.currentConversation
+            ? "hidden md:flex" // Hide on mobile and small tablets when conversation is active
+            : "flex" // Always show when no conversation is selected
+        } flex-shrink-0 w-full md:w-auto`}
       >
         <Chats />
       </div>
 
-      {/* Chat Messages */}
+      {/* Chat Messages - Takes full width on mobile when conversation is active */}
       {conversation.currentConversation === null ? (
-        <div className="hidden lg:flex flex-1">
+        <div className="hidden md:flex flex-1">
           <HomePage />
         </div>
       ) : (
-        <MessageView />
+        <div className="flex-1 w-full">
+          <MessageView />
+        </div>
       )}
 
-      {/* Sidebars */}
+      {/* Sidebars - Only show on larger screens */}
       {app.sidebar.isOpen && app.sidebar.type === "PROFILE" && (
-        <div className="hidden lg:block">
+        <div className="hidden xl:block">
           <ProfileSidebar />
         </div>
       )}
       {app.sidebar.isOpen && app.sidebar.type === "SHARED" && (
-        <div className="hidden lg:block">
+        <div className="hidden xl:block">
           <SharedSidebar />
         </div>
       )}

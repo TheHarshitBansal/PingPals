@@ -66,10 +66,10 @@ const CallElement = ({ name, incoming, missed, avatar, time, voice, date }) => {
 
 const CallLog = () => {
   return (
-    <div className="relative h-screen w-full sm:min-w-80 sm:max-w-80 lg:min-w-96 lg:max-w-96 shadow-light dark:shadow-dark flex flex-col">
+    <div className="relative h-screen w-full md:min-w-80 md:max-w-80 lg:min-w-96 lg:max-w-96 xl:min-w-[26rem] xl:max-w-[26rem] shadow-light dark:shadow-dark flex flex-col">
       {/* Header */}
-      <div className="flex items-center justify-between px-4 sm:px-10 py-5 flex-shrink-0">
-        <h1 className="text-xl sm:text-2xl font-bold">Calls</h1>
+      <div className="flex items-center justify-between px-4 md:px-6 lg:px-8 xl:px-10 py-4 md:py-5 flex-shrink-0">
+        <h1 className="text-lg md:text-xl lg:text-2xl font-bold">Calls</h1>
       </div>
 
       {/* Search Box */}

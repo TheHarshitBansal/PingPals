@@ -104,29 +104,32 @@ const ProfileSidebar = () => {
   const recentMedia = mediaFiles.slice(-3); // Get the last 3 media files
 
   return (
-    <div className="flex flex-col shadow-light dark:shadow-dark w-full lg:w-1/4 h-full">
+    <div className="flex flex-col shadow-light dark:shadow-dark w-full xl:w-1/4 h-full">
       {/* Profile Header */}
-      <div className="sticky border-b border-gray-300 dark:border-gray-700 flex items-center justify-between w-full p-4 sm:p-6 ">
-        <div className="font-semibold text-base sm:text-lg">Profile</div>
+      <div className="sticky border-b border-gray-300 dark:border-gray-700 flex items-center justify-between w-full p-3 md:p-4 lg:p-6">
+        <div className="font-semibold text-base md:text-lg lg:text-xl">
+          Profile
+        </div>
         <button onClick={handleUserDetailsOpen}>
-          <X size={20} className="sm:hidden" color="gray" />
-          <X size={24} className="hidden sm:block" color="gray" />
+          <X size={18} className="md:hidden" color="gray" />
+          <X size={20} className="hidden md:block lg:hidden" color="gray" />
+          <X size={24} className="hidden lg:block" color="gray" />
         </button>
       </div>
 
       {/* Profile Details */}
-      <div className="p-3 sm:p-4 space-y-3 sm:space-y-4 overflow-y-auto">
-        <div className="flex items-center gap-x-3 sm:gap-x-5 px-2">
+      <div className="p-3 md:p-4 lg:p-6 space-y-3 md:space-y-4 lg:space-y-6 overflow-y-auto">
+        <div className="flex items-center gap-x-3 md:gap-x-4 lg:gap-x-5 px-2">
           <LazyImage
             src={users[0]?.avatar}
             alt={users[0]?.name}
-            className="w-12 h-12 sm:w-16 sm:h-16 rounded-full object-cover object-center flex-shrink-0"
+            className="w-12 h-12 md:w-14 md:h-14 lg:w-16 lg:h-16 rounded-full object-cover object-center flex-shrink-0"
           />
           <div className="min-w-0 flex-1">
-            <h3 className="text-base sm:text-lg font-medium truncate">
+            <h3 className="text-base md:text-lg lg:text-xl font-medium truncate">
               {users[0]?.name}
             </h3>
-            <h3 className="text-sm sm:text-base text-gray-600 dark:text-gray-400 truncate">
+            <h3 className="text-sm md:text-base text-gray-600 dark:text-gray-400 truncate">
               @{users[0]?.username}
             </h3>
           </div>

@@ -144,20 +144,28 @@ const SharedSidebar = () => {
   };
 
   return (
-    <div className="flex flex-col shadow-light dark:shadow-dark w-full lg:w-1/4 h-screen">
-      <div className="sticky flex-shrink-0 border-b border-gray-300 dark:border-gray-700 flex items-center justify-start gap-x-2 w-full p-4 sm:p-6">
+    <div className="flex flex-col shadow-light dark:shadow-dark w-full xl:w-1/4 h-screen">
+      <div className="sticky flex-shrink-0 border-b border-gray-300 dark:border-gray-700 flex items-center justify-start gap-x-2 w-full p-3 md:p-4 lg:p-6">
         <button onClick={handleProfile}>
-          <ChevronLeft size={20} className="sm:w-6 sm:h-6" color="gray" />
+          <ChevronLeft size={18} className="md:hidden" color="gray" />
+          <ChevronLeft
+            size={20}
+            className="hidden md:block lg:hidden"
+            color="gray"
+          />
+          <ChevronLeft size={24} className="hidden lg:block" color="gray" />
         </button>
-        <div className="font-semibold text-base sm:text-lg">Shared Media</div>
+        <div className="font-semibold text-base md:text-lg lg:text-xl">
+          Shared Media
+        </div>
       </div>
 
       <Tabs defaultValue="media" className="flex flex-col h-full">
         <TabsList className="grid w-full grid-cols-2 gap-2 p-1 rounded-none flex-shrink-0">
-          <TabsTrigger value="media" className="text-sm sm:text-base">
+          <TabsTrigger value="media" className="text-sm md:text-base">
             Media
           </TabsTrigger>
-          <TabsTrigger value="links" className="text-sm sm:text-base">
+          <TabsTrigger value="links" className="text-sm md:text-base">
             Links
           </TabsTrigger>
         </TabsList>

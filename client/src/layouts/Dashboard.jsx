@@ -203,7 +203,81 @@ const Dashboard = () => {
 
   return (
     <div className="flex" key={forceRender}>
-      <div className="h-screen w-[100px] bg-gray-100 dark:bg-gray-900 shadow-light dark:shadow-dark">
+      {/* Mobile and tablet: Bottom navigation bar */}
+      <div className="fixed bottom-0 left-0 right-0 z-50 bg-gray-100 dark:bg-gray-900 shadow-light dark:shadow-dark border-t border-gray-200 dark:border-gray-700 lg:hidden">
+        <div className="flex items-center justify-around py-2">
+          <div
+            className={`flex flex-col items-center justify-center p-2 rounded-lg cursor-pointer ${
+              active === 0
+                ? "bg-blue-500 text-white"
+                : "hover:bg-gray-200 dark:hover:bg-gray-800"
+            }`}
+            onClick={() => {
+              setActive(0);
+              navigate("/");
+            }}
+          >
+            <img src={Logo} alt="Logo" className="h-6 w-6 mb-1" />
+            <span className="text-xs">Home</span>
+          </div>
+          {[["/chat", MessageSquareMoreIcon, 1]].map(([path, Icon, index]) => (
+            <div
+              key={path}
+              className={`flex flex-col items-center justify-center p-2 rounded-lg cursor-pointer ${
+                active === index
+                  ? "bg-blue-500 text-white"
+                  : "hover:bg-gray-200 dark:hover:bg-gray-800"
+              }`}
+              onClick={() => {
+                setActive(index);
+                navigate(path);
+              }}
+            >
+              <Icon size={20} />
+              <span className="text-xs mt-1">Chat</span>
+            </div>
+          ))}
+          <div className="flex flex-col items-center justify-center p-2">
+            <DarkModeSwitcher />
+            <span className="text-xs mt-1">Theme</span>
+          </div>
+          <ProfileOptions>
+            <div className="flex flex-col items-center justify-center p-2 cursor-pointer">
+              {user?.status === "Online" ? (
+                <StyledBadge
+                  overlap="circular"
+                  anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                  variant="dot"
+                >
+                  <Avatar className="h-6 w-6">
+                    <AvatarImage src={user.avatar} />
+                    <AvatarFallback>
+                      <Skeleton className="h-6 w-6 rounded-full" />
+                    </AvatarFallback>
+                  </Avatar>
+                </StyledBadge>
+              ) : (
+                <StyledRedBadge
+                  overlap="circular"
+                  anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                  variant="dot"
+                >
+                  <Avatar className="h-6 w-6">
+                    <AvatarImage src={user.avatar} />
+                    <AvatarFallback>
+                      <Skeleton className="h-6 w-6 rounded-full" />
+                    </AvatarFallback>
+                  </Avatar>
+                </StyledRedBadge>
+              )}
+              <span className="text-xs mt-1">Profile</span>
+            </div>
+          </ProfileOptions>
+        </div>
+      </div>
+
+      {/* Desktop: Side navigation */}
+      <div className="hidden lg:flex h-screen w-[100px] bg-gray-100 dark:bg-gray-900 shadow-light dark:shadow-dark flex-shrink-0">
         <div className="h-full w-full flex flex-col items-center justify-between">
           <div className="w-full flex flex-col items-center justify-center gap-y-3">
             <div className="h-16 w-16 rounded-lg my-4 flex items-center justify-center cursor-pointer">
@@ -272,7 +346,11 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
-      <Outlet />
+
+      {/* Main content area with bottom padding for mobile navigation */}
+      <div className="flex-1 pb-16 lg:pb-0">
+        <Outlet />
+      </div>
     </div>
   );
 };

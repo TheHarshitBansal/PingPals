@@ -22,7 +22,10 @@ import {
 } from "@/components/ui/avatar.jsx";
 import { Skeleton } from "@/components/ui/skeleton.jsx";
 import { socket } from "@/socket.js";
-import { fetchMessages } from "@/redux/slices/conversationSlice.js";
+import {
+  fetchMessages,
+  setCurrentConversation,
+} from "@/redux/slices/conversationSlice.js";
 import {
   setIncomingCallData,
   clearIncomingCallData,
@@ -208,17 +211,37 @@ const MessageView = () => {
   return (
     <div
       className={`flex flex-col h-full border-x border-gray-100 dark:border-gray-900 shadow-light dark:shadow-dark ${
-        !profileSidebar ? "w-full lg:w-4/5" : "w-full lg:w-3/5"
+        !profileSidebar ? "w-full xl:w-4/5" : "w-full xl:w-3/5"
       } transition-all ease-linear duration-300`}
       key={forceRefresh}
     >
       {/* Chat Header */}
-      <div className="flex sticky items-center justify-between border-b px-4 sm:px-6 py-3 sm:py-4">
+      <div className="flex sticky items-center justify-between border-b px-3 md:px-4 lg:px-6 py-3 md:py-4">
+        {/* Back button for mobile */}
+        <button
+          onClick={() => dispatch(setCurrentConversation(null))}
+          className="md:hidden mr-3 p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full"
+        >
+          <svg
+            className="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M15 19l-7-7 7-7"
+            />
+          </svg>
+        </button>
+
         <div
           onClick={() => dispatch(toggleSidebar())}
           className="flex items-center cursor-pointer flex-1 min-w-0"
         >
-          <div className="mr-3 sm:mr-4 h-8 w-8 sm:h-10 sm:w-10 rounded-full overflow-hidden flex-shrink-0">
+          <div className="mr-3 md:mr-4 h-8 w-8 md:h-10 md:w-10 lg:h-12 lg:w-12 rounded-full overflow-hidden flex-shrink-0">
             <Avatar className="h-full w-full">
               <AvatarImage src={users[0]?.avatar || ""} />
               <AvatarFallback>
@@ -227,33 +250,43 @@ const MessageView = () => {
             </Avatar>
           </div>
           <div className="min-w-0 flex-1">
-            <h5 className="font-medium text-black dark:text-white text-sm sm:text-base truncate">
+            <h5 className="font-medium text-black dark:text-white text-sm md:text-base lg:text-lg truncate">
               {users[0]?.name || "Unknown User"}
             </h5>
-            <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 truncate">
+            <p className="text-xs md:text-sm text-gray-500 dark:text-gray-400 truncate">
               {users[0]?.status}
             </p>
           </div>
         </div>
-        <div className="cursor-pointer flex items-center space-x-3 sm:space-x-6 h-full flex-shrink-0">
-          <button onClick={() => setIsCallActive(true)} className="p-1">
-            <VideoCamera size={20} className="sm:hidden" color="gray" />
-            <VideoCamera size={24} className="hidden sm:block" color="gray" />
+        <div className="cursor-pointer flex items-center space-x-2 md:space-x-3 lg:space-x-6 h-full flex-shrink-0">
+          <button onClick={() => setIsCallActive(true)} className="p-1 md:p-2">
+            <VideoCamera size={18} className="md:hidden" color="gray" />
+            <VideoCamera
+              size={20}
+              className="hidden md:block lg:hidden"
+              color="gray"
+            />
+            <VideoCamera size={24} className="hidden lg:block" color="gray" />
           </button>
           <Divider
             orientation="vertical"
             flexItem
-            className="bg-gray-100 dark:bg-gray-700 hidden sm:block"
+            className="bg-gray-100 dark:bg-gray-700 hidden md:block"
           />
           <ChatOptions chatId={chat?._id}>
-            <CaretDown size={20} className="sm:hidden" color="gray" />
-            <CaretDown size={24} className="hidden sm:block" color="gray" />
+            <CaretDown size={18} className="md:hidden" color="gray" />
+            <CaretDown
+              size={20}
+              className="hidden md:block lg:hidden"
+              color="gray"
+            />
+            <CaretDown size={24} className="hidden lg:block" color="gray" />
           </ChatOptions>
         </div>
       </div>
 
       {/* Chat Messages */}
-      <div className="max-h-full space-y-2 sm:space-y-3 overflow-auto no-scrollbar px-3 sm:px-6 py-4 sm:py-7 grow bg-gray-50 dark:bg-gray-900 shadow-inner">
+      <div className="max-h-full space-y-2 md:space-y-3 lg:space-y-4 overflow-auto no-scrollbar px-3 md:px-4 lg:px-6 py-4 md:py-6 lg:py-8 grow bg-gray-50 dark:bg-gray-900 shadow-inner">
         {sortedMessages?.map((message, index) => {
           switch (message.type) {
             case "Separator":
@@ -298,9 +331,9 @@ const MessageView = () => {
       </div>
 
       {/* Chat Input */}
-      <div className="sticky bottom-0 p-2 sm:p-3">
+      <div className="sticky bottom-0 p-2 md:p-3 lg:p-4">
         <form
-          className="flex items-center justify-between space-x-2 sm:space-x-4"
+          className="flex items-center justify-between space-x-2 md:space-x-3 lg:space-x-4"
           onSubmit={handleMessageSend}
         >
           <div className="relative w-full">
@@ -310,13 +343,13 @@ const MessageView = () => {
                   ? "Message"
                   : "You are not friends with this user"
               }
-              className="h-10 sm:h-12 resize-none w-full rounded border border-gray-300 dark:border-gray-700 p-2 bg-gray-50 dark:bg-gray-900 shadow-inner text-sm outline-none focus:border-blue-950 dark:focus:border-blue-200 text-black dark:text-white pl-3 sm:pl-5 pr-16 sm:pr-19 flex"
+              className="h-10 md:h-12 lg:h-14 resize-none w-full rounded border border-gray-300 dark:border-gray-700 p-2 md:p-3 bg-gray-50 dark:bg-gray-900 shadow-inner text-sm md:text-base outline-none focus:border-blue-950 dark:focus:border-blue-200 text-black dark:text-white pl-3 md:pl-4 lg:pl-5 pr-16 md:pr-18 lg:pr-20 flex"
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               disabled={!user.friends.includes(users[0]?._id)}
               rows={1}
             />
-            <div className="absolute right-2 sm:right-5 top-1/2 -translate-y-1/2 flex items-center justify-end space-x-2 sm:space-x-4">
+            <div className="absolute right-2 md:right-3 lg:right-5 top-1/2 -translate-y-1/2 flex items-center justify-end space-x-1 md:space-x-2 lg:space-x-3">
               <Attachments />
               <button
                 onClick={(e) => {
@@ -326,14 +359,20 @@ const MessageView = () => {
                 className="p-1"
               >
                 <Gif
+                  size={18}
+                  className="md:hidden"
+                  color="gray"
+                  weight="bold"
+                />
+                <Gif
                   size={20}
-                  className="sm:hidden"
+                  className="hidden md:block lg:hidden"
                   color="gray"
                   weight="bold"
                 />
                 <Gif
                   size={24}
-                  className="hidden sm:block"
+                  className="hidden lg:block"
                   color="gray"
                   weight="bold"
                 />
@@ -343,18 +382,24 @@ const MessageView = () => {
           </div>
           <button
             type="submit"
-            className="flex items-center justify-center h-10 w-10 sm:h-12 sm:w-12 rounded-md bg-blue-500 text-white hover:bg-opacity-80 flex-shrink-0"
+            className="flex items-center justify-center h-10 w-10 md:h-12 md:w-12 lg:h-14 lg:w-14 rounded-md bg-blue-500 text-white hover:bg-opacity-80 flex-shrink-0"
             disabled={message.trim() === ""}
           >
             <PaperPlaneTilt
+              size={18}
+              className="md:hidden"
+              color="white"
+              weight="bold"
+            />
+            <PaperPlaneTilt
               size={20}
-              className="sm:hidden"
+              className="hidden md:block lg:hidden"
               color="white"
               weight="bold"
             />
             <PaperPlaneTilt
               size={24}
-              className="hidden sm:block"
+              className="hidden lg:block"
               color="white"
               weight="bold"
             />
