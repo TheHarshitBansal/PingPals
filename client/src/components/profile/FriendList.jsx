@@ -41,83 +41,83 @@ const FriendList = () => {
   }, [refetch]);
 
   return (
-    <div className="w-full">
+    <div className="w-full p-4">
       {isLoading && <div className="text-center mt-4">Loading...</div>}
       {friends?.length > 0 ? (
-        <div className="mt-6 w-4/5 mx-auto grid grid-cols-2 gap-6">
+        <div className="space-y-4">
           {friends.map((person) => (
             <div
               key={person._id}
-              className="border p-6 rounded-2xl shadow-md flex items-center gap-x-6 min-w-[50%] bg-white dark:bg-gray-900 hover:shadow-lg transition-shadow duration-200"
+              className="border p-4 rounded-lg shadow-md flex flex-col sm:flex-row items-start sm:items-center gap-4 bg-white dark:bg-gray-900 hover:shadow-lg transition-shadow duration-200"
             >
-              <Avatar className="cursor-pointer h-20 w-20">
+              <Avatar className="cursor-pointer h-12 w-12 sm:h-16 sm:w-16 flex-shrink-0">
                 <AvatarImage src={person.avatar} loading="lazy" />
                 <AvatarFallback>
-                  <Skeleton className="h-20 w-20 rounded-full" />
+                  <Skeleton className="h-12 w-12 sm:h-16 sm:w-16 rounded-full" />
                 </AvatarFallback>
               </Avatar>
 
-              <div className="flex flex-col flex-1 min-w-fit">
-                <h3 className="font-semibold text-xl text-gray-800 dark:text-gray-200">
+              <div className="flex flex-col flex-1 min-w-0">
+                <h3 className="font-semibold text-base sm:text-lg text-gray-800 dark:text-gray-200 truncate">
                   {person.name}
                 </h3>
-                <p className="text-gray-500 dark:text-gray-400 text-sm">
+                <p className="text-gray-500 dark:text-gray-400 text-sm truncate">
                   @{person.username}
                 </p>
-                <p className="text-sm text-gray-400 dark:text-gray-500 mt-1">
+                <p className="text-xs sm:text-sm text-gray-400 dark:text-gray-500 mt-1 line-clamp-2">
                   {person.about}
                 </p>
+              </div>
 
-                {/* Buttons */}
-                <div className="flex gap-3 mt-4">
-                  <button
-                    className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-500 rounded-lg hover:bg-blue-600 transition-all"
-                    onClick={() => {
-                      socket?.emit("start_chat", {
-                        receiver: person._id,
-                      });
-                    }}
-                  >
-                    <MessageSquareMoreIcon size={18} />
-                    Message
-                  </button>
-                  <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <button className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-red-500 rounded-lg hover:bg-red-600 transition-all">
-                        <LucideUserMinus size={18} />
-                        Remove
-                      </button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>
-                          Are you absolutely sure?
-                        </AlertDialogTitle>
-                        <AlertDialogDescription>
-                          This action cannot be undone. You will have to send
-                          friend request to them in order to chat again.
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction asChild>
-                          <button
-                            className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-600 transition-all"
-                            onClick={() => {
-                              //INFO: Remove friend functionality
-                              socket.emit("remove_friend", {
-                                receiver: person._id,
-                              });
-                              refetch();
-                            }}
-                          >
-                            Remove
-                          </button>
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
-                </div>
+              {/* Buttons */}
+              <div className="flex gap-2 w-full sm:w-auto sm:flex-shrink-0">
+                <button
+                  className="flex items-center justify-center gap-2 px-3 py-2 text-xs sm:text-sm font-medium text-white bg-blue-500 rounded-lg hover:bg-blue-600 transition-all flex-1 sm:flex-initial"
+                  onClick={() => {
+                    socket?.emit("start_chat", {
+                      receiver: person._id,
+                    });
+                  }}
+                >
+                  <MessageSquareMoreIcon size={16} />
+                  <span className="sm:inline">Message</span>
+                </button>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <button className="flex items-center justify-center gap-2 px-3 py-2 text-xs sm:text-sm font-medium text-white bg-red-500 rounded-lg hover:bg-red-600 transition-all flex-1 sm:flex-initial">
+                      <LucideUserMinus size={16} />
+                      <span className="sm:inline">Remove</span>
+                    </button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>
+                        Are you absolutely sure?
+                      </AlertDialogTitle>
+                      <AlertDialogDescription>
+                        This action cannot be undone. You will have to send
+                        friend request to them in order to chat again.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction asChild>
+                        <button
+                          className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-600 transition-all"
+                          onClick={() => {
+                            //INFO: Remove friend functionality
+                            socket.emit("remove_friend", {
+                              receiver: person._id,
+                            });
+                            refetch();
+                          }}
+                        >
+                          Remove
+                        </button>
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               </div>
             </div>
           ))}
