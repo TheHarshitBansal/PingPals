@@ -69,9 +69,19 @@ const StyledRedBadge = styled(Badge)(({ theme }) => ({
 }));
 
 export const ChatElement = ({ id, name, avatar, online, message, time }) => {
+  const user = useSelector((state) => state.auth.user);
+  const chats = useSelector((state) => state.conversation.directConversations);
   const currentCoversation = useSelector(
     (state) => state.conversation.currentConversation
   );
+
+  const currentConvo = chats?.find((chat) => {
+    const otherParticipant = chat?.participants?.find(
+      (person) => person._id !== user._id
+    );
+    const matches = otherParticipant?._id === id;
+    return matches;
+  });
 
   const dispatch = useDispatch();
   return (
@@ -293,12 +303,9 @@ const Chats = () => {
         return null;
       }
 
-      console.log("Chats: Processed conversation item:", conversationItem);
       return conversationItem;
     })
     .filter(Boolean); // Remove null entries
-
-  console.log("Chats: Total conversations processed:", conversations.length);
 
   const handleChange = (e) => {
     setSearch(e.target.value);
