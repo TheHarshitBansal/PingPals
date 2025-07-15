@@ -31,14 +31,23 @@ const GeneralApp = () => {
       }
     };
 
+    // Also listen to database-updated for consistency
+    const handleDatabaseUpdate = () => {
+      if (user?._id) {
+        socket?.emit("get_direct_chats", { user_id: user._id });
+      }
+    };
+
     socket?.on("direct_chats", handleDirectChats);
     socket?.on("database-changed", handleDatabaseChange);
+    socket?.on("database-updated", handleDatabaseUpdate);
 
     return () => {
       socket?.off("direct_chats", handleDirectChats);
       socket?.off("database-changed", handleDatabaseChange);
+      socket?.off("database-updated", handleDatabaseUpdate);
     };
-  }, [user?._id, conversation.currentConversation?._id, dispatch]); // ✅ Dependencies updated
+  }, [user?._id, dispatch]); // Removed conversation dependency as it's not needed
 
   return (
     <div className="flex h-screen w-full">

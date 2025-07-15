@@ -6,6 +6,9 @@ import { styled } from "@mui/material";
 import { Skeleton } from "@/components/ui/skeleton.jsx";
 import { useDispatch, useSelector } from "react-redux";
 import { setCurrentConversation } from "@/redux/slices/conversationSlice.js";
+import { socket } from "@/socket.js";
+import authApi from "@/redux/api/authApi.js";
+import { toast } from "@/hooks/use-toast.js";
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
   "& .MuiBadge-badge": {
@@ -135,11 +138,85 @@ export const ChatElement = ({ id, name, avatar, online, message, time }) => {
 
 const Chats = () => {
   const [search, setSearch] = useState("");
+  const [forceRefresh, setForceRefresh] = useState(0); // Add force refresh state
+  const dispatch = useDispatch();
 
   const chats = useSelector((state) => state.conversation.directConversations);
   const user = useSelector((state) => state.auth.user);
 
   const [showChats, setShowChats] = useState(chats);
+
+  // Add socket event listeners for real-time updates
+  useEffect(() => {
+    if (socket) {
+      // Handle database updates by invalidating cache
+      const handleDatabaseUpdate = () => {
+        // Invalidate all cache tags to ensure fresh data including user status
+        dispatch(
+          authApi.util.invalidateTags(["User", "People", "Friends", "Requests"])
+        );
+        // Force component re-render for immediate UI update
+        setForceRefresh((prev) => prev + 1);
+      };
+
+      // Handle socket errors
+      const handleSocketError = (data) => {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: data.message || "An error occurred",
+        });
+        // Invalidate cache to ensure data consistency
+        dispatch(
+          authApi.util.invalidateTags(["User", "People", "Friends", "Requests"])
+        );
+      };
+
+      // Handle real-time message updates - force immediate cache invalidation
+      const handleMessageUpdate = () => {
+        // Force re-render of chat conversations with immediate invalidation
+        dispatch(
+          authApi.util.invalidateTags(["User", "People", "Friends", "Requests"])
+        );
+        setForceRefresh((prev) => prev + 1);
+      };
+
+      // Handle new messages specifically
+      const handleNewMessage = () => {
+        // Immediately invalidate cache when new messages arrive
+        dispatch(
+          authApi.util.invalidateTags(["User", "People", "Friends", "Requests"])
+        );
+        setForceRefresh((prev) => prev + 1);
+      };
+
+      // Listen to database update events - this should handle all status changes
+      socket.on("database-updated", handleDatabaseUpdate);
+      socket.on("database-changed", handleMessageUpdate);
+      socket.on("error", handleSocketError);
+
+      // Listen to specific message events for immediate updates
+      socket.on("direct_chats", handleMessageUpdate);
+      socket.on("dispatch_messages", handleNewMessage);
+      socket.on("text_message", handleNewMessage);
+      socket.on("message", handleNewMessage);
+
+      // Cleanup function
+      return () => {
+        socket.off("database-updated", handleDatabaseUpdate);
+        socket.off("database-changed", handleMessageUpdate);
+        socket.off("error", handleSocketError);
+        socket.off("direct_chats", handleMessageUpdate);
+        socket.off("dispatch_messages", handleNewMessage);
+        socket.off("text_message", handleNewMessage);
+        socket.off("message", handleNewMessage);
+      };
+    }
+  }, [dispatch]);
+
+  useEffect(() => {
+    setShowChats(chats);
+  }, [chats]);
 
   useEffect(() => {
     if (!search) {
@@ -150,45 +227,85 @@ const Chats = () => {
         const participant = chat.participants.find(
           (person) => person._id !== user._id
         );
-        return participant.name.toLowerCase().includes(search.toLowerCase());
+        return participant?.name?.toLowerCase().includes(search.toLowerCase());
       });
       setShowChats(filteredChats);
     }
-  }, [search]);
+  }, [search, chats]);
 
-  const conversations = showChats.map((chat) => {
-    const participant = chat.participants.find(
-      (person) => person._id !== user._id
-    );
+  const conversations = showChats
+    .map((chat) => {
+      const participant = chat.participants.find(
+        (person) => person._id !== user._id
+      );
 
-    const lastMessage =
-      chat.messages?.length > 0
-        ? chat.messages[chat.messages.length - 1].type === "Media"
-          ? "Media"
-          : chat.messages[chat.messages.length - 1].content
+      // Handle cases where participant might be undefined
+      if (!participant) {
+        return null;
+      }
+
+      // Sort messages by creation time to get the actual latest message
+      const sortedMessages = chat.messages
+        ? [...chat.messages].sort((a, b) => {
+            // Skip separators when finding latest message
+            if (a.type === "Separator" && b.type !== "Separator") return -1;
+            if (b.type === "Separator" && a.type !== "Separator") return 1;
+            if (a.type === "Separator" && b.type === "Separator") return 0;
+
+            // Sort by MongoDB ObjectId timestamp for most accurate ordering
+            if (a._id && b._id) {
+              const aTime = new Date(
+                parseInt(a._id.toString().substring(0, 8), 16) * 1000
+              );
+              const bTime = new Date(
+                parseInt(b._id.toString().substring(0, 8), 16) * 1000
+              );
+              return bTime - aTime; // Descending order (latest first)
+            }
+
+            // Fallback to time string comparison
+            const aTime = a.createdAt?.split(":") || ["0", "0"];
+            const bTime = b.createdAt?.split(":") || ["0", "0"];
+            const aMinutes = parseInt(aTime[0]) * 60 + parseInt(aTime[1]);
+            const bMinutes = parseInt(bTime[0]) * 60 + parseInt(bTime[1]);
+
+            return bMinutes - aMinutes; // Descending order (latest first)
+          })
+        : [];
+
+      // Get the latest non-separator message
+      const latestMessage = sortedMessages.find(
+        (msg) => msg.type !== "Separator"
+      );
+
+      const lastMessage = latestMessage
+        ? latestMessage.type === "Media"
+          ? "📎 Media"
+          : latestMessage.content || "No messages yet"
         : "No messages yet";
 
-    const lastMessageTime =
-      chat.messages?.length > 0
-        ? chat.messages[chat.messages.length - 1].createdAt
-        : "";
+      const lastMessageTime = latestMessage?.createdAt || "";
 
-    return {
-      id: participant._id,
-      name: participant.name,
-      avatar: participant.avatar,
-      online: participant.status === "Online",
-      message: lastMessage,
-      time: lastMessageTime,
-    };
-  });
+      return {
+        id: participant._id,
+        name: participant.name,
+        avatar: participant.avatar,
+        online: participant.status === "Online",
+        message: lastMessage,
+        time: lastMessageTime,
+      };
+    })
+    .filter(Boolean); // Remove null entries
 
   const handleChange = (e) => {
     setSearch(e.target.value);
   };
 
   return (
-    <div className="relative h-screen min-w-80 max-w-80 shadow-light dark:shadow-dark flex flex-col">
+    <div
+      className="relative h-screen min-w-80 max-w-80 shadow-light dark:shadow-dark flex flex-col"
+      key={forceRefresh}
+    >
       {/* Header */}
       <div className="flex items-center justify-between px-10 py-5 flex-shrink-0">
         <h1 className="text-2xl font-bold">Chats</h1>

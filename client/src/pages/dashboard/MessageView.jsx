@@ -29,12 +29,15 @@ import {
 } from "@/redux/slices/appSlice.js"; // Import from appSlice
 import ChatOptions from "@/components/messages/ChatOptions.jsx";
 import VideoCall from "@/components/VideoCall.jsx";
+import authApi from "@/redux/api/authApi.js";
+import { toast } from "@/hooks/use-toast.js";
 
 const MessageView = () => {
   const dispatch = useDispatch();
   const [message, setMessage] = useState("");
   const [isGifOpen, setIsGifOpen] = useState(false);
   const [isCallActive, setIsCallActive] = useState(false);
+  const [forceRefresh, setForceRefresh] = useState(0); // Add force refresh state
   const profileSidebar = useSelector((state) => state?.app?.sidebar?.isOpen);
   const chat = useSelector((state) => state?.conversation?.currentConversation);
   const user = useSelector((state) => state?.auth?.user);
@@ -45,6 +48,52 @@ const MessageView = () => {
     chat?.participants?.filter((person) => person?._id !== user?._id) || [];
   const receiverId = users[0]?._id;
   const receiverName = users[0]?.name || "Unknown User";
+
+  // Sort messages by creation order to maintain proper sequence
+  const sortedMessages = messages
+    ? [...messages].sort((a, b) => {
+        // If both are separators, sort by date
+        if (a.type === "Separator" && b.type === "Separator") {
+          return new Date(a.createdAt) - new Date(b.createdAt);
+        }
+
+        // If one is a separator, use the actual createdAt timestamp for comparison
+        if (a.type === "Separator") {
+          const separatorDate = new Date(a.createdAt);
+          const messageDate = b._id
+            ? new Date(b._id.toString().substring(0, 8), 16) * 1000
+            : new Date();
+          return separatorDate - messageDate;
+        }
+
+        if (b.type === "Separator") {
+          const messageDate = a._id
+            ? new Date(a._id.toString().substring(0, 8), 16) * 1000
+            : new Date();
+          const separatorDate = new Date(b.createdAt);
+          return messageDate - separatorDate;
+        }
+
+        // For regular messages, sort by MongoDB ObjectId timestamp (most reliable)
+        if (a._id && b._id) {
+          const aTime = new Date(
+            parseInt(a._id.toString().substring(0, 8), 16) * 1000
+          );
+          const bTime = new Date(
+            parseInt(b._id.toString().substring(0, 8), 16) * 1000
+          );
+          return aTime - bTime;
+        }
+
+        // Fallback to time string comparison if no _id
+        const aTime = a.createdAt?.split(":") || ["0", "0"];
+        const bTime = b.createdAt?.split(":") || ["0", "0"];
+        const aMinutes = parseInt(aTime[0]) * 60 + parseInt(aTime[1]);
+        const bMinutes = parseInt(bTime[0]) * 60 + parseInt(bTime[1]);
+
+        return aMinutes - bMinutes;
+      })
+    : [];
 
   const handleMessageSend = useCallback(
     async (e) => {
@@ -62,21 +111,65 @@ const MessageView = () => {
   );
 
   useEffect(() => {
-    const handleDatabaseChange = () => {
-      socket?.emit("get_messages", { conversation_id: chat?._id });
-    };
-    const handleDispatchMessages = async (data) => {
-      dispatch(fetchMessages(data));
-    };
-    if (chat?._id) handleDatabaseChange();
-    socket?.on("database-changed", handleDatabaseChange);
-    socket?.on("dispatch_messages", handleDispatchMessages);
+    if (socket) {
+      // Handle database updates by invalidating cache
+      const handleDatabaseUpdate = () => {
+        // Invalidate cache to ensure fresh data including user status
+        dispatch(
+          authApi.util.invalidateTags(["User", "People", "Friends", "Requests"])
+        );
+        // Force component re-render for immediate UI update
+        setForceRefresh((prev) => prev + 1);
+        // Also refetch messages for immediate update
+        if (chat?._id) {
+          socket?.emit("get_messages", { conversation_id: chat._id });
+        }
+      };
 
-    return () => {
-      socket?.off("database-changed", handleDatabaseChange);
-      socket?.off("dispatch_messages", handleDispatchMessages);
-    };
-  }, [chat, dispatch]);
+      // Handle real-time message updates
+      const handleDatabaseChange = () => {
+        if (chat?._id) {
+          socket?.emit("get_messages", { conversation_id: chat._id });
+        }
+      };
+
+      // Handle socket errors
+      const handleSocketError = (data) => {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: data.message || "An error occurred",
+        });
+        // Invalidate cache to ensure data consistency
+        dispatch(
+          authApi.util.invalidateTags(["User", "People", "Friends", "Requests"])
+        );
+      };
+
+      const handleDispatchMessages = async (data) => {
+        dispatch(fetchMessages(data));
+      };
+
+      // Initial message fetch
+      if (chat?._id) {
+        handleDatabaseChange();
+      }
+
+      // Listen to all relevant events - database-updated should handle status changes
+      socket.on("database-changed", handleDatabaseChange);
+      socket.on("database-updated", handleDatabaseUpdate);
+      socket.on("dispatch_messages", handleDispatchMessages);
+      socket.on("error", handleSocketError);
+
+      // Cleanup function
+      return () => {
+        socket.off("database-changed", handleDatabaseChange);
+        socket.off("database-updated", handleDatabaseUpdate);
+        socket.off("dispatch_messages", handleDispatchMessages);
+        socket.off("error", handleSocketError);
+      };
+    }
+  }, [chat?._id, dispatch]);
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -109,6 +202,7 @@ const MessageView = () => {
       className={`flex flex-col h-full border-x border-gray-100 dark:border-gray-900 shadow-light dark:shadow-dark ${
         !profileSidebar ? "w-4/5" : "w-3/5"
       } transition-width ease-linear duration-300`}
+      key={forceRefresh}
     >
       {/* Chat Header */}
       <div className="flex sticky items-center justify-between border-b px-6 py-4">
@@ -150,14 +244,19 @@ const MessageView = () => {
 
       {/* Chat Messages */}
       <div className="max-h-full space-y-3 overflow-auto no-scrollbar px-6 py-7 grow bg-gray-50 dark:bg-gray-900 shadow-inner">
-        {messages?.map((message, index) => {
+        {sortedMessages?.map((message, index) => {
           switch (message.type) {
             case "Separator":
-              return <DateSeparator key={index} date={message?.createdAt} />;
+              return (
+                <DateSeparator
+                  key={`separator-${index}-${message.createdAt}`}
+                  date={message?.createdAt}
+                />
+              );
             case "Text":
               return (
                 <Text
-                  key={index}
+                  key={`text-${index}-${message?._id || message?.createdAt}`}
                   incoming={message?.sender === users[0]?._id}
                   timestamp={message?.createdAt}
                   content={message?.content}
@@ -167,7 +266,7 @@ const MessageView = () => {
             case "Media":
               return (
                 <Media
-                  key={index}
+                  key={`media-${index}-${message?._id || message?.createdAt}`}
                   incoming={message?.sender === users[0]?._id}
                   timestamp={message?.createdAt}
                   file={message?.file}
@@ -175,7 +274,15 @@ const MessageView = () => {
                 />
               );
             default:
-              return null;
+              return (
+                <Text
+                  key={`default-${index}-${message?._id || message?.createdAt}`}
+                  incoming={message?.sender === users[0]?._id}
+                  timestamp={message?.createdAt}
+                  content={message?.content || ""}
+                  messageId={message?._id}
+                />
+              );
           }
         })}
       </div>

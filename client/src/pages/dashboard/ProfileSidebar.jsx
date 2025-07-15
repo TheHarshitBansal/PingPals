@@ -1,5 +1,6 @@
 import { Separator } from "@/components/ui/separator.jsx";
 import { setSidebarType, toggleSidebar } from "@/redux/slices/appSlice.js";
+import { setCurrentConversation } from "@/redux/slices/conversationSlice.js";
 import { BellOff, ChevronRight, Star, Trash, UserMinus, X } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { Label } from "@/components/ui/label";
@@ -18,9 +19,12 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useDeleteChatMutation } from "@/redux/api/chatApi.js";
 import { socket } from "@/socket.js";
+import authApi from "@/redux/api/authApi.js";
+import { useNavigate } from "react-router-dom";
 
 const ProfileSidebar = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleUserDetailsOpen = () => {
     dispatch(toggleSidebar());
@@ -35,6 +39,64 @@ const ProfileSidebar = () => {
   const chat = useSelector((state) => state?.conversation?.currentConversation);
   const user = useSelector((state) => state?.auth?.user);
   const users = chat?.participants?.filter((person) => person._id !== user._id);
+
+  // Handle unfriend user
+  const handleUnfriendUser = async () => {
+    try {
+      if (socket && users[0]?._id) {
+        // Emit remove_friend socket event
+        socket.emit("remove_friend", { receiver: users[0]._id });
+
+        // Close the current conversation
+        dispatch(setCurrentConversation(null));
+
+        // Close the sidebar
+        dispatch(toggleSidebar());
+
+        // Navigate back to chat list
+        navigate("/chat");
+
+        // Invalidate cache to refresh all data
+        dispatch(
+          authApi.util.invalidateTags(["User", "People", "Friends", "Requests"])
+        );
+
+        // Emit socket event to update chat list
+        socket.emit("get_direct_chats", { user_id: user._id });
+      }
+    } catch (error) {
+      console.error("Error unfriending user:", error);
+    }
+  };
+
+  // Handle chat deletion
+  const handleDeleteChat = async () => {
+    try {
+      // Delete the chat
+      await deleteChat(chat?._id);
+
+      // Close the current conversation
+      dispatch(setCurrentConversation(null));
+
+      // Close the sidebar
+      dispatch(toggleSidebar());
+
+      // Navigate back to chat list
+      navigate("/chat");
+
+      // Invalidate cache to refresh chat list
+      dispatch(
+        authApi.util.invalidateTags(["User", "People", "Friends", "Requests"])
+      );
+
+      // Emit socket event to update other components
+      if (socket && user?._id) {
+        socket.emit("get_direct_chats", { user_id: user._id });
+      }
+    } catch (error) {
+      console.error("Error deleting chat:", error);
+    }
+  };
 
   // Get media files from current conversation
   const mediaFiles =
@@ -82,14 +144,7 @@ const ProfileSidebar = () => {
               </AlertDialogHeader>
               <AlertDialogFooter>
                 <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction
-                  onClick={() => {
-                    //INFO: Remove friend functionality
-                    socket.emit("remove_friend", {
-                      receiver: users[0]._id,
-                    });
-                  }}
-                >
+                <AlertDialogAction onClick={handleUnfriendUser}>
                   Unfriend User
                 </AlertDialogAction>
               </AlertDialogFooter>
@@ -111,8 +166,8 @@ const ProfileSidebar = () => {
               </AlertDialogHeader>
               <AlertDialogFooter>
                 <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction onClick={() => deleteChat(chat?._id)}>
-                  Delete User
+                <AlertDialogAction onClick={handleDeleteChat}>
+                  Delete Chat
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
