@@ -1,7 +1,13 @@
 // Dashboard.jsx
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import Logo from "../assets/logo.png";
-import { CogIcon, MessageSquareMoreIcon, PhoneIcon, Users } from "lucide-react";
+import {
+  CogIcon,
+  MessageSquareMoreIcon,
+  PhoneIcon,
+  Users,
+  Search,
+} from "lucide-react";
 import { Divider } from "@mui/material";
 import Badge from "@mui/material/Badge";
 import { styled } from "@mui/material";
@@ -116,8 +122,13 @@ const Dashboard = () => {
         });
 
         socket.on("open_chat", (data) => {
+          console.log("Dashboard: Received open_chat event", data);
           navigate(`/chat`);
           dispatch(setCurrentConversation(data));
+          toast({
+            title: "Chat opened",
+            description: "Conversation ready!",
+          });
         });
 
         socket.on("database-updated", async () => {
@@ -197,7 +208,8 @@ const Dashboard = () => {
     const routes = {
       "/": 0,
       "/chat": 1,
-      "/profile": 2,
+      "/explore": 2,
+      "/profile": 3,
     };
     setActive(routes[location.pathname] ?? null);
   }, [location]);
@@ -222,9 +234,10 @@ const Dashboard = () => {
             <span className="text-xs">Home</span>
           </div>
           {[
-            ["/chat", MessageSquareMoreIcon, 1],
-            ["/profile", Users, 2],
-          ].map(([path, Icon, index]) => (
+            ["/chat", MessageSquareMoreIcon, 1, "Chat"],
+            ["/explore", Search, 2, "Explore"],
+            ["/profile", CogIcon, 3, "Profile"],
+          ].map(([path, Icon, index, label]) => (
             <div
               key={path}
               className={`flex flex-col items-center justify-center p-2 rounded-lg cursor-pointer ${
@@ -238,9 +251,7 @@ const Dashboard = () => {
               }}
             >
               <Icon size={20} />
-              <span className="text-xs mt-1">
-                {index === 1 ? "Chat" : "Friends"}
-              </span>
+              <span className="text-xs mt-1">{label}</span>
             </div>
           ))}
           <div className="flex flex-col items-center justify-center p-2">
@@ -298,7 +309,8 @@ const Dashboard = () => {
             </div>
             {[
               ["/chat", MessageSquareMoreIcon, 1],
-              ["/profile", Users, 2],
+              ["/explore", Search, 2],
+              ["/profile", CogIcon, 3],
             ].map(([path, Icon, index]) => (
               <div
                 key={path}

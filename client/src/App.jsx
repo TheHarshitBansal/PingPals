@@ -9,6 +9,7 @@ import { removeUser } from "./redux/slices/authSlice.js";
 import GoogleCallback from "./pages/auth/GoogleCallback.jsx";
 import GithubCallback from "./pages/auth/GithubCallback.jsx";
 const ProfileGeneral = lazy(() => import("./pages/profile/ProfileGeneral.jsx"));
+const Explore = lazy(() => import("./pages/explore"));
 const Verification = lazy(() => import("./pages/auth/Verification.jsx"));
 const ForgotPassword = lazy(() => import("./pages/auth/ForgotPassword.jsx"));
 const ResetPassword = lazy(() => import("./pages/auth/ResetPassword.jsx"));
@@ -62,6 +63,7 @@ const App = () => {
           <Route path="/" element={<Dashboard />}>
             <Route index element={<HomePage />} />
             <Route path="chat" element={<GeneralApp />} />
+            <Route path="explore" element={<Explore />} />
             <Route path="profile" element={<ProfileGeneral />} />
           </Route>
         </Route>

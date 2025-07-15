@@ -14,6 +14,14 @@ const GeneralApp = () => {
   const user = useSelector((state) => state.auth.user);
   const dispatch = useDispatch();
 
+  // Debug: Log conversation state changes
+  useEffect(() => {
+    console.log("GeneralApp: Conversation state changed:", {
+      currentConversation: conversation.currentConversation,
+      directConversations: conversation.directConversations?.length || 0,
+    });
+  }, [conversation.currentConversation, conversation.directConversations]);
+
   useEffect(() => {
     if (user?._id) {
       socket?.emit("get_direct_chats", { user_id: user._id });
@@ -22,10 +30,12 @@ const GeneralApp = () => {
 
   useEffect(() => {
     const handleDirectChats = (data) => {
+      console.log("GeneralApp: Received direct chats", data);
       dispatch(fetchDirectConversations(data));
     };
 
     const handleDatabaseChange = () => {
+      console.log("GeneralApp: Database changed, refetching chats");
       if (user?._id) {
         socket?.emit("get_direct_chats", { user_id: user._id });
       }
@@ -33,6 +43,7 @@ const GeneralApp = () => {
 
     // Also listen to database-updated for consistency
     const handleDatabaseUpdate = () => {
+      console.log("GeneralApp: Database updated, refetching chats");
       if (user?._id) {
         socket?.emit("get_direct_chats", { user_id: user._id });
       }

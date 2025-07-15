@@ -7,6 +7,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { useGetFriendsQuery } from "@/redux/api/authApi.js";
 import { useEffect } from "react";
 import { setFriends } from "@/redux/slices/appSlice.js";
+import { useNavigate } from "react-router-dom";
+import { toast } from "@/hooks/use-toast.js";
+import { setCurrentConversation } from "@/redux/slices/conversationSlice.js";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -21,8 +24,12 @@ import {
 
 const FriendList = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { data, refetch, isSuccess, isLoading } = useGetFriendsQuery(undefined);
   const friends = useSelector((state) => state.app.friends);
+  const directConversations = useSelector(
+    (state) => state.conversation.directConversations
+  );
 
   useEffect(() => {
     if (isSuccess && data?.friends) {
@@ -74,9 +81,40 @@ const FriendList = () => {
                 <button
                   className="flex items-center justify-center gap-2 px-3 py-2 text-xs sm:text-sm font-medium text-white bg-blue-500 rounded-lg hover:bg-blue-600 transition-all flex-1 sm:flex-initial"
                   onClick={() => {
-                    socket?.emit("start_chat", {
-                      receiver: person._id,
-                    });
+                    console.log("Starting chat with:", person.name, person._id);
+
+                    // First, check if conversation already exists
+                    const existingConversation = directConversations?.find(
+                      (conv) =>
+                        conv.participants?.some((p) => p._id === person._id)
+                    );
+
+                    if (existingConversation) {
+                      console.log(
+                        "Found existing conversation:",
+                        existingConversation._id
+                      );
+                      dispatch(setCurrentConversation(existingConversation));
+                      navigate("/chat");
+                      toast({
+                        title: "Chat opened",
+                        description: `Conversation with ${person.name} ready!`,
+                      });
+                    } else {
+                      // If no existing conversation, emit start_chat
+                      socket?.emit("start_chat", {
+                        receiver: person._id,
+                      });
+
+                      // Navigate to chat immediately
+                      navigate("/chat");
+
+                      // Show toast notification
+                      toast({
+                        title: "Starting chat...",
+                        description: `Opening conversation with ${person.name}`,
+                      });
+                    }
                   }}
                 >
                   <MessageSquareMoreIcon size={16} />

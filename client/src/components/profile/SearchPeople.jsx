@@ -14,10 +14,16 @@ import {
 import { socket } from "@/socket.js";
 import { useSelector, useDispatch } from "react-redux";
 import { toast } from "@/hooks/use-toast.js";
+import { useNavigate } from "react-router-dom";
+import { setCurrentConversation } from "@/redux/slices/conversationSlice.js";
 
 const SearchPeople = () => {
   const user = useSelector((state) => state.auth.user);
+  const directConversations = useSelector(
+    (state) => state.conversation.directConversations
+  );
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const { data, isSuccess, isLoading, refetch } = useFindPeopleQuery({
@@ -71,7 +77,7 @@ const SearchPeople = () => {
 
   return (
     <div className="w-full p-4">
-      <form className="w-full max-w-md mx-auto flex flex-col items-center justify-center gap-y-3 mb-6">
+      <form className="w-full mx-auto flex flex-col items-center justify-center gap-y-3 mb-6">
         <input
           type="text"
           placeholder="Search People (Name or Username)"
@@ -187,9 +193,44 @@ const SearchPeople = () => {
                   <button
                     className="p-2 text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-full transition-colors"
                     onClick={() => {
-                      socket?.emit("start_chat", {
-                        receiver: person._id,
-                      });
+                      console.log(
+                        "Starting chat with:",
+                        person.name,
+                        person._id
+                      );
+
+                      // First, check if conversation already exists
+                      const existingConversation = directConversations?.find(
+                        (conv) =>
+                          conv.participants?.some((p) => p._id === person._id)
+                      );
+
+                      if (existingConversation) {
+                        console.log(
+                          "Found existing conversation:",
+                          existingConversation._id
+                        );
+                        dispatch(setCurrentConversation(existingConversation));
+                        navigate("/chat");
+                        toast({
+                          title: "Chat opened",
+                          description: `Conversation with ${person.name} ready!`,
+                        });
+                      } else {
+                        // If no existing conversation, emit start_chat
+                        socket?.emit("start_chat", {
+                          receiver: person._id,
+                        });
+
+                        // Navigate to chat immediately
+                        navigate("/chat");
+
+                        // Show toast notification
+                        toast({
+                          title: "Starting chat...",
+                          description: `Opening conversation with ${person.name}`,
+                        });
+                      }
                     }}
                   >
                     <MessageSquareMoreIcon size={20} />
