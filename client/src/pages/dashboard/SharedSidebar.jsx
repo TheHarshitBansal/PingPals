@@ -170,15 +170,12 @@ const SharedSidebar = () => {
 
   return (
     <div className="flex flex-col w-full h-full bg-white dark:bg-gray-800 shadow-lg">
-      <div className="sticky top-0 flex-shrink-0 border-b border-gray-300 dark:border-gray-700 flex items-center justify-start gap-x-2 w-full p-3 md:p-4 lg:p-6 bg-white dark:bg-gray-800 z-10">
-        <button onClick={handleProfile}>
-          <ChevronLeft size={18} className="md:hidden" color="gray" />
-          <ChevronLeft
-            size={20}
-            className="hidden md:block lg:hidden"
-            color="gray"
-          />
-          <ChevronLeft size={24} className="hidden lg:block" color="gray" />
+      <div className="sticky top-0 flex-shrink-0 border-b border-gray-300 dark:border-gray-700 flex items-center justify-start gap-x-2 w-full p-4 md:p-4 lg:p-6 bg-white dark:bg-gray-800 z-10">
+        <button
+          onClick={handleProfile}
+          className="hover:bg-gray-100 dark:hover:bg-gray-700 p-1 rounded-full transition-colors"
+        >
+          <ChevronLeft size={20} color="gray" />
         </button>
         <div className="font-semibold text-base md:text-lg lg:text-xl">
           Shared Media

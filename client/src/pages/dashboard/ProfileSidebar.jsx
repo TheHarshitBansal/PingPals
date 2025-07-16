@@ -107,14 +107,13 @@ const ProfileSidebar = () => {
   return (
     <div className="flex flex-col w-full h-full bg-white dark:bg-gray-800 shadow-lg">
       {/* Profile Header */}
-      <div className="sticky top-0 border-b border-gray-300 dark:border-gray-700 flex items-center justify-between w-full p-5 bg-white dark:bg-gray-800 z-10">
+      <div className="sticky top-0 border-b border-gray-300 dark:border-gray-700 flex items-center justify-between w-full p-4 md:p-5 bg-white dark:bg-gray-800 z-10">
         <div className="font-semibold text-lg lg:text-xl">Profile</div>
         <button
           onClick={handleUserDetailsOpen}
           className="hover:bg-gray-100 dark:hover:bg-gray-700 p-2 rounded-full transition-colors"
         >
-          <X size={20} className="lg:hidden" color="gray" />
-          <X size={24} className="hidden lg:block" color="gray" />
+          <X size={20} color="gray" />
         </button>
       </div>
 

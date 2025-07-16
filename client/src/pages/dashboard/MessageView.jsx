@@ -353,47 +353,47 @@ const MessageView = () => {
           </div>
 
           {/* Chat Input */}
-          <div className="border-t border-gray-200 dark:border-gray-700 p-2 md:p-3 lg:p-4 bg-white dark:bg-gray-800 flex-shrink-0">
+          <div className="border-t border-gray-200 dark:border-gray-700 p-3 md:p-3 lg:p-4 bg-white dark:bg-gray-800 flex-shrink-0">
             <form
-              className="flex items-center justify-between space-x-2 md:space-x-3 lg:space-x-4"
+              className="flex items-end justify-between space-x-2 md:space-x-3 lg:space-x-4"
               onSubmit={handleMessageSend}
             >
-              <div className="relative w-full">
+              <div className="relative flex-1 min-w-0">
                 <textarea
                   placeholder={
                     user.friends.includes(users[0]?._id)
                       ? "Message"
                       : "You are not friends with this user"
                   }
-                  className="h-10 md:h-12 lg:h-14 resize-none w-full rounded border border-gray-300 dark:border-gray-700 p-2 md:p-3 bg-gray-50 dark:bg-gray-900 shadow-inner text-sm md:text-base outline-none focus:border-blue-950 dark:focus:border-blue-200 text-black dark:text-white pl-3 md:pl-4 lg:pl-5 pr-16 md:pr-18 lg:pr-20 flex"
+                  className="min-h-[40px] h-10 md:h-12 lg:h-14 resize-none w-full rounded-lg border border-gray-300 dark:border-gray-700 p-3 md:p-3 bg-gray-50 dark:bg-gray-900 shadow-inner text-sm md:text-base outline-none focus:border-blue-950 dark:focus:border-blue-200 text-black dark:text-white pr-28 md:pr-32 lg:pr-36"
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   disabled={!user.friends.includes(users[0]?._id)}
                   rows={1}
                 />
-                <div className="absolute right-2 md:right-3 lg:right-5 top-1/2 -translate-y-1/2 flex items-center justify-end space-x-1 md:space-x-2 lg:space-x-3">
+                <div className="absolute right-2 md:right-3 lg:right-3 top-1/2 -translate-y-1/2 flex items-center justify-end space-x-1 md:space-x-2">
                   <Attachments />
                   <button
                     onClick={(e) => {
                       e.preventDefault();
                       setIsGifOpen(!isGifOpen);
                     }}
-                    className="p-1"
+                    className="p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded transition-colors"
                   >
                     <Gif
-                      size={18}
+                      size={16}
                       className="md:hidden"
                       color="gray"
                       weight="bold"
                     />
                     <Gif
-                      size={20}
+                      size={18}
                       className="hidden md:block lg:hidden"
                       color="gray"
                       weight="bold"
                     />
                     <Gif
-                      size={24}
+                      size={20}
                       className="hidden lg:block"
                       color="gray"
                       weight="bold"
@@ -404,23 +404,25 @@ const MessageView = () => {
               </div>
               <button
                 type="submit"
-                className="flex items-center justify-center h-10 w-10 md:h-12 md:w-12 lg:h-14 lg:w-14 rounded-md bg-blue-500 text-white hover:bg-opacity-80 flex-shrink-0"
-                disabled={message.trim() === ""}
+                className="flex items-center justify-center h-10 w-10 md:h-12 md:w-12 lg:h-14 lg:w-14 rounded-lg bg-blue-500 text-white hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0 transition-colors"
+                disabled={
+                  message.trim() === "" || !user.friends.includes(users[0]?._id)
+                }
               >
                 <PaperPlaneTilt
-                  size={18}
+                  size={16}
                   className="md:hidden"
                   color="white"
                   weight="bold"
                 />
                 <PaperPlaneTilt
-                  size={20}
+                  size={18}
                   className="hidden md:block lg:hidden"
                   color="white"
                   weight="bold"
                 />
                 <PaperPlaneTilt
-                  size={24}
+                  size={20}
                   className="hidden lg:block"
                   color="white"
                   weight="bold"

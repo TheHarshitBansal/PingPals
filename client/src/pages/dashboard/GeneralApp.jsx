@@ -10,6 +10,7 @@ import {
   fetchDirectConversations,
   setCurrentConversation,
 } from "@/redux/slices/conversationSlice.js";
+import { toggleSidebar } from "@/redux/slices/appSlice.js";
 
 const GeneralApp = () => {
   const conversation = useSelector((state) => state.conversation);
@@ -81,18 +82,48 @@ const GeneralApp = () => {
         </div>
       )}
 
-      {/* Profile Sidebar - Show on larger screens when open */}
+      {/* Profile Sidebar - Show as overlay on mobile, sidebar on larger screens */}
       {app.sidebar.isOpen && app.sidebar.type === "PROFILE" && (
-        <div className="hidden lg:flex lg:w-80 xl:w-80 flex-shrink-0 border-l border-gray-200 dark:border-gray-700">
-          <ProfileSidebar />
-        </div>
+        <>
+          {/* Mobile overlay */}
+          <div
+            className="lg:hidden fixed inset-0 z-50 bg-black bg-opacity-50"
+            onClick={() => dispatch(toggleSidebar())}
+          >
+            <div
+              className="absolute right-0 top-0 h-full w-80 max-w-[85vw]"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <ProfileSidebar />
+            </div>
+          </div>
+          {/* Desktop sidebar */}
+          <div className="hidden lg:flex lg:w-80 xl:w-80 flex-shrink-0 border-l border-gray-200 dark:border-gray-700">
+            <ProfileSidebar />
+          </div>
+        </>
       )}
 
-      {/* Shared Sidebar - Show on larger screens when open */}
+      {/* Shared Sidebar - Show as overlay on mobile, sidebar on larger screens */}
       {app.sidebar.isOpen && app.sidebar.type === "SHARED" && (
-        <div className="hidden lg:flex lg:w-80 xl:w-80 flex-shrink-0 border-l border-gray-200 dark:border-gray-700">
-          <SharedSidebar />
-        </div>
+        <>
+          {/* Mobile overlay */}
+          <div
+            className="lg:hidden fixed inset-0 z-50 bg-black bg-opacity-50"
+            onClick={() => dispatch(toggleSidebar())}
+          >
+            <div
+              className="absolute right-0 top-0 h-full w-80 max-w-[85vw]"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <SharedSidebar />
+            </div>
+          </div>
+          {/* Desktop sidebar */}
+          <div className="hidden lg:flex lg:w-80 xl:w-80 flex-shrink-0 border-l border-gray-200 dark:border-gray-700">
+            <SharedSidebar />
+          </div>
+        </>
       )}
     </div>
   );
