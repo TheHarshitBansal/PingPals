@@ -303,7 +303,7 @@ const MessageView = () => {
             </div>
 
             {/* Chat Messages */}
-            <div className="flex-1 overflow-y-scroll space-y-2 md:space-y-3 lg:space-y-4 px-3 md:px-4 lg:px-6 py-4 md:py-6 lg:py-8 pb-20 md:pb-24 lg:pb-28 bg-gray-50 dark:bg-gray-900 no-scrollbar">
+            <div className="flex-1 overflow-y-scroll space-y-2 md:space-y-3 lg:space-y-4 px-3 md:px-4 lg:px-6 py-4 md:py-6 lg:py-8 pb-48 lg:pb-28 bg-gray-50 dark:bg-gray-900 no-scrollbar">
               {sortedMessages?.map((message, index) => {
                 switch (message.type) {
                   case "Separator":
@@ -354,7 +354,7 @@ const MessageView = () => {
             </div>
 
             {/* Chat Input */}
-            <div className="border-t border-gray-200 dark:border-gray-700 p-3 md:p-3 lg:p-4 bg-white dark:bg-gray-800 flex-shrink-0 absolute left-0 right-0 bottom-0">
+            <div className="border-t border-gray-200 dark:border-gray-700 p-3 md:p-3 lg:p-4 bg-white dark:bg-gray-800 flex-shrink-0 absolute left-0 right-0 bottom-0 mb-28 lg:mb-0 z-10">
               <form
                 className="flex items-center justify-between space-x-2 md:space-x-3 lg:space-x-4"
                 onSubmit={handleMessageSend}
