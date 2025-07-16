@@ -10,7 +10,7 @@
 </p>
 
 <p align="center">
-  <a href="https://pingpals.vercel.app">🌐 Live Demo</a> •
+  <a href="https://ping-pals.vercel.app">🌐 Live Demo</a> •
   <a href="https://github.com/TheHarshitBansal/PingPals/issues">🐛 Report Bug</a> •
   <a href="mailto:harshitbansal.contact@gmail.com">📬 Contact</a>
 </p>
@@ -32,8 +32,7 @@
 - 🔐 **Secure Authentication** — JWT auth and OAuth (Google, GitHub)  
 - 🖼️ **Media Sharing** — Share images, videos, and other files easily  
 - 😀 **Emoji & GIF Support** — Make conversations expressive and fun  
-- 👀 **Typing Indicators & Presence** — Know who’s online and typing  
-- 🛡️ **Data Security** — Fully encrypted sensitive data  
+- 👀 **Live Presence** — Know who’s online
 - 🖌️ **Profile Customization** — Update avatar, bio, and other details  
 - 🌐 **Cross-Platform Ready** — Responsive UI for mobile & desktop  
 - ⚡ **Optimized Performance** — Scalable backend and efficient state handling  
