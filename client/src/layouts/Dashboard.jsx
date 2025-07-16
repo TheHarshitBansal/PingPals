@@ -218,7 +218,7 @@ const Dashboard = () => {
   }, [location]);
 
   return (
-    <div className="flex h-screen" key={forceRender}>
+    <div className="flex min-h-screen mobile-full-height" key={forceRender}>
       {/* Mobile and tablet: Bottom navigation bar - hide when chat is open */}
       {!currentConversation && (
         <div className="fixed bottom-0 left-0 right-0 z-50 bg-gray-100 dark:bg-gray-900 shadow-light dark:shadow-dark border-t border-gray-200 dark:border-gray-700 lg:hidden">
@@ -299,7 +299,7 @@ const Dashboard = () => {
       )}
 
       {/* Desktop: Side navigation */}
-      <div className="hidden lg:flex h-screen w-[100px] bg-gray-100 dark:bg-gray-900 shadow-light dark:shadow-dark flex-shrink-0">
+      <div className="hidden lg:flex min-h-screen w-[100px] bg-gray-100 dark:bg-gray-900 shadow-light dark:shadow-dark flex-shrink-0">
         <div className="h-full w-full flex flex-col items-center justify-between">
           <div className="w-full flex flex-col items-center justify-center gap-y-3">
             <div className="h-16 w-16 rounded-lg my-4 flex items-center justify-center cursor-pointer">
@@ -373,7 +373,7 @@ const Dashboard = () => {
 
       {/* Main content area with conditional bottom padding for mobile navigation */}
       <div
-        className={`flex-1 h-full ${
+        className={`flex-1 min-h-screen mobile-full-height ${
           currentConversation ? "pb-0" : "pb-28"
         } lg:pb-0`}
       >
