@@ -86,6 +86,9 @@ const Dashboard = () => {
   const { data, refetch, isLoading, isFetching, isSuccess, isError } =
     useGetUserQuery(undefined);
   const { isAuthenticated, user } = useSelector((state) => state.auth);
+  const currentConversation = useSelector(
+    (state) => state?.conversation?.currentConversation
+  );
   const [active, setActive] = useState(null);
   const [forceRender, setForceRender] = useState(0); // Force re-render state
   const navigate = useNavigate();
@@ -216,82 +219,84 @@ const Dashboard = () => {
 
   return (
     <div className="flex h-screen" key={forceRender}>
-      {/* Mobile and tablet: Bottom navigation bar */}
-      <div className="fixed bottom-0 left-0 right-0 z-50 bg-gray-100 dark:bg-gray-900 shadow-light dark:shadow-dark border-t border-gray-200 dark:border-gray-700 lg:hidden">
-        <div className="flex items-center justify-around py-2">
-          <div
-            className={`flex flex-col items-center justify-center p-2 rounded-lg cursor-pointer ${
-              active === 0
-                ? "bg-blue-500 text-white"
-                : "hover:bg-gray-200 dark:hover:bg-gray-800"
-            }`}
-            onClick={() => {
-              setActive(0);
-              navigate("/");
-            }}
-          >
-            <img src={Logo} alt="Logo" className="h-6 w-6 mb-1" />
-            <span className="text-xs">Home</span>
-          </div>
-          {[
-            ["/chat", MessageSquareMoreIcon, 1, "Chat"],
-            ["/explore", Search, 2, "Explore"],
-            ["/profile", CogIcon, 3, "Profile"],
-          ].map(([path, Icon, index, label]) => (
+      {/* Mobile and tablet: Bottom navigation bar - hide when chat is open */}
+      {!currentConversation && (
+        <div className="fixed bottom-0 left-0 right-0 z-50 bg-gray-100 dark:bg-gray-900 shadow-light dark:shadow-dark border-t border-gray-200 dark:border-gray-700 lg:hidden">
+          <div className="flex items-center justify-around py-2">
             <div
-              key={path}
               className={`flex flex-col items-center justify-center p-2 rounded-lg cursor-pointer ${
-                active === index
+                active === 0
                   ? "bg-blue-500 text-white"
                   : "hover:bg-gray-200 dark:hover:bg-gray-800"
               }`}
               onClick={() => {
-                setActive(index);
-                navigate(path);
+                setActive(0);
+                navigate("/");
               }}
             >
-              <Icon size={20} />
-              <span className="text-xs mt-1">{label}</span>
+              <img src={Logo} alt="Logo" className="h-6 w-6 mb-1" />
+              <span className="text-xs">Home</span>
             </div>
-          ))}
-          <div className="flex flex-col items-center justify-center p-2">
-            <DarkModeSwitcher />
-            <span className="text-xs mt-1">Theme</span>
+            {[
+              ["/chat", MessageSquareMoreIcon, 1, "Chat"],
+              ["/explore", Search, 2, "Explore"],
+              ["/profile", CogIcon, 3, "Profile"],
+            ].map(([path, Icon, index, label]) => (
+              <div
+                key={path}
+                className={`flex flex-col items-center justify-center p-2 rounded-lg cursor-pointer ${
+                  active === index
+                    ? "bg-blue-500 text-white"
+                    : "hover:bg-gray-200 dark:hover:bg-gray-800"
+                }`}
+                onClick={() => {
+                  setActive(index);
+                  navigate(path);
+                }}
+              >
+                <Icon size={20} />
+                <span className="text-xs mt-1">{label}</span>
+              </div>
+            ))}
+            <div className="flex flex-col items-center justify-center p-2">
+              <DarkModeSwitcher />
+              <span className="text-xs mt-1">Theme</span>
+            </div>
+            <ProfileOptions>
+              <div className="flex flex-col items-center justify-center p-2 cursor-pointer">
+                {user?.status === "Online" ? (
+                  <StyledBadge
+                    overlap="circular"
+                    anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                    variant="dot"
+                  >
+                    <Avatar className="h-6 w-6">
+                      <AvatarImage src={user.avatar} />
+                      <AvatarFallback>
+                        <Skeleton className="h-6 w-6 rounded-full" />
+                      </AvatarFallback>
+                    </Avatar>
+                  </StyledBadge>
+                ) : (
+                  <StyledRedBadge
+                    overlap="circular"
+                    anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                    variant="dot"
+                  >
+                    <Avatar className="h-6 w-6">
+                      <AvatarImage src={user.avatar} />
+                      <AvatarFallback>
+                        <Skeleton className="h-6 w-6 rounded-full" />
+                      </AvatarFallback>
+                    </Avatar>
+                  </StyledRedBadge>
+                )}
+                <span className="text-xs mt-1">Profile</span>
+              </div>
+            </ProfileOptions>
           </div>
-          <ProfileOptions>
-            <div className="flex flex-col items-center justify-center p-2 cursor-pointer">
-              {user?.status === "Online" ? (
-                <StyledBadge
-                  overlap="circular"
-                  anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-                  variant="dot"
-                >
-                  <Avatar className="h-6 w-6">
-                    <AvatarImage src={user.avatar} />
-                    <AvatarFallback>
-                      <Skeleton className="h-6 w-6 rounded-full" />
-                    </AvatarFallback>
-                  </Avatar>
-                </StyledBadge>
-              ) : (
-                <StyledRedBadge
-                  overlap="circular"
-                  anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-                  variant="dot"
-                >
-                  <Avatar className="h-6 w-6">
-                    <AvatarImage src={user.avatar} />
-                    <AvatarFallback>
-                      <Skeleton className="h-6 w-6 rounded-full" />
-                    </AvatarFallback>
-                  </Avatar>
-                </StyledRedBadge>
-              )}
-              <span className="text-xs mt-1">Profile</span>
-            </div>
-          </ProfileOptions>
         </div>
-      </div>
+      )}
 
       {/* Desktop: Side navigation */}
       <div className="hidden lg:flex h-screen w-[100px] bg-gray-100 dark:bg-gray-900 shadow-light dark:shadow-dark flex-shrink-0">
@@ -366,8 +371,12 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Main content area with bottom padding for mobile navigation */}
-      <div className="flex-1 h-full pb-28 lg:pb-0">
+      {/* Main content area with conditional bottom padding for mobile navigation */}
+      <div
+        className={`flex-1 h-full ${
+          currentConversation ? "pb-0" : "pb-28"
+        } lg:pb-0`}
+      >
         <Outlet />
       </div>
     </div>
