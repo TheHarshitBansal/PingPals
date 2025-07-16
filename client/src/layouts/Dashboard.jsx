@@ -218,7 +218,7 @@ const Dashboard = () => {
   }, [location]);
 
   return (
-    <div className="flex min-h-screen mobile-full-height" key={forceRender}>
+    <div className="relative flex h-screen" key={forceRender}>
       {/* Mobile and tablet: Bottom navigation bar - hide when chat is open */}
       {!currentConversation && (
         <div className="fixed bottom-0 left-0 right-0 z-50 bg-gray-100 dark:bg-gray-900 shadow-light dark:shadow-dark border-t border-gray-200 dark:border-gray-700 lg:hidden">

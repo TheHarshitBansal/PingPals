@@ -76,7 +76,7 @@ const SearchPeople = () => {
   }, [search]);
 
   return (
-    <div className="w-full h-full flex flex-col">
+    <div className="w-full h-full flex flex-col overflow-y-scroll">
       <div className="flex-shrink-0 p-4">
         <form className="w-full mx-auto flex flex-col items-center justify-center gap-y-3">
           <input
@@ -92,7 +92,7 @@ const SearchPeople = () => {
         </form>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-4 pb-4">
+      <div className="flex-1 overflow-y-auto px-4 pb-32 lg:pb-4">
         {isLoading && <div className="text-center mt-4">Loading...</div>}
 
         {isSuccess && data?.people?.length > 0 ? (

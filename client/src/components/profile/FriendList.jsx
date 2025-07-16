@@ -60,8 +60,8 @@ const FriendList = () => {
   }, [refetch]);
 
   return (
-    <div className="w-full h-full flex flex-col">
-      <div className="flex-1 overflow-y-auto p-4">
+    <div className="w-full h-full">
+      <div className="p-4 space-y-4 pb-32 lg:pb-4">
         {isLoading && <div className="text-center mt-4">Loading...</div>}
         {friends?.length > 0 ? (
           <div className="space-y-4">

@@ -5,17 +5,20 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const Explore = () => {
   return (
-    <div className="w-full h-full flex flex-col">
+    <div className="relative w-full h-full flex flex-col">
       {/* Header */}
-      <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+      <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
         <h1 className="text-xl md:text-2xl font-bold">Explore & Connect</h1>
         <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
           Discover new people and manage your connections
         </p>
       </div>
 
-      <Tabs defaultValue="search" className="w-full flex-1 flex flex-col">
-        <TabsList className="w-full rounded-none h-12 flex justify-evenly py-2 border-b border-gray-200 dark:border-gray-700 bg-transparent">
+      <Tabs
+        defaultValue="search"
+        className="w-full flex-1 flex flex-col min-h-0"
+      >
+        <TabsList className="w-full rounded-none h-12 flex justify-evenly py-2 border-b border-gray-200 dark:border-gray-700 bg-transparent flex-shrink-0">
           <TabsTrigger
             value="search"
             className="flex-1 text-sm md:text-base data-[state=active]:bg-blue-500 data-[state=active]:text-white"
@@ -40,25 +43,19 @@ const Explore = () => {
             value="search"
             className="h-full overflow-y-auto p-0 m-0"
           >
-            <div className="h-full overflow-y-auto">
-              <SearchPeople />
-            </div>
+            <SearchPeople />
           </TabsContent>
           <TabsContent
             value="friends"
             className="h-full overflow-y-auto p-0 m-0"
           >
-            <div className="h-full overflow-y-auto">
-              <FriendList />
-            </div>
+            <FriendList />
           </TabsContent>
           <TabsContent
             value="requests"
             className="h-full overflow-y-auto p-0 m-0"
           >
-            <div className="h-full overflow-y-auto">
-              <RequestList />
-            </div>
+            <RequestList />
           </TabsContent>
         </div>
       </Tabs>
