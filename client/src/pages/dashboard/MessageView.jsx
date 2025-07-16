@@ -353,7 +353,7 @@ const MessageView = () => {
           </div>
 
           {/* Chat Input */}
-          <div className="border-t border-gray-200 dark:border-gray-700 p-3 md:p-3 lg:p-4 bg-white dark:bg-gray-800 flex-shrink-0 pb-6 lg:pb-3">
+          <div className="border-t border-gray-200 dark:border-gray-700 p-3 md:p-3 lg:p-4 bg-white dark:bg-gray-800 flex-shrink-0 bottom-0">
             <form
               className="flex items-center justify-between space-x-2 md:space-x-3 lg:space-x-4"
               onSubmit={handleMessageSend}
