@@ -40,6 +40,7 @@ const VideoCall = ({
   const [connectionState, setConnectionState] = useState("new");
   const [isScreenSharing, setIsScreenSharing] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
+  const [isMediaReady, setIsMediaReady] = useState(false);
 
   const servers = {
     iceServers: [
@@ -89,11 +90,14 @@ const VideoCall = ({
 
     peerConnectionRef.current = new RTCPeerConnection(servers);
 
-    // Add local stream tracks
+    // Add local stream tracks if available
     if (localStreamRef.current) {
       localStreamRef.current.getTracks().forEach((track) => {
+        console.log("Adding local track:", track.kind);
         peerConnectionRef.current.addTrack(track, localStreamRef.current);
       });
+    } else {
+      console.warn("No local stream available when setting up peer connection");
     }
 
     // Handle remote stream
@@ -189,10 +193,16 @@ const VideoCall = ({
 
   const acceptCall = async () => {
     try {
-      if (!incomingCall || !localStreamRef.current) {
-        setErrorMessage("No incoming call or media not ready.");
+      if (!incomingCall) {
+        setErrorMessage("No incoming call to accept.");
         return;
       }
+
+      if (!localStreamRef.current) {
+        setErrorMessage("Media not ready. Please wait a moment and try again.");
+        return;
+      }
+
       if (!socket?.connected) {
         setErrorMessage(
           "Not connected to server. Please refresh and try again."
@@ -203,15 +213,21 @@ const VideoCall = ({
       setIsConnecting(true);
       setErrorMessage("");
 
+      // Setup peer connection with local stream
       setupPeerConnection();
 
       console.log("Accepting call from:", incomingCall.caller_id);
 
+      // Set remote description first
       await peerConnectionRef.current.setRemoteDescription(
         new RTCSessionDescription(incomingCall.offer)
       );
 
-      const answer = await peerConnectionRef.current.createAnswer();
+      // Create and set local description
+      const answer = await peerConnectionRef.current.createAnswer({
+        offerToReceiveAudio: true,
+        offerToReceiveVideo: true,
+      });
       await peerConnectionRef.current.setLocalDescription(answer);
 
       console.log("Sending answer to:", incomingCall.caller_id);
@@ -279,6 +295,7 @@ const VideoCall = ({
     setIsMuted(false);
     setIsVideoOff(false);
     setIsScreenSharing(false);
+    setIsMediaReady(false);
   }, []);
 
   const endCall = () => {
@@ -405,7 +422,6 @@ const VideoCall = ({
           }
         }
 
-        console.log(`Setting up media for user ${userId}`);
         const localStream = await navigator.mediaDevices.getUserMedia({
           video: {
             width: { ideal: 1280, max: 1920 },
@@ -425,10 +441,9 @@ const VideoCall = ({
         if (localVideoRef.current) {
           localVideoRef.current.srcObject = localStream;
         }
+        setIsMediaReady(true);
         console.log(`Media setup complete for user ${userId}`);
       } catch (error) {
-        console.error("Media error for user", userId, ":", error);
-
         let errorMsg = "Failed to access camera or microphone. ";
         if (error.name === "NotAllowedError") {
           errorMsg +=
@@ -504,14 +519,14 @@ const VideoCall = ({
 
   // Handle incoming call data from Redux
   useEffect(() => {
-    if (incomingCallData && !callInitiated && !incomingCall) {
+    if (incomingCallData && !callInitiated && !incomingCall && isMediaReady) {
       console.log("Setting incoming call data:", incomingCallData);
       setIncomingCall({
         caller_id: incomingCallData.caller_id,
         offer: incomingCallData.offer,
       });
     }
-  }, [incomingCallData, callInitiated, incomingCall]);
+  }, [incomingCallData, callInitiated, incomingCall, isMediaReady]);
 
   if (!isOpen) return null;
 
@@ -524,7 +539,21 @@ const VideoCall = ({
       }`}
     >
       {/* Incoming Call UI */}
-      {incomingCall && !callInitiated ? (
+      {incomingCallData && !callInitiated && !incomingCall && !isMediaReady ? (
+        <div className="bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 p-6 sm:p-8 rounded-3xl shadow-2xl border border-gray-200 dark:border-gray-700 max-w-sm sm:max-w-md w-full mx-4">
+          <div className="flex flex-col items-center space-y-4 sm:space-y-6">
+            <div className="animate-spin w-10 h-10 sm:w-12 sm:h-12 border-4 border-blue-500/30 border-t-blue-500 rounded-full"></div>
+            <div className="text-center space-y-1 sm:space-y-2">
+              <h3 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
+                Preparing Call
+              </h3>
+              <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300">
+                Setting up camera and microphone...
+              </p>
+            </div>
+          </div>
+        </div>
+      ) : incomingCall && !callInitiated ? (
         <div className="bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 p-6 sm:p-8 rounded-3xl shadow-2xl border border-gray-200 dark:border-gray-700 max-w-sm sm:max-w-md w-full mx-4 transform transition-all duration-300 hover:scale-105">
           {/* Avatar and caller info */}
           <div className="flex flex-col items-center space-y-4 sm:space-y-6">
@@ -648,12 +677,12 @@ const VideoCall = ({
           </div>
 
           {/* Video containers */}
-          <div className="relative w-full h-full flex">
+          <div className="relative w-full h-full flex p-2 sm:p-0">
             {/* Remote video (main) */}
-            <div className="flex-1 relative bg-gray-800">
+            <div className="flex-1 relative bg-gray-800 rounded-lg sm:rounded-none overflow-hidden">
               <video
                 ref={remoteVideoRef}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-contain sm:object-cover"
                 autoPlay
                 playsInline
               />
@@ -688,7 +717,7 @@ const VideoCall = ({
             </div>
 
             {/* Local video (picture-in-picture) */}
-            <div className="absolute bottom-3 right-3 sm:bottom-4 sm:right-4 md:bottom-6 md:right-6 w-32 h-24 sm:w-40 sm:h-30 md:w-48 md:h-36 bg-gray-700 rounded-lg sm:rounded-xl overflow-hidden shadow-lg border-2 border-white/20">
+            <div className="absolute bottom-16 right-3 sm:bottom-4 sm:right-4 md:bottom-6 md:right-6 w-24 h-18 sm:w-40 sm:h-30 md:w-48 md:h-36 bg-gray-700 rounded-lg sm:rounded-xl overflow-hidden shadow-lg border-2 border-white/20 z-10">
               <video
                 ref={localVideoRef}
                 className="w-full h-full object-cover"
