@@ -367,7 +367,7 @@ const Dashboard = () => {
       </div>
 
       {/* Main content area with bottom padding for mobile navigation */}
-      <div className="flex-1 h-full pb-16 lg:pb-0">
+      <div className="flex-1 h-full pb-28 lg:pb-0">
         <Outlet />
       </div>
     </div>
