@@ -1,3 +1,4 @@
+import { Separator } from "@/components/ui/separator.jsx";
 import { setSidebarType, toggleSidebar } from "@/redux/slices/appSlice.js";
 import { setCurrentConversation } from "@/redux/slices/conversationSlice.js";
 import { ChevronRight, Star, Trash, UserMinus, X } from "lucide-react";
@@ -18,7 +19,6 @@ import { useDeleteChatMutation } from "@/redux/api/chatApi.js";
 import { socket } from "@/socket.js";
 import authApi from "@/redux/api/authApi.js";
 import { useNavigate } from "react-router-dom";
-import { Divider } from "@mui/material";
 
 const ProfileSidebar = () => {
   const dispatch = useDispatch();
@@ -36,6 +36,7 @@ const ProfileSidebar = () => {
 
   const chat = useSelector((state) => state?.conversation?.currentConversation);
   const user = useSelector((state) => state?.auth?.user);
+  const messages = useSelector((state) => state?.conversation?.currentMessages);
   const users = chat?.participants?.filter((person) => person._id !== user._id);
 
   // Handle chat deletion
@@ -98,9 +99,9 @@ const ProfileSidebar = () => {
     }
   };
 
-  // Get media files from current conversation
-  const mediaFiles =
-    chat?.messages?.filter((msg) => msg.type === "Media") || [];
+  // Get media files from current conversation - use currentMessages from Redux
+  const allMessages = messages || chat?.messages || [];
+  const mediaFiles = allMessages.filter((msg) => msg.type === "Media") || [];
   const recentMedia = mediaFiles.slice(-3); // Get the last 3 media files
 
   return (
@@ -198,7 +199,7 @@ const ProfileSidebar = () => {
           </AlertDialog>
         </div>
 
-        <Divider />
+        <Separator className="my-2" />
 
         {/* About Section */}
         <div className="px-2">
@@ -210,7 +211,7 @@ const ProfileSidebar = () => {
           </p>
         </div>
 
-        <Divider />
+        <Separator className="my-2" />
 
         {/* Shared Media Section */}
         <div className="px-2">

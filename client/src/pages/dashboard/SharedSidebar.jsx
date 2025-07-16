@@ -15,11 +15,15 @@ const SharedSidebarLinks = ({ links }) => {
           <Text
             key={index}
             content={link.content}
-            incoming={link.receiver === user._id}
+            incoming={link.sender !== user._id}
           />
         ))
       ) : (
-        <p className="text-gray-500 text-center text-sm">No shared links</p>
+        <div className="text-center py-8">
+          <p className="text-gray-500 dark:text-gray-400 text-sm">
+            No shared links
+          </p>
+        </div>
       )}
     </div>
   );
@@ -76,9 +80,14 @@ const SharedSidebarMedia = ({ media }) => {
             );
           })
         ) : (
-          <p className="text-gray-500 text-center col-span-2 sm:col-span-3 text-sm">
-            No shared media
-          </p>
+          <div className="text-center py-8">
+            <div className="text-gray-400 dark:text-gray-500 mb-2">
+              <Image size={32} className="mx-auto opacity-50" />
+            </div>
+            <p className="text-gray-500 dark:text-gray-400 text-sm">
+              No shared media
+            </p>
+          </div>
         )}
       </div>
 
@@ -133,11 +142,27 @@ const SharedSidebarMedia = ({ media }) => {
 const SharedSidebar = () => {
   const dispatch = useDispatch();
   const chat = useSelector((state) => state?.conversation?.currentConversation);
+  const messages = useSelector((state) => state?.conversation?.currentMessages);
 
-  const links = chat?.messages?.filter((msg) =>
-    msg.content?.match(/https?:\/\/\S+/)
+  // Use currentMessages from Redux store instead of chat.messages
+  const allMessages = messages || chat?.messages || [];
+
+  // Filter links from text messages that contain URLs
+  const links = allMessages.filter(
+    (msg) => msg.type === "Text" && msg.content?.match(/https?:\/\/\S+/)
   );
-  const media = chat?.messages?.filter((msg) => msg.type === "Media");
+
+  // Filter media messages
+  const media = allMessages.filter((msg) => msg.type === "Media");
+
+  console.log("SharedSidebar Debug:", {
+    totalMessages: allMessages.length,
+    linksFound: links.length,
+    mediaFound: media.length,
+    messages: allMessages,
+    links: links,
+    media: media,
+  });
 
   const handleProfile = () => {
     dispatch(setSidebarType("PROFILE"));
