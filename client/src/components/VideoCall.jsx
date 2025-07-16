@@ -48,9 +48,13 @@ const VideoCall = ({
         urls: [
           "stun:stun1.l.google.com:19302",
           "stun:stun2.l.google.com:19302",
+          "stun:stun.l.google.com:19302",
+          "stun:stun3.l.google.com:19302",
+          "stun:stun4.l.google.com:19302",
         ],
       },
     ],
+    iceCandidatePoolSize: 10,
   };
 
   // Call duration timer
@@ -101,30 +105,16 @@ const VideoCall = ({
 
     peerConnectionRef.current = new RTCPeerConnection(servers);
 
-    // Add local stream tracks if available
-    if (localStreamRef.current) {
-      localStreamRef.current.getTracks().forEach((track) => {
-        console.log("Adding local track:", track.kind);
-        peerConnectionRef.current.addTrack(track, localStreamRef.current);
-      });
-    } else {
-      console.warn("No local stream available when setting up peer connection");
-    }
-
     // Handle remote stream
     peerConnectionRef.current.ontrack = (event) => {
-      console.log("Received remote track:", event.streams[0]);
-      console.log("Remote video ref current:", remoteVideoRef.current);
+      console.log("Received remote track:", event.track.kind, event.streams[0]);
       if (remoteVideoRef.current && event.streams[0]) {
         console.log("Setting remote video source object");
         remoteVideoRef.current.srcObject = event.streams[0];
-        // Force video element to load and play
-        remoteVideoRef.current.load();
-        remoteVideoRef.current
-          .play()
-          .catch((e) => console.log("Remote video play error:", e));
-      } else {
-        console.warn("Remote video ref or stream not available");
+        // Ensure video plays
+        remoteVideoRef.current.onloadedmetadata = () => {
+          remoteVideoRef.current.play().catch(e => console.log("Remote video play error:", e));
+        };
       }
     };
 
@@ -167,6 +157,14 @@ const VideoCall = ({
         );
       }
     };
+
+    // Add local stream tracks if available
+    if (localStreamRef.current) {
+      localStreamRef.current.getTracks().forEach((track) => {
+        console.log("Adding local track:", track.kind);
+        peerConnectionRef.current.addTrack(track, localStreamRef.current);
+      });
+    }
   }, [receiverId, servers]);
 
   const startCall = async () => {
@@ -187,7 +185,11 @@ const VideoCall = ({
       setIsConnecting(true);
       setErrorMessage("");
 
+      // Setup peer connection with local stream first
       setupPeerConnection();
+
+      // Wait a bit for peer connection to be ready
+      await new Promise(resolve => setTimeout(resolve, 100));
 
       const offer = await peerConnectionRef.current.createOffer({
         offerToReceiveAudio: true,
@@ -233,10 +235,13 @@ const VideoCall = ({
       setIsConnecting(true);
       setErrorMessage("");
 
-      // Setup peer connection with local stream
+      // Setup peer connection with local stream first
       setupPeerConnection();
 
       console.log("Accepting call from:", incomingCall.caller_id);
+
+      // Wait a bit for peer connection to be ready
+      await new Promise(resolve => setTimeout(resolve, 100));
 
       // Set remote description first
       await peerConnectionRef.current.setRemoteDescription(
@@ -458,13 +463,16 @@ const VideoCall = ({
         });
 
         localStreamRef.current = localStream;
+        setIsMediaReady(true);
+        
+        // Setup local video immediately
         if (localVideoRef.current) {
           localVideoRef.current.srcObject = localStream;
-          localVideoRef.current
-            .play()
-            .catch((e) => console.log("Initial local video play error:", e));
+          localVideoRef.current.onloadedmetadata = () => {
+            localVideoRef.current.play().catch((e) => console.log("Initial local video play error:", e));
+          };
         }
-        setIsMediaReady(true);
+        
         console.log(`Media setup complete for user ${userId}`, {
           videoTracks: localStream.getVideoTracks().length,
           audioTracks: localStream.getAudioTracks().length,
@@ -499,12 +507,14 @@ const VideoCall = ({
           await peerConnectionRef.current.setRemoteDescription(
             new RTCSessionDescription(answer)
           );
+          console.log("Remote description set successfully");
           setCallInitiated(true);
           setIsConnecting(false);
         }
       } catch (error) {
         console.error("Error handling call acceptance:", error);
         setErrorMessage("Failed to establish connection.");
+        setIsConnecting(false);
       }
     };
 
@@ -721,9 +731,10 @@ const VideoCall = ({
                 className="w-full h-full object-contain sm:object-cover"
                 autoPlay
                 playsInline
-                onLoadedMetadata={() =>
-                  console.log("Remote video metadata loaded")
-                }
+                onLoadedMetadata={() => {
+                  console.log("Remote video metadata loaded");
+                  remoteVideoRef.current?.play().catch(e => console.log("Remote video autoplay failed:", e));
+                }}
                 onCanPlay={() => console.log("Remote video can play")}
                 onPlay={() => console.log("Remote video started playing")}
                 onError={(e) => console.log("Remote video error:", e)}
@@ -766,9 +777,10 @@ const VideoCall = ({
                 autoPlay
                 playsInline
                 muted
-                onLoadedMetadata={() =>
-                  console.log("Local video metadata loaded")
-                }
+                onLoadedMetadata={() => {
+                  console.log("Local video metadata loaded");
+                  localVideoRef.current?.play().catch(e => console.log("Local video autoplay failed:", e));
+                }}
                 onCanPlay={() => console.log("Local video can play")}
                 onPlay={() => console.log("Local video started playing")}
                 onError={(e) => console.log("Local video error:", e)}
