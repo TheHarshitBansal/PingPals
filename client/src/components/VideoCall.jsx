@@ -74,14 +74,25 @@ const VideoCall = ({
   };
 
   const setupLocalVideo = useCallback(() => {
+    console.log(
+      "Setting up local video, stream:",
+      localStreamRef.current,
+      "video ref:",
+      localVideoRef.current
+    );
     if (localStreamRef.current && localVideoRef.current) {
       localVideoRef.current.srcObject = localStreamRef.current;
+      // Force video element to load and play
+      localVideoRef.current.load();
+      localVideoRef.current
+        .play()
+        .catch((e) => console.log("Local video play error:", e));
     }
   }, []);
 
   useEffect(() => {
     setupLocalVideo();
-  }, [setupLocalVideo]);
+  }, [setupLocalVideo, isOpen]);
 
   const setupPeerConnection = useCallback(() => {
     if (peerConnectionRef.current) {
@@ -103,8 +114,17 @@ const VideoCall = ({
     // Handle remote stream
     peerConnectionRef.current.ontrack = (event) => {
       console.log("Received remote track:", event.streams[0]);
+      console.log("Remote video ref current:", remoteVideoRef.current);
       if (remoteVideoRef.current && event.streams[0]) {
+        console.log("Setting remote video source object");
         remoteVideoRef.current.srcObject = event.streams[0];
+        // Force video element to load and play
+        remoteVideoRef.current.load();
+        remoteVideoRef.current
+          .play()
+          .catch((e) => console.log("Remote video play error:", e));
+      } else {
+        console.warn("Remote video ref or stream not available");
       }
     };
 
@@ -440,9 +460,16 @@ const VideoCall = ({
         localStreamRef.current = localStream;
         if (localVideoRef.current) {
           localVideoRef.current.srcObject = localStream;
+          localVideoRef.current
+            .play()
+            .catch((e) => console.log("Initial local video play error:", e));
         }
         setIsMediaReady(true);
-        console.log(`Media setup complete for user ${userId}`);
+        console.log(`Media setup complete for user ${userId}`, {
+          videoTracks: localStream.getVideoTracks().length,
+          audioTracks: localStream.getAudioTracks().length,
+          localVideoElement: !!localVideoRef.current,
+        });
       } catch (error) {
         let errorMsg = "Failed to access camera or microphone. ";
         if (error.name === "NotAllowedError") {
@@ -530,7 +557,16 @@ const VideoCall = ({
 
   if (!isOpen) return null;
 
-  console.log(`VideoCall rendered for user ${userId}`);
+  console.log(`VideoCall rendered for user ${userId}`, {
+    isOpen,
+    callInitiated,
+    incomingCall: !!incomingCall,
+    isMediaReady,
+    hasLocalStream: !!localStreamRef.current,
+    incomingCallData: !!incomingCallData,
+    connectionState,
+    isConnecting,
+  });
 
   return (
     <div
@@ -685,6 +721,12 @@ const VideoCall = ({
                 className="w-full h-full object-contain sm:object-cover"
                 autoPlay
                 playsInline
+                onLoadedMetadata={() =>
+                  console.log("Remote video metadata loaded")
+                }
+                onCanPlay={() => console.log("Remote video can play")}
+                onPlay={() => console.log("Remote video started playing")}
+                onError={(e) => console.log("Remote video error:", e)}
               />
               {!callInitiated && !incomingCall && (
                 <div className="absolute inset-0 flex items-center justify-center bg-gray-800">
@@ -724,6 +766,12 @@ const VideoCall = ({
                 autoPlay
                 playsInline
                 muted
+                onLoadedMetadata={() =>
+                  console.log("Local video metadata loaded")
+                }
+                onCanPlay={() => console.log("Local video can play")}
+                onPlay={() => console.log("Local video started playing")}
+                onError={(e) => console.log("Local video error:", e)}
               />
               {isVideoOff && (
                 <div className="absolute inset-0 bg-gray-700 flex items-center justify-center">

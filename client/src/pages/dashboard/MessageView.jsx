@@ -202,251 +202,254 @@ const MessageView = () => {
   };
 
   return (
-    <div
-      className="relative flex flex-col h-full w-full border-x border-gray-100 dark:border-gray-900 shadow-light dark:shadow-dark transition-all ease-linear duration-300"
-      key={forceRefresh}
-    >
-      {/* Show loading if chat data is incomplete */}
-      {!chat || !users.length ? (
-        <div className="flex items-center justify-center h-full">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-4"></div>
-            <p className="text-gray-500 dark:text-gray-400">
-              Loading conversation...
-            </p>
-            <button
-              className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
-              onClick={() => dispatch(setCurrentConversation(null))}
-            >
-              Go Back
-            </button>
-          </div>
-        </div>
-      ) : (
-        <div className="relative flex flex-col h-full">
-          {/* Chat Header */}
-          <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 px-3 md:px-4 lg:px-6 py-3 md:py-4 bg-white dark:bg-gray-800 flex-shrink-0">
-            {/* Back button for mobile */}
-            <button
-              onClick={() => dispatch(setCurrentConversation(null))}
-              className="md:hidden mr-3 p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full"
-            >
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M15 19l-7-7 7-7"
-                />
-              </svg>
-            </button>
-
-            <div
-              onClick={() => dispatch(toggleSidebar())}
-              className="flex items-center cursor-pointer flex-1 min-w-0"
-            >
-              <div className="mr-3 md:mr-4 h-8 w-8 md:h-10 md:w-10 lg:h-12 lg:w-12 rounded-full overflow-hidden flex-shrink-0">
-                <Avatar className="h-full w-full">
-                  <AvatarImage src={users[0]?.avatar || ""} />
-                  <AvatarFallback>
-                    <Skeleton className="h-full w-full rounded-full" />
-                  </AvatarFallback>
-                </Avatar>
-              </div>
-              <div className="min-w-0 h-full flex-1">
-                <h5 className="font-medium text-black dark:text-white text-sm md:text-base lg:text-lg truncate">
-                  {users[0]?.name || "Unknown User"}
-                </h5>
-                <p className="text-xs md:text-sm text-gray-500 dark:text-gray-400 truncate">
-                  {users[0]?.status}
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center space-x-2 md:space-x-3 lg:space-x-4 h-full flex-shrink-0">
+    <>
+      <div
+        className="relative flex flex-col h-full w-full border-x border-gray-100 dark:border-gray-900 shadow-light dark:shadow-dark transition-all ease-linear duration-300"
+        key={forceRefresh}
+      >
+        {/* Show loading if chat data is incomplete */}
+        {!chat || !users.length ? (
+          <div className="flex items-center justify-center h-full">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-4"></div>
+              <p className="text-gray-500 dark:text-gray-400">
+                Loading conversation...
+              </p>
               <button
-                onClick={() => setIsCallActive(true)}
-                className="group relative bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-medium py-2 px-3 md:py-2.5 md:px-4 lg:py-3 lg:px-5 rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 ease-out flex items-center gap-2 md:gap-2.5 lg:gap-3"
+                className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                onClick={() => dispatch(setCurrentConversation(null))}
               >
-                <div className="relative">
-                  <VideoCamera
-                    size={16}
-                    className="md:hidden group-hover:animate-pulse"
-                    color="white"
-                    weight="fill"
-                  />
-                  <VideoCamera
-                    size={18}
-                    className="hidden md:block lg:hidden group-hover:animate-pulse"
-                    color="white"
-                    weight="fill"
-                  />
-                  <VideoCamera
-                    size={20}
-                    className="hidden lg:block group-hover:animate-pulse"
-                    color="white"
-                    weight="fill"
-                  />
-                  <div className="absolute -inset-1 bg-white opacity-20 rounded-full animate-ping group-hover:animate-pulse"></div>
-                </div>
-                <span className="text-xs md:text-sm lg:text-base font-semibold tracking-wide">
-                  Call
-                </span>
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-0 group-hover:opacity-10 rounded-full transition-opacity duration-300"></div>
+                Go Back
               </button>
             </div>
           </div>
+        ) : (
+          <div className="relative flex flex-col h-full">
+            {/* Chat Header */}
+            <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 px-3 md:px-4 lg:px-6 py-3 md:py-4 bg-white dark:bg-gray-800 flex-shrink-0">
+              {/* Back button for mobile */}
+              <button
+                onClick={() => dispatch(setCurrentConversation(null))}
+                className="md:hidden mr-3 p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full"
+              >
+                <svg
+                  className="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M15 19l-7-7 7-7"
+                  />
+                </svg>
+              </button>
 
-          {/* Chat Messages */}
-          <div className="flex-1 overflow-y-scroll space-y-2 md:space-y-3 lg:space-y-4 px-3 md:px-4 lg:px-6 py-4 md:py-6 lg:py-8 pb-20 md:pb-24 lg:pb-28 bg-gray-50 dark:bg-gray-900 no-scrollbar">
-            {sortedMessages?.map((message, index) => {
-              switch (message.type) {
-                case "Separator":
-                  return (
-                    <DateSeparator
-                      key={`separator-${index}-${message.createdAt}`}
-                      date={message?.createdAt}
-                    />
-                  );
-                case "Text":
-                  return (
-                    <Text
-                      key={`text-${index}-${
-                        message?._id || message?.createdAt
-                      }`}
-                      incoming={message?.sender === users[0]?._id}
-                      timestamp={message?.createdAt}
-                      content={message?.content}
-                      messageId={message?._id}
-                    />
-                  );
-                case "Media":
-                  return (
-                    <Media
-                      key={`media-${index}-${
-                        message?._id || message?.createdAt
-                      }`}
-                      incoming={message?.sender === users[0]?._id}
-                      timestamp={message?.createdAt}
-                      file={message?.file}
-                      messageId={message?._id}
-                    />
-                  );
-                default:
-                  return (
-                    <Text
-                      key={`default-${index}-${
-                        message?._id || message?.createdAt
-                      }`}
-                      incoming={message?.sender === users[0]?._id}
-                      timestamp={message?.createdAt}
-                      content={message?.content || ""}
-                      messageId={message?._id}
-                    />
-                  );
-              }
-            })}
-          </div>
-
-          {/* Chat Input */}
-          <div className="border-t border-gray-200 dark:border-gray-700 p-3 md:p-3 lg:p-4 bg-white dark:bg-gray-800 flex-shrink-0 absolute left-0 right-0 bottom-0">
-            <form
-              className="flex items-center justify-between space-x-2 md:space-x-3 lg:space-x-4"
-              onSubmit={handleMessageSend}
-            >
-              <div className="relative flex-1 min-w-0">
-                <textarea
-                  placeholder={
-                    user.friends.includes(users[0]?._id)
-                      ? "Message"
-                      : "You are not friends with this user"
-                  }
-                  className="h-10 md:h-12 lg:h-14 resize-none w-full rounded-lg border border-gray-300 dark:border-gray-700 p-3 bg-gray-50 dark:bg-gray-900 shadow-inner text-sm md:text-base outline-none focus:border-blue-950 dark:focus:border-blue-200 text-black dark:text-white pr-28 md:pr-32 lg:pr-36 overflow-hidden"
-                  value={message}
-                  onChange={(e) => setMessage(e.target.value)}
-                  disabled={!user.friends.includes(users[0]?._id)}
-                  rows={1}
-                  style={{ lineHeight: "1.2" }}
-                />
-                <div className="absolute right-2 md:right-3 lg:right-3 top-1/2 -translate-y-1/2 flex items-center justify-end space-x-1 md:space-x-2">
-                  <Attachments />
-                  <button
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setIsGifOpen(!isGifOpen);
-                    }}
-                    className="p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded transition-colors"
-                  >
-                    <Gif
+              <div
+                onClick={() => dispatch(toggleSidebar())}
+                className="flex items-center cursor-pointer flex-1 min-w-0"
+              >
+                <div className="mr-3 md:mr-4 h-8 w-8 md:h-10 md:w-10 lg:h-12 lg:w-12 rounded-full overflow-hidden flex-shrink-0">
+                  <Avatar className="h-full w-full">
+                    <AvatarImage src={users[0]?.avatar || ""} />
+                    <AvatarFallback>
+                      <Skeleton className="h-full w-full rounded-full" />
+                    </AvatarFallback>
+                  </Avatar>
+                </div>
+                <div className="min-w-0 h-full flex-1">
+                  <h5 className="font-medium text-black dark:text-white text-sm md:text-base lg:text-lg truncate">
+                    {users[0]?.name || "Unknown User"}
+                  </h5>
+                  <p className="text-xs md:text-sm text-gray-500 dark:text-gray-400 truncate">
+                    {users[0]?.status}
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center space-x-2 md:space-x-3 lg:space-x-4 h-full flex-shrink-0">
+                <button
+                  onClick={() => setIsCallActive(true)}
+                  className="group relative bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-medium py-2 px-3 md:py-2.5 md:px-4 lg:py-3 lg:px-5 rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 ease-out flex items-center gap-2 md:gap-2.5 lg:gap-3"
+                >
+                  <div className="relative">
+                    <VideoCamera
                       size={16}
-                      className="md:hidden"
-                      color="gray"
-                      weight="bold"
+                      className="md:hidden group-hover:animate-pulse"
+                      color="white"
+                      weight="fill"
                     />
-                    <Gif
+                    <VideoCamera
                       size={18}
-                      className="hidden md:block lg:hidden"
-                      color="gray"
-                      weight="bold"
+                      className="hidden md:block lg:hidden group-hover:animate-pulse"
+                      color="white"
+                      weight="fill"
                     />
-                    <Gif
+                    <VideoCamera
                       size={20}
-                      className="hidden lg:block"
-                      color="gray"
-                      weight="bold"
+                      className="hidden lg:block group-hover:animate-pulse"
+                      color="white"
+                      weight="fill"
                     />
-                  </button>
-                  <EmojiPicker selectEmoji={handleEmojiSelect} />
-                </div>
+                    <div className="absolute -inset-1 bg-white opacity-20 rounded-full animate-ping group-hover:animate-pulse"></div>
+                  </div>
+                  <span className="text-xs md:text-sm lg:text-base font-semibold tracking-wide">
+                    Call
+                  </span>
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-0 group-hover:opacity-10 rounded-full transition-opacity duration-300"></div>
+                </button>
               </div>
-              <button
-                type="submit"
-                className="flex items-center justify-center h-10 w-10 md:h-12 md:w-12 lg:h-14 lg:w-14 rounded-lg bg-blue-500 text-white hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0 transition-colors"
-                disabled={
-                  message.trim() === "" || !user.friends.includes(users[0]?._id)
-                }
-              >
-                <PaperPlaneTilt
-                  size={16}
-                  className="md:hidden"
-                  color="white"
-                  weight="bold"
-                />
-                <PaperPlaneTilt
-                  size={18}
-                  className="hidden md:block lg:hidden"
-                  color="white"
-                  weight="bold"
-                />
-                <PaperPlaneTilt
-                  size={20}
-                  className="hidden lg:block"
-                  color="white"
-                  weight="bold"
-                />
-              </button>
-            </form>
-            {isGifOpen && <Giphy />}
-          </div>
+            </div>
 
-          {/* Video Call */}
-          <VideoCall
-            isOpen={isCallActive}
-            handleClose={handleCallClose}
-            conversationId={chat?._id}
-            userId={user?._id}
-            receiverId={receiverId}
-            receiverName={receiverName}
-            incomingCallData={incomingCallData}
-            users={users}
-          />
-        </div>
-      )}
-    </div>
+            {/* Chat Messages */}
+            <div className="flex-1 overflow-y-scroll space-y-2 md:space-y-3 lg:space-y-4 px-3 md:px-4 lg:px-6 py-4 md:py-6 lg:py-8 pb-20 md:pb-24 lg:pb-28 bg-gray-50 dark:bg-gray-900 no-scrollbar">
+              {sortedMessages?.map((message, index) => {
+                switch (message.type) {
+                  case "Separator":
+                    return (
+                      <DateSeparator
+                        key={`separator-${index}-${message.createdAt}`}
+                        date={message?.createdAt}
+                      />
+                    );
+                  case "Text":
+                    return (
+                      <Text
+                        key={`text-${index}-${
+                          message?._id || message?.createdAt
+                        }`}
+                        incoming={message?.sender === users[0]?._id}
+                        timestamp={message?.createdAt}
+                        content={message?.content}
+                        messageId={message?._id}
+                      />
+                    );
+                  case "Media":
+                    return (
+                      <Media
+                        key={`media-${index}-${
+                          message?._id || message?.createdAt
+                        }`}
+                        incoming={message?.sender === users[0]?._id}
+                        timestamp={message?.createdAt}
+                        file={message?.file}
+                        messageId={message?._id}
+                      />
+                    );
+                  default:
+                    return (
+                      <Text
+                        key={`default-${index}-${
+                          message?._id || message?.createdAt
+                        }`}
+                        incoming={message?.sender === users[0]?._id}
+                        timestamp={message?.createdAt}
+                        content={message?.content || ""}
+                        messageId={message?._id}
+                      />
+                    );
+                }
+              })}
+            </div>
+
+            {/* Chat Input */}
+            <div className="border-t border-gray-200 dark:border-gray-700 p-3 md:p-3 lg:p-4 bg-white dark:bg-gray-800 flex-shrink-0 absolute left-0 right-0 bottom-0">
+              <form
+                className="flex items-center justify-between space-x-2 md:space-x-3 lg:space-x-4"
+                onSubmit={handleMessageSend}
+              >
+                <div className="relative flex-1 min-w-0">
+                  <textarea
+                    placeholder={
+                      user.friends.includes(users[0]?._id)
+                        ? "Message"
+                        : "You are not friends with this user"
+                    }
+                    className="h-10 md:h-12 lg:h-14 resize-none w-full rounded-lg border border-gray-300 dark:border-gray-700 p-3 bg-gray-50 dark:bg-gray-900 shadow-inner text-sm md:text-base outline-none focus:border-blue-950 dark:focus:border-blue-200 text-black dark:text-white pr-28 md:pr-32 lg:pr-36 overflow-hidden"
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    disabled={!user.friends.includes(users[0]?._id)}
+                    rows={1}
+                    style={{ lineHeight: "1.2" }}
+                  />
+                  <div className="absolute right-2 md:right-3 lg:right-3 top-1/2 -translate-y-1/2 flex items-center justify-end space-x-1 md:space-x-2">
+                    <Attachments />
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setIsGifOpen(!isGifOpen);
+                      }}
+                      className="p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded transition-colors"
+                    >
+                      <Gif
+                        size={16}
+                        className="md:hidden"
+                        color="gray"
+                        weight="bold"
+                      />
+                      <Gif
+                        size={18}
+                        className="hidden md:block lg:hidden"
+                        color="gray"
+                        weight="bold"
+                      />
+                      <Gif
+                        size={20}
+                        className="hidden lg:block"
+                        color="gray"
+                        weight="bold"
+                      />
+                    </button>
+                    <EmojiPicker selectEmoji={handleEmojiSelect} />
+                  </div>
+                </div>
+                <button
+                  type="submit"
+                  className="flex items-center justify-center h-10 w-10 md:h-12 md:w-12 lg:h-14 lg:w-14 rounded-lg bg-blue-500 text-white hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0 transition-colors"
+                  disabled={
+                    message.trim() === "" ||
+                    !user.friends.includes(users[0]?._id)
+                  }
+                >
+                  <PaperPlaneTilt
+                    size={16}
+                    className="md:hidden"
+                    color="white"
+                    weight="bold"
+                  />
+                  <PaperPlaneTilt
+                    size={18}
+                    className="hidden md:block lg:hidden"
+                    color="white"
+                    weight="bold"
+                  />
+                  <PaperPlaneTilt
+                    size={20}
+                    className="hidden lg:block"
+                    color="white"
+                    weight="bold"
+                  />
+                </button>
+              </form>
+              {isGifOpen && <Giphy />}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Video Call - Render outside of main container */}
+      <VideoCall
+        isOpen={isCallActive}
+        handleClose={handleCallClose}
+        conversationId={chat?._id}
+        userId={user?._id}
+        receiverId={receiverId}
+        receiverName={receiverName}
+        incomingCallData={incomingCallData}
+        users={users}
+      />
+    </>
   );
 };
 

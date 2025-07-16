@@ -36,14 +36,29 @@ const Explore = () => {
           </TabsTrigger>
         </TabsList>
         <div className="flex-1 overflow-hidden">
-          <TabsContent value="search" className="h-full overflow-y-auto">
-            <SearchPeople />
+          <TabsContent
+            value="search"
+            className="h-full overflow-y-auto p-0 m-0"
+          >
+            <div className="h-full overflow-y-auto">
+              <SearchPeople />
+            </div>
           </TabsContent>
-          <TabsContent value="friends" className="h-full overflow-y-auto">
-            <FriendList />
+          <TabsContent
+            value="friends"
+            className="h-full overflow-y-auto p-0 m-0"
+          >
+            <div className="h-full overflow-y-auto">
+              <FriendList />
+            </div>
           </TabsContent>
-          <TabsContent value="requests" className="h-full overflow-y-auto">
-            <RequestList />
+          <TabsContent
+            value="requests"
+            className="h-full overflow-y-auto p-0 m-0"
+          >
+            <div className="h-full overflow-y-auto">
+              <RequestList />
+            </div>
           </TabsContent>
         </div>
       </Tabs>
