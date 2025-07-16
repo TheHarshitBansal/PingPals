@@ -353,9 +353,9 @@ const MessageView = () => {
           </div>
 
           {/* Chat Input */}
-          <div className="border-t border-gray-200 dark:border-gray-700 p-3 md:p-3 lg:p-4 bg-white dark:bg-gray-800 flex-shrink-0">
+          <div className="border-t border-gray-200 dark:border-gray-700 p-3 md:p-3 lg:p-4 bg-white dark:bg-gray-800 flex-shrink-0 pb-20 lg:pb-4">
             <form
-              className="flex items-end justify-between space-x-2 md:space-x-3 lg:space-x-4"
+              className="flex items-center justify-between space-x-2 md:space-x-3 lg:space-x-4"
               onSubmit={handleMessageSend}
             >
               <div className="relative flex-1 min-w-0">
@@ -365,11 +365,12 @@ const MessageView = () => {
                       ? "Message"
                       : "You are not friends with this user"
                   }
-                  className="min-h-[40px] h-10 md:h-12 lg:h-14 resize-none w-full rounded-lg border border-gray-300 dark:border-gray-700 p-3 md:p-3 bg-gray-50 dark:bg-gray-900 shadow-inner text-sm md:text-base outline-none focus:border-blue-950 dark:focus:border-blue-200 text-black dark:text-white pr-28 md:pr-32 lg:pr-36"
+                  className="h-10 md:h-12 lg:h-14 resize-none w-full rounded-lg border border-gray-300 dark:border-gray-700 p-3 bg-gray-50 dark:bg-gray-900 shadow-inner text-sm md:text-base outline-none focus:border-blue-950 dark:focus:border-blue-200 text-black dark:text-white pr-28 md:pr-32 lg:pr-36 overflow-hidden"
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   disabled={!user.friends.includes(users[0]?._id)}
                   rows={1}
+                  style={{ lineHeight: "1.2" }}
                 />
                 <div className="absolute right-2 md:right-3 lg:right-3 top-1/2 -translate-y-1/2 flex items-center justify-end space-x-1 md:space-x-2">
                   <Attachments />

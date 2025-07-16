@@ -41,7 +41,7 @@ const SharedSidebarMedia = ({ media }) => {
 
   return (
     <>
-      <div className="w-full grid grid-cols-2 sm:grid-cols-3 gap-1 sm:gap-2 py-1 px-2">
+      <div className="w-full grid grid-cols-3 gap-2 py-1 px-2">
         {media.length > 0 ? (
           media.map((file, index) => {
             const parsedFile = JSON.parse(file.file);
