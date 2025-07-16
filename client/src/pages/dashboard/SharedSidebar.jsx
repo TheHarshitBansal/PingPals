@@ -155,15 +155,6 @@ const SharedSidebar = () => {
   // Filter media messages
   const media = allMessages.filter((msg) => msg.type === "Media");
 
-  console.log("SharedSidebar Debug:", {
-    totalMessages: allMessages.length,
-    linksFound: links.length,
-    mediaFound: media.length,
-    messages: allMessages,
-    links: links,
-    media: media,
-  });
-
   const handleProfile = () => {
     dispatch(setSidebarType("PROFILE"));
   };

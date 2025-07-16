@@ -196,34 +196,9 @@ const SearchPeople = () => {
                     <button
                       className="p-2 text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-full transition-colors"
                       onClick={() => {
-                        console.log(
-                          "Starting chat with:",
-                          person.name,
-                          person._id
-                        );
-
-                        // Debug: Log available conversations
-                        console.log(
-                          "Available direct conversations:",
-                          directConversations
-                        );
-                        console.log(
-                          "Looking for participant with ID:",
-                          person._id
-                        );
-
                         // First, check if conversation already exists
                         const existingConversation = directConversations?.find(
                           (conv) => {
-                            console.log(
-                              "Checking conversation:",
-                              conv._id,
-                              "participants:",
-                              conv.participants?.map((p) => ({
-                                id: p._id,
-                                name: p.name,
-                              }))
-                            );
                             return conv.participants?.some(
                               (p) => p._id === person._id
                             );
@@ -231,22 +206,12 @@ const SearchPeople = () => {
                         );
 
                         if (existingConversation) {
-                          console.log(
-                            "Found existing conversation:",
-                            existingConversation._id
-                          );
-                          console.log(
-                            "About to dispatch setCurrentConversation"
-                          );
-
                           const result = dispatch(
                             setCurrentConversation(existingConversation)
                           );
-                          console.log("Dispatch result:", result);
 
                           // Add a small delay to let Redux update
                           setTimeout(() => {
-                            console.log("After dispatch - navigating to chat");
                             navigate("/chat");
                           }, 100);
 

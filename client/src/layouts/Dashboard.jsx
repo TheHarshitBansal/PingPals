@@ -125,7 +125,6 @@ const Dashboard = () => {
         });
 
         socket.on("open_chat", (data) => {
-          console.log("Dashboard: Received open_chat event", data);
           navigate(`/chat`);
           dispatch(setCurrentConversation(data));
           toast({
@@ -170,9 +169,6 @@ const Dashboard = () => {
         socket.on(
           "incoming_video_call",
           ({ caller_id, offer, conversation_id }) => {
-            console.log(
-              `Dashboard: User ${user._id} received incoming call from ${caller_id} for conversation ${conversation_id}`
-            );
             if (caller_id !== user._id) {
               dispatch(
                 setIncomingCallData({ caller_id, offer, conversation_id })

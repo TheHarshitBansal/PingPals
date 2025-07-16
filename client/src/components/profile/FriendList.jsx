@@ -31,18 +31,6 @@ const FriendList = () => {
     (state) => state.conversation.directConversations
   );
 
-  // Debug: Log conversation state
-  useEffect(() => {
-    console.log("FriendList: Direct conversations updated:", {
-      count: directConversations?.length || 0,
-      conversations:
-        directConversations?.map((c) => ({
-          id: c._id,
-          participants: c.participants?.map((p) => p.name || p._id),
-        })) || [],
-    });
-  }, [directConversations]);
-
   useEffect(() => {
     if (isSuccess && data?.friends) {
       dispatch(setFriends(data.friends));
@@ -94,58 +82,21 @@ const FriendList = () => {
                   <button
                     className="flex items-center justify-center gap-2 px-3 py-2 text-xs sm:text-sm font-medium text-white bg-blue-500 rounded-lg hover:bg-blue-600 transition-all flex-1 sm:flex-initial"
                     onClick={() => {
-                      console.log(
-                        "Starting chat with:",
-                        person.name,
-                        person._id
-                      );
-
-                      // Debug: Log available conversations
-                      console.log(
-                        "Available direct conversations:",
-                        directConversations
-                      );
-                      console.log(
-                        "Looking for participant with ID:",
-                        person._id
-                      );
-
                       // First, check if conversation already exists
                       const existingConversation = directConversations?.find(
                         (conv) => {
-                          console.log(
-                            "Checking conversation:",
-                            conv._id,
-                            "participants:",
-                            conv.participants?.map((p) => ({
-                              id: p._id,
-                              name: p.name,
-                            }))
-                          );
                           return conv.participants?.some(
                             (p) => p._id === person._id
                           );
                         }
                       );
                       if (existingConversation) {
-                        console.log(
-                          "Found existing conversation:",
-                          existingConversation._id
-                        );
-                        console.log(
-                          "Setting current conversation...",
-                          existingConversation
-                        );
-                        console.log("About to dispatch setCurrentConversation");
-
                         const result = dispatch(
                           setCurrentConversation(existingConversation)
                         );
-                        console.log("Dispatch result:", result);
 
                         // Add a small delay to let Redux update
                         setTimeout(() => {
-                          console.log("After dispatch - navigating to chat");
                           navigate("/chat");
                         }, 100);
 
