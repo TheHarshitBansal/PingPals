@@ -53,6 +53,29 @@ const VideoCall = ({
           "stun:stun4.l.google.com:19302",
         ],
       },
+      {
+        urls: "stun:stun.relay.metered.ca:80",
+      },
+      {
+        urls: "turn:a.relay.metered.ca:80",
+        username: "87e75a5c835e5a3e9b1d2c5f",
+        credential: "uiQx2gAEGm7Vs8ef",
+      },
+      {
+        urls: "turn:a.relay.metered.ca:80?transport=tcp",
+        username: "87e75a5c835e5a3e9b1d2c5f",
+        credential: "uiQx2gAEGm7Vs8ef",
+      },
+      {
+        urls: "turn:a.relay.metered.ca:443",
+        username: "87e75a5c835e5a3e9b1d2c5f",
+        credential: "uiQx2gAEGm7Vs8ef",
+      },
+      {
+        urls: "turn:a.relay.metered.ca:443?transport=tcp",
+        username: "87e75a5c835e5a3e9b1d2c5f",
+        credential: "uiQx2gAEGm7Vs8ef",
+      },
     ],
     iceCandidatePoolSize: 10,
   };
@@ -107,13 +130,39 @@ const VideoCall = ({
 
     // Handle remote stream
     peerConnectionRef.current.ontrack = (event) => {
-      console.log("Received remote track:", event.track.kind, event.streams[0]);
-      if (remoteVideoRef.current && event.streams[0]) {
-        console.log("Setting remote video source object");
-        remoteVideoRef.current.srcObject = event.streams[0];
+      console.log(
+        "Received remote track:",
+        event.track.kind,
+        event.streams.length
+      );
+      const [remoteStream] = event.streams;
+      if (remoteStream && remoteVideoRef.current) {
+        console.log("Setting remote video source object", {
+          tracks: remoteStream.getTracks().length,
+          videoTracks: remoteStream.getVideoTracks().length,
+          audioTracks: remoteStream.getAudioTracks().length,
+        });
+
+        remoteVideoRef.current.srcObject = remoteStream;
+
         // Ensure video plays
         remoteVideoRef.current.onloadedmetadata = () => {
-          remoteVideoRef.current.play().catch(e => console.log("Remote video play error:", e));
+          console.log("Remote video metadata loaded, attempting to play");
+          remoteVideoRef.current
+            .play()
+            .then(() => console.log("Remote video playing successfully"))
+            .catch((e) => {
+              console.log("Remote video play error:", e);
+              // Retry after a short delay
+              setTimeout(() => {
+                remoteVideoRef.current
+                  ?.play()
+                  .then(() => console.log("Remote video retry successful"))
+                  .catch((retryError) =>
+                    console.log("Remote video retry failed:", retryError)
+                  );
+              }, 500);
+            });
         };
       }
     };
@@ -138,6 +187,7 @@ const VideoCall = ({
       if (state === "connected") {
         setIsConnecting(false);
         setErrorMessage("");
+        console.log("Peer connection established successfully");
       } else if (state === "failed" || state === "disconnected") {
         setErrorMessage("Connection failed. Please try again.");
         setIsConnecting(false);
@@ -151,7 +201,9 @@ const VideoCall = ({
       const iceState = peerConnectionRef.current?.iceConnectionState;
       console.log("ICE connection state:", iceState);
 
-      if (iceState === "failed") {
+      if (iceState === "connected" || iceState === "completed") {
+        console.log("ICE connection established");
+      } else if (iceState === "failed") {
         setErrorMessage(
           "Network connection failed. Please check your internet connection."
         );
@@ -160,10 +212,26 @@ const VideoCall = ({
 
     // Add local stream tracks if available
     if (localStreamRef.current) {
+      console.log("Adding local stream tracks to peer connection");
       localStreamRef.current.getTracks().forEach((track) => {
-        console.log("Adding local track:", track.kind);
-        peerConnectionRef.current.addTrack(track, localStreamRef.current);
+        console.log(
+          "Adding local track:",
+          track.kind,
+          track.enabled,
+          track.readyState
+        );
+        try {
+          const sender = peerConnectionRef.current.addTrack(
+            track,
+            localStreamRef.current
+          );
+          console.log("Track added successfully:", sender?.track?.kind);
+        } catch (error) {
+          console.error("Error adding track:", error);
+        }
       });
+    } else {
+      console.warn("No local stream available when setting up peer connection");
     }
   }, [receiverId, servers]);
 
@@ -189,7 +257,7 @@ const VideoCall = ({
       setupPeerConnection();
 
       // Wait a bit for peer connection to be ready
-      await new Promise(resolve => setTimeout(resolve, 100));
+      await new Promise((resolve) => setTimeout(resolve, 100));
 
       const offer = await peerConnectionRef.current.createOffer({
         offerToReceiveAudio: true,
@@ -241,7 +309,7 @@ const VideoCall = ({
       console.log("Accepting call from:", incomingCall.caller_id);
 
       // Wait a bit for peer connection to be ready
-      await new Promise(resolve => setTimeout(resolve, 100));
+      await new Promise((resolve) => setTimeout(resolve, 100));
 
       // Set remote description first
       await peerConnectionRef.current.setRemoteDescription(
@@ -380,7 +448,13 @@ const VideoCall = ({
       } else {
         // Stop screen sharing and switch back to camera
         const videoStream = await navigator.mediaDevices.getUserMedia({
-          video: true,
+          video: {
+            width: { ideal: 320, max: 640 },
+            height: { ideal: 240, max: 480 },
+            facingMode: "user",
+            frameRate: { ideal: 15, max: 24 },
+            aspectRatio: { ideal: 4 / 3 },
+          },
           audio: true,
         });
 
@@ -449,34 +523,39 @@ const VideoCall = ({
 
         const localStream = await navigator.mediaDevices.getUserMedia({
           video: {
-            width: { ideal: 1280, max: 1920 },
-            height: { ideal: 720, max: 1080 },
+            width: { ideal: 320, max: 640 },
+            height: { ideal: 240, max: 480 },
             facingMode: "user",
-            frameRate: { ideal: 30, max: 60 },
+            frameRate: { ideal: 15, max: 24 },
+            aspectRatio: { ideal: 4 / 3 },
           },
           audio: {
             echoCancellation: true,
             noiseSuppression: true,
             autoGainControl: true,
-            sampleRate: 44100,
           },
         });
 
         localStreamRef.current = localStream;
         setIsMediaReady(true);
-        
+
         // Setup local video immediately
         if (localVideoRef.current) {
           localVideoRef.current.srcObject = localStream;
           localVideoRef.current.onloadedmetadata = () => {
-            localVideoRef.current.play().catch((e) => console.log("Initial local video play error:", e));
+            console.log("Local video metadata loaded, playing");
+            localVideoRef.current
+              .play()
+              .then(() => console.log("Local video playing successfully"))
+              .catch((e) => console.log("Initial local video play error:", e));
           };
         }
-        
+
         console.log(`Media setup complete for user ${userId}`, {
           videoTracks: localStream.getVideoTracks().length,
           audioTracks: localStream.getAudioTracks().length,
           localVideoElement: !!localVideoRef.current,
+          videoSettings: localStream.getVideoTracks()[0]?.getSettings(),
         });
       } catch (error) {
         let errorMsg = "Failed to access camera or microphone. ";
@@ -723,23 +802,33 @@ const VideoCall = ({
           </div>
 
           {/* Video containers */}
-          <div className="relative w-full h-full flex p-2 sm:p-0">
+          <div className="relative w-full h-full">
             {/* Remote video (main) */}
-            <div className="flex-1 relative bg-gray-800 rounded-lg sm:rounded-none overflow-hidden">
+            <div className="w-full h-full relative bg-gray-800 flex items-center justify-center overflow-hidden">
               <video
                 ref={remoteVideoRef}
-                className="w-full h-full object-contain sm:object-cover"
+                className="w-full h-full"
+                style={{
+                  objectFit: "contain",
+                  transform: "scaleX(-1)", // Mirror for better UX
+                  maxWidth: "100%",
+                  maxHeight: "100%",
+                }}
                 autoPlay
                 playsInline
                 onLoadedMetadata={() => {
                   console.log("Remote video metadata loaded");
-                  remoteVideoRef.current?.play().catch(e => console.log("Remote video autoplay failed:", e));
+                  remoteVideoRef.current
+                    ?.play()
+                    .catch((e) =>
+                      console.log("Remote video autoplay failed:", e)
+                    );
                 }}
                 onCanPlay={() => console.log("Remote video can play")}
                 onPlay={() => console.log("Remote video started playing")}
                 onError={(e) => console.log("Remote video error:", e)}
               />
-              {!callInitiated && !incomingCall && (
+              {(!callInitiated || connectionState !== "connected") && (
                 <div className="absolute inset-0 flex items-center justify-center bg-gray-800">
                   <div className="text-center space-y-3 sm:space-y-4 px-4">
                     <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center mx-auto shadow-lg">
@@ -762,7 +851,9 @@ const VideoCall = ({
                       {receiverName}
                     </p>
                     <p className="text-gray-300 text-sm sm:text-base">
-                      Waiting to connect...
+                      {connectionState === "connecting" || isConnecting
+                        ? "Connecting..."
+                        : "Waiting to connect..."}
                     </p>
                   </div>
                 </div>
@@ -770,16 +861,24 @@ const VideoCall = ({
             </div>
 
             {/* Local video (picture-in-picture) */}
-            <div className="absolute bottom-16 right-3 sm:bottom-4 sm:right-4 md:bottom-6 md:right-6 w-24 h-18 sm:w-40 sm:h-30 md:w-48 md:h-36 bg-gray-700 rounded-lg sm:rounded-xl overflow-hidden shadow-lg border-2 border-white/20 z-10">
+            <div className="absolute bottom-20 right-4 sm:bottom-4 sm:right-4 w-32 h-24 sm:w-48 sm:h-36 bg-gray-700 rounded-lg overflow-hidden shadow-lg border-2 border-white/20 z-10">
               <video
                 ref={localVideoRef}
-                className="w-full h-full object-cover"
+                className="w-full h-full"
+                style={{
+                  objectFit: "contain",
+                  transform: "scaleX(-1)", // Mirror for better UX
+                }}
                 autoPlay
                 playsInline
                 muted
                 onLoadedMetadata={() => {
                   console.log("Local video metadata loaded");
-                  localVideoRef.current?.play().catch(e => console.log("Local video autoplay failed:", e));
+                  localVideoRef.current
+                    ?.play()
+                    .catch((e) =>
+                      console.log("Local video autoplay failed:", e)
+                    );
                 }}
                 onCanPlay={() => console.log("Local video can play")}
                 onPlay={() => console.log("Local video started playing")}
@@ -787,9 +886,9 @@ const VideoCall = ({
               />
               {isVideoOff && (
                 <div className="absolute inset-0 bg-gray-700 flex items-center justify-center">
-                  <VideoOff size={24} className="sm:hidden text-gray-400" />
+                  <VideoOff size={20} className="sm:hidden text-gray-400" />
                   <VideoOff
-                    size={32}
+                    size={24}
                     className="hidden sm:block text-gray-400"
                   />
                 </div>
