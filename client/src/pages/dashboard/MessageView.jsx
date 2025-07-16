@@ -203,7 +203,7 @@ const MessageView = () => {
 
   return (
     <div
-      className="flex flex-col min-h-screen mobile-full-height lg:h-full w-full border-x border-gray-100 dark:border-gray-900 shadow-light dark:shadow-dark transition-all ease-linear duration-300"
+      className="flex flex-col h-full w-full border-x border-gray-100 dark:border-gray-900 shadow-light dark:shadow-dark transition-all ease-linear duration-300"
       key={forceRefresh}
     >
       {/* Show loading if chat data is incomplete */}
@@ -223,7 +223,7 @@ const MessageView = () => {
           </div>
         </div>
       ) : (
-        <div className="flex flex-col min-h-screen mobile-full-height lg:h-full">
+        <div className="flex flex-col h-full">
           {/* Chat Header */}
           <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 px-3 md:px-4 lg:px-6 py-3 md:py-4 bg-white dark:bg-gray-800 flex-shrink-0">
             {/* Back button for mobile */}
@@ -353,7 +353,7 @@ const MessageView = () => {
           </div>
 
           {/* Chat Input */}
-          <div className="border-t border-gray-200 dark:border-gray-700 p-3 md:p-3 lg:p-4 bg-white dark:bg-gray-800 flex-shrink-0 mb-4 lg:mb-0 mobile-input-container mobile-safe-area">
+          <div className="border-t border-gray-200 dark:border-gray-700 p-3 md:p-3 lg:p-4 bg-white dark:bg-gray-800 flex-shrink-0 pb-6 lg:pb-3">
             <form
               className="flex items-center justify-between space-x-2 md:space-x-3 lg:space-x-4"
               onSubmit={handleMessageSend}

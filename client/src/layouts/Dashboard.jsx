@@ -373,7 +373,7 @@ const Dashboard = () => {
 
       {/* Main content area with conditional bottom padding for mobile navigation */}
       <div
-        className={`flex-1 min-h-screen mobile-full-height ${
+        className={`flex-1 h-full ${
           currentConversation ? "pb-0" : "pb-28"
         } lg:pb-0`}
       >
