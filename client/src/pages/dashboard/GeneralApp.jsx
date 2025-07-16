@@ -64,25 +64,33 @@ const GeneralApp = () => {
         <Chats />
       </div>
 
-      {/* Chat Messages - Takes full width on mobile when conversation is active */}
+      {/* Chat Messages - Takes remaining space but leaves room for sidebars */}
       {conversation.currentConversation === null ? (
         <div className="hidden md:flex flex-1">
           <HomePage />
         </div>
       ) : (
-        <div className="flex-1 w-full">
+        <div
+          className={`flex-1 ${
+            app.sidebar.isOpen
+              ? "lg:max-w-none xl:max-w-[calc(100%-320px)]"
+              : "w-full"
+          } min-w-0`}
+        >
           <MessageView />
         </div>
       )}
 
-      {/* Sidebars - Only show on larger screens */}
+      {/* Profile Sidebar - Show on larger screens when open */}
       {app.sidebar.isOpen && app.sidebar.type === "PROFILE" && (
-        <div className="hidden xl:block">
+        <div className="hidden lg:flex lg:w-80 xl:w-80 flex-shrink-0 border-l border-gray-200 dark:border-gray-700">
           <ProfileSidebar />
         </div>
       )}
+
+      {/* Shared Sidebar - Show on larger screens when open */}
       {app.sidebar.isOpen && app.sidebar.type === "SHARED" && (
-        <div className="hidden xl:block">
+        <div className="hidden lg:flex lg:w-80 xl:w-80 flex-shrink-0 border-l border-gray-200 dark:border-gray-700">
           <SharedSidebar />
         </div>
       )}

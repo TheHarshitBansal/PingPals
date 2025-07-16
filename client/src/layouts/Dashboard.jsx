@@ -215,7 +215,7 @@ const Dashboard = () => {
   }, [location]);
 
   return (
-    <div className="flex" key={forceRender}>
+    <div className="flex h-screen" key={forceRender}>
       {/* Mobile and tablet: Bottom navigation bar */}
       <div className="fixed bottom-0 left-0 right-0 z-50 bg-gray-100 dark:bg-gray-900 shadow-light dark:shadow-dark border-t border-gray-200 dark:border-gray-700 lg:hidden">
         <div className="flex items-center justify-around py-2">
@@ -367,7 +367,7 @@ const Dashboard = () => {
       </div>
 
       {/* Main content area with bottom padding for mobile navigation */}
-      <div className="flex-1 pb-16 lg:pb-0">
+      <div className="flex-1 h-full pb-16 lg:pb-0">
         <Outlet />
       </div>
     </div>

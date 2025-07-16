@@ -19,7 +19,7 @@ const NotFound = () => {
           </p>
         </div>
 
-        <div className="space-y-4">
+        <div className="space-y-4 space-x-4">
           <Button
             asChild
             className="w-full sm:w-auto bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-3 px-6 rounded-lg shadow-lg transform transition hover:scale-105"

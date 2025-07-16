@@ -6,7 +6,7 @@ const MediaGrid = ({ file }) => {
   const renderGrid = () => {
     const media = JSON.parse(file);
     if (!media || !Array.isArray(media) || media.length === 0) {
-      <Skeleton className="w-full max-h-64 min-h-64 rounded-lg" />;
+      return <Skeleton className="w-full max-h-64 min-h-64 rounded-lg" />;
     }
 
     const mediaCount = media.length;

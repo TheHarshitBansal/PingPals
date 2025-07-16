@@ -1,12 +1,6 @@
 // MessageView.js
 import { useEffect, useState, useCallback } from "react";
-import {
-  CaretDown,
-  Gif,
-  PaperPlaneTilt,
-  VideoCamera,
-} from "@phosphor-icons/react";
-import { Divider } from "@mui/material";
+import { Gif, PaperPlaneTilt, VideoCamera } from "@phosphor-icons/react";
 import { useDispatch, useSelector } from "react-redux";
 import { toggleSidebar } from "@/redux/slices/appSlice.js";
 import DateSeparator from "@/components/messages/DateSeparator.jsx";
@@ -29,8 +23,7 @@ import {
 import {
   setIncomingCallData,
   clearIncomingCallData,
-} from "@/redux/slices/appSlice.js"; // Import from appSlice
-import ChatOptions from "@/components/messages/ChatOptions.jsx";
+} from "@/redux/slices/appSlice.js";
 import VideoCall from "@/components/VideoCall.jsx";
 import authApi from "@/redux/api/authApi.js";
 import { toast } from "@/hooks/use-toast.js";
@@ -210,9 +203,7 @@ const MessageView = () => {
 
   return (
     <div
-      className={`flex flex-col h-full border-x border-gray-100 dark:border-gray-900 shadow-light dark:shadow-dark ${
-        !profileSidebar ? "w-full xl:w-4/5" : "w-full xl:w-3/5"
-      } transition-all ease-linear duration-300`}
+      className="flex flex-col h-full w-full border-x border-gray-100 dark:border-gray-900 shadow-light dark:shadow-dark transition-all ease-linear duration-300"
       key={forceRefresh}
     >
       {/* Show loading if chat data is incomplete */}
@@ -232,9 +223,9 @@ const MessageView = () => {
           </div>
         </div>
       ) : (
-        <>
+        <div className="flex flex-col h-full">
           {/* Chat Header */}
-          <div className="flex sticky items-center justify-between border-b px-3 md:px-4 lg:px-6 py-3 md:py-4">
+          <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 px-3 md:px-4 lg:px-6 py-3 md:py-4 bg-white dark:bg-gray-800 flex-shrink-0">
             {/* Back button for mobile */}
             <button
               onClick={() => dispatch(setCurrentConversation(null))}
@@ -267,7 +258,7 @@ const MessageView = () => {
                   </AvatarFallback>
                 </Avatar>
               </div>
-              <div className="min-w-0 flex-1">
+              <div className="min-w-0 h-full flex-1">
                 <h5 className="font-medium text-black dark:text-white text-sm md:text-base lg:text-lg truncate">
                   {users[0]?.name || "Unknown User"}
                 </h5>
@@ -276,42 +267,42 @@ const MessageView = () => {
                 </p>
               </div>
             </div>
-            <div className="cursor-pointer flex items-center space-x-2 md:space-x-3 lg:space-x-6 h-full flex-shrink-0">
+            <div className="flex items-center space-x-2 md:space-x-3 lg:space-x-4 h-full flex-shrink-0">
               <button
                 onClick={() => setIsCallActive(true)}
-                className="p-1 md:p-2"
+                className="group relative bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-medium py-2 px-3 md:py-2.5 md:px-4 lg:py-3 lg:px-5 rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 ease-out flex items-center gap-2 md:gap-2.5 lg:gap-3"
               >
-                <VideoCamera size={18} className="md:hidden" color="gray" />
-                <VideoCamera
-                  size={20}
-                  className="hidden md:block lg:hidden"
-                  color="gray"
-                />
-                <VideoCamera
-                  size={24}
-                  className="hidden lg:block"
-                  color="gray"
-                />
+                <div className="relative">
+                  <VideoCamera
+                    size={16}
+                    className="md:hidden group-hover:animate-pulse"
+                    color="white"
+                    weight="fill"
+                  />
+                  <VideoCamera
+                    size={18}
+                    className="hidden md:block lg:hidden group-hover:animate-pulse"
+                    color="white"
+                    weight="fill"
+                  />
+                  <VideoCamera
+                    size={20}
+                    className="hidden lg:block group-hover:animate-pulse"
+                    color="white"
+                    weight="fill"
+                  />
+                  <div className="absolute -inset-1 bg-white opacity-20 rounded-full animate-ping group-hover:animate-pulse"></div>
+                </div>
+                <span className="text-xs md:text-sm lg:text-base font-semibold tracking-wide">
+                  Call
+                </span>
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-0 group-hover:opacity-10 rounded-full transition-opacity duration-300"></div>
               </button>
-              <Divider
-                orientation="vertical"
-                flexItem
-                className="bg-gray-100 dark:bg-gray-700 hidden md:block"
-              />
-              <ChatOptions chatId={chat?._id}>
-                <CaretDown size={18} className="md:hidden" color="gray" />
-                <CaretDown
-                  size={20}
-                  className="hidden md:block lg:hidden"
-                  color="gray"
-                />
-                <CaretDown size={24} className="hidden lg:block" color="gray" />
-              </ChatOptions>
             </div>
           </div>
 
           {/* Chat Messages */}
-          <div className="max-h-full space-y-2 md:space-y-3 lg:space-y-4 overflow-auto no-scrollbar px-3 md:px-4 lg:px-6 py-4 md:py-6 lg:py-8 grow bg-gray-50 dark:bg-gray-900 shadow-inner">
+          <div className="flex-1 overflow-y-auto space-y-2 md:space-y-3 lg:space-y-4 px-3 md:px-4 lg:px-6 py-4 md:py-6 lg:py-8 bg-gray-50 dark:bg-gray-900 no-scrollbar">
             {sortedMessages?.map((message, index) => {
               switch (message.type) {
                 case "Separator":
@@ -362,7 +353,7 @@ const MessageView = () => {
           </div>
 
           {/* Chat Input */}
-          <div className="sticky bottom-0 p-2 md:p-3 lg:p-4">
+          <div className="border-t border-gray-200 dark:border-gray-700 p-2 md:p-3 lg:p-4 bg-white dark:bg-gray-800 flex-shrink-0">
             <form
               className="flex items-center justify-between space-x-2 md:space-x-3 lg:space-x-4"
               onSubmit={handleMessageSend}
@@ -450,7 +441,7 @@ const MessageView = () => {
             incomingCallData={incomingCallData}
             users={users}
           />
-        </>
+        </div>
       )}
     </div>
   );

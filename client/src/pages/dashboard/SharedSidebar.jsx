@@ -144,8 +144,8 @@ const SharedSidebar = () => {
   };
 
   return (
-    <div className="flex flex-col shadow-light dark:shadow-dark w-full xl:w-1/4 h-screen">
-      <div className="sticky flex-shrink-0 border-b border-gray-300 dark:border-gray-700 flex items-center justify-start gap-x-2 w-full p-3 md:p-4 lg:p-6">
+    <div className="flex flex-col w-full h-full bg-white dark:bg-gray-800 shadow-lg">
+      <div className="sticky top-0 flex-shrink-0 border-b border-gray-300 dark:border-gray-700 flex items-center justify-start gap-x-2 w-full p-3 md:p-4 lg:p-6 bg-white dark:bg-gray-800 z-10">
         <button onClick={handleProfile}>
           <ChevronLeft size={18} className="md:hidden" color="gray" />
           <ChevronLeft
@@ -160,7 +160,10 @@ const SharedSidebar = () => {
         </div>
       </div>
 
-      <Tabs defaultValue="media" className="flex flex-col h-full">
+      <Tabs
+        defaultValue="media"
+        className="flex flex-col flex-1 overflow-hidden"
+      >
         <TabsList className="grid w-full grid-cols-2 gap-2 p-1 rounded-none flex-shrink-0">
           <TabsTrigger value="media" className="text-sm md:text-base">
             Media
