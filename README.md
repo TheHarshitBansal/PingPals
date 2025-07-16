@@ -1,63 +1,85 @@
-# PingPals
+<p align="center">
+  <img src="https://raw.githubusercontent.com/TheHarshitBansal/PingPals/main/public/logo.png" alt="PingPals Logo" width="150" />
+</p>
 
-![PingPals Logo](https://res.cloudinary.com/dtlpxg7ar/image/upload/v1740693236/PingPals/1740693233908-XeJDZ8Y7OxxI9g0LA_MaW-transformed.png.png)
+<h1 align="center">PingPals</h1>
 
-Welcome to **PingPals**, a real-time messaging and social connection platform designed to make communication fast, fun, and effortless. Whether you're chatting, video calling, or sharing media with friends and teams, PingPals offers a rich and seamless experience powered by modern web technologies.
+<p align="center">
+  <b>Your Ultimate Real-Time Messaging Platform</b><br/>
+  Chat, share, and connect instantly — all in one place.
+</p>
 
-## About
+<p align="center">
+  <a href="https://pingpals.vercel.app">🌐 Live Demo</a> •
+  <a href="https://github.com/TheHarshitBansal/PingPals/issues">🐛 Report Bug</a> •
+  <a href="mailto:harshitbansal.contact@gmail.com">📬 Contact</a>
+</p>
 
-**PingPals** is a real-time messaging app that connects friends and teams through fast, secure chat, video calls, GIFs, emojis, and media sharing, built with modern web technologies like React, Node.js, and Socket.IO.
-
-## Features
-
-- **Real-Time Messaging**: Chat instantly with friends using WebSocket technology.
-- **Video Calls**: Connect face-to-face with high-quality video calling.
-- **GIFs and Emojis**: Express yourself with a wide range of GIFs and emojis.
-- **Media Sharing**: Send and receive photos, videos, and other files effortlessly.
-- **User Authentication**: Secure login and registration with JWT-based security.
-- **Customizable Profiles**: Add avatars, bios, and status updates to personalize your presence.
-- **Friend Management**: Easily add, remove, and organize your list of pals.
-- **Message History**: Retrieve past conversations with efficient storage.
-  
----
-
-## Tech Stack
-
-PingPals is built with a modern tech stack optimized for real-time communication and rich media support:
-
-### Frontend  
-- **React.js**: Dynamic and responsive user interface.
-- **Redux**: State management for predictable data flow.
-- **Socket.IO-Client**: Real-time communication with the backend.
-- **WebRTC**: Enables peer-to-peer video calling.
-- **Tailwind CSS**: Utility-first styling for a clean, modern look.
-
-### Backend  
-- **Node.js**: Server-side runtime for handling logic and requests.
-- **Express.js**: Framework for building RESTful APIs.
-- **Socket.IO**: Powers real-time messaging and call signaling.
-- **MongoDB**: NoSQL database for storing user data, messages, and media metadata.
-- **Mongoose**: Schema management and querying for MongoDB.
-
-### Authentication & Security
-- **JWT (JSON Web Tokens)**: Secure authentication and session handling.
-- **Bcrypt**: Password hashing for enhanced security.
-
-### Third-Party Services
-- **Cloudinary**: Hosting and management of images and media files.
-- **Giphy API**: Source for GIFs integrated into the chat experience.
-
-### Deployment
-- **Vercel**: Hosts the frontend for fast and scalable deployment.
-- **Render**: Hosts the backend with reliable performance.
+<p align="center">
+  <img src="https://img.shields.io/badge/Hosted%20on-Vercel-black?logo=Vercel&style=plastic" />
+  <img src="https://img.shields.io/badge/Backend-Render-%2346E3B7?logo=render&style=plastic" />
+  <img src="https://img.shields.io/github/last-commit/TheHarshitBansal/PingPals?color=ff69b4&style=plastic" />
+  <img src="https://img.shields.io/github/repo-size/TheHarshitBansal/PingPals?color=blueviolet&style=plastic" />
+  <img src="https://img.shields.io/github/languages/top/TheHarshitBansal/PingPals?style=plastic" />
+</p>
 
 ---
 
-## Contribution
+## ✨ Features
 
-Feel free to contribute to this project by:
-  1. Forking the repository.
-  2. Creating a new branch for your feature or bug fix.
-  3. Submitting a pull request.
+- 💬 **Instant Messaging** — Real-time 1:1 chat powered by Socket.IO  
+- 📞 **Audio & Video Calls** — Peer-to-peer communication using WebRTC  
+- 🔐 **Secure Authentication** — JWT auth and OAuth (Google, GitHub)  
+- 🖼️ **Media Sharing** — Share images, videos, and other files easily  
+- 😀 **Emoji & GIF Support** — Make conversations expressive and fun  
+- 👀 **Typing Indicators & Presence** — Know who’s online and typing  
+- 🛡️ **Data Security** — Fully encrypted sensitive data  
+- 🖌️ **Profile Customization** — Update avatar, bio, and other details  
+- 🌐 **Cross-Platform Ready** — Responsive UI for mobile & desktop  
+- ⚡ **Optimized Performance** — Scalable backend and efficient state handling  
 
+---
 
+## 🛠️ Tech Stack
+
+<p align="center">
+  <img src="https://img.shields.io/badge/React-20232A?logo=react&logoColor=61DAFB&style=for-the-badge" />
+  <img src="https://img.shields.io/badge/Redux-593D88?logo=redux&logoColor=white&style=for-the-badge" />
+  <img src="https://img.shields.io/badge/TailwindCSS-38B2AC?logo=tailwindcss&logoColor=white&style=for-the-badge" />
+  <img src="https://img.shields.io/badge/Node.js-339933?logo=node.js&logoColor=white&style=for-the-badge" />
+  <img src="https://img.shields.io/badge/Express-000000?logo=express&logoColor=white&style=for-the-badge" />
+  <img src="https://img.shields.io/badge/Socket.IO-010101?logo=socket.io&logoColor=white&style=for-the-badge" />
+  <img src="https://img.shields.io/badge/WebRTC-333333?logo=webrtc&logoColor=white&style=for-the-badge" />
+  <img src="https://img.shields.io/badge/MongoDB-4EA94B?logo=mongodb&logoColor=white&style=for-the-badge" />
+  <img src="https://img.shields.io/badge/Vercel-000000?logo=vercel&logoColor=white&style=for-the-badge" />
+  <img src="https://img.shields.io/badge/Render-46E3B7?logo=render&logoColor=white&style=for-the-badge" />
+</p>
+
+| Tech / Tool          | Purpose |
+|----------------------|---------|
+| ⚛ **React.js**       | Build dynamic and responsive UI |
+| 🎨 **TailwindCSS**    | Modern styling and responsive design |
+| 🧠 **Redux Toolkit**  | Global state management for chats & auth |
+| 🔌 **Socket.IO**      | Real-time messaging and presence |
+| 🎥 **WebRTC**         | Audio/Video calling |
+| 🌐 **Node.js + Express** | Backend APIs, auth handling |
+| 🛢 **MongoDB**        | Database for users and messages |
+| 🔐 **JWT + OAuth**    | Secure authentication |
+| ☁️ **Vercel + Render** | Deployment |
+
+---
+
+## 💬 Contributing
+
+Found a bug or have an idea?  
+Open an [issue](https://github.com/TheHarshitBansal/extrait/issues) or a [pull request](https://github.com/TheHarshitBansal/extrait/pulls).
+
+---
+
+## 📜 License
+
+MIT © [Harshit Bansal](https://github.com/TheHarshitBansal)
+
+<p align="center">
+  Made with ❤️ by <a href="https://github.com/TheHarshitBansal">Harshit Bansal</a>
+</p>
